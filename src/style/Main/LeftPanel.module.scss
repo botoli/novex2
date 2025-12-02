@@ -1,364 +1,372 @@
-.main{
+.main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #202020;
+  color: white;
+  min-height: 100vh;
+  position: relative;
+
+  .header {
     display: flex;
     flex-direction: column;
-    width: 300px;
-    height: 100%;
-    background-color: #202020;
-    color: white;
-    min-height: 100vh;
-    position: relative;
+    margin-top: 20px;
+    gap: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    height: 120px;
+    padding-left: 20px;
 
-    .header{
+    .naming {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      align-items: center;
+
+      .svgbox {
+        width: 40px;
+        height: 40px;
         display: flex;
-        flex-direction: column;
-        margin-top: 20px;
-        gap: 25px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        height: 120px;
-        padding-left: 20px;
+        justify-content: center;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 30%;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
 
-        .naming{
-            display: flex;
-            flex-direction: row;
-            gap: 10px;
-            align-items: center;
+      .namingtxt {
+        display: flex;
+        justify-content: start;
+        align-items: center;
 
-            .svgbox{
-                width: 40px;
-                height: 40px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
-                border-radius: 30%;
-                border: 1px solid rgba(255, 255, 255, 0.2);
-            }
-
-            .namingtxt{
-                display: flex;
-                justify-content: start;
-                align-items: center;
-
-                p {
-                    margin: 0;
-                    font-size: 15px;
-                    font-weight: 500;
-                }
-            }
+        p {
+          margin: 0;
+          font-size: 15px;
+          font-weight: 500;
         }
-
-        .searchcont{
-            position: relative;
-
-            svg{
-                position: absolute;
-                top: 50%;
-                left: 12px;
-                transform: translateY(-50%);
-                z-index: 1;
-            }
-
-            input{
-                width: 75%;
-                height: 36px;
-                padding-left: 40px;
-                border-radius: 8px;
-                background: rgba(255, 255, 255, 0.08);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                color: white;
-                font-size: 13px;
-                transition: all 0.2s ease;
-
-                &::placeholder {
-                    color: rgba(255, 255, 255, 0.4);
-                }
-
-                &:focus {
-                    outline: none;
-                    border-color: rgba(255, 255, 255, 0.3);
-                    background: rgba(255, 255, 255, 0.12);
-                }
-            }
-        }
+      }
     }
 
-    .category{
-        display: flex;
-        flex-direction: column;
-        padding-top: 20px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        flex-shrink: 0;
+    .searchcont {
+      position: relative;
 
-        .categoryItem{
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0 12px 20px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: rgba(255, 255, 255, 0.6);
+      svg {
+        position: absolute;
+        top: 50%;
+        left: 12px;
+        transform: translateY(-50%);
+        z-index: 1;
+      }
 
-            svg {
-                width: 20px;
-                height: 20px;
-                stroke: rgba(255, 255, 255, 0.6);
-                transition: all 0.2s ease;
-            }
+      input {
+        width: 75%;
+        height: 36px;
+        padding-left: 40px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 13px;
+        transition: all 0.2s ease;
 
-            p {
-                margin: 0;
-                font-size: 14px;
-                transition: all 0.2s ease;
-            }
-
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.05);
-                color: rgba(255, 255, 255, 0.8);
-
-                svg {
-                    stroke: rgba(255, 255, 255, 0.8);
-                }
-            }
-
-            &.active {
-                background-color: rgba(255, 255, 255, 0.1);
-                color: white;
-
-                svg {
-                    stroke: white;
-                }
-            }
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.4);
         }
-    }
 
-    // Секция ИИ
-    .suggestions {
-        padding: 20px;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-
-        .glassCard {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            height: fit-content;
-
-            .cardHeader {
-                .aiIdentity {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-
-                    .aiIcon {
-                        width: 36px;
-                        height: 36px;
-                        background: linear-gradient(135deg, rgba(108, 115, 218, 0.2), rgba(117, 85, 175, 0.2));
-                        border-radius: 10px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        border: 1px solid rgba(255, 255, 255, 0.1);
-                    }
-
-                    .aiInfo {
-                        .aiName {
-                            font-size: 14px;
-                            font-weight: 600;
-                            color: white;
-                            margin-bottom: 2px;
-                        }
-
-                        .aiStatus {
-                            display: flex;
-                            align-items: center;
-                            gap: 6px;
-                            font-size: 11px;
-                            color: rgba(255, 255, 255, 0.5);
-
-                            .statusDot {
-                                width: 6px;
-                                height: 6px;
-                                background: #10B981;
-                                border-radius: 50%;
-                                animation: pulse 2s infinite;
-                            }
-                        }
-                    }
-                }
-            }
-
-            .cardContent {
-                .suggestionsTitle {
-                    font-size: 13px;
-                    font-weight: 600;
-                    color: rgba(255, 255, 255, 0.9);
-                    margin-bottom: 12px;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                }
-
-                .suggestionsList {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 8px;
-
-                    .suggestionItem {
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        padding: 8px 0;
-                        cursor: pointer;
-                        transition: all 0.2s ease;
-                        border-radius: 6px;
-
-                        .suggestionIcon {
-                            width: 16px;
-                            height: 16px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            opacity: 0.5;
-                            transition: opacity 0.2s ease;
-                        }
-
-                        .suggestionText {
-                            font-size: 12px;
-                            color: rgba(255, 255, 255, 0.7);
-                            transition: color 0.2s ease;
-                        }
-
-                        &:hover {
-                            background: rgba(255, 255, 255, 0.05);
-
-                            .suggestionIcon {
-                                opacity: 0.8;
-                            }
-
-                            .suggestionText {
-                                color: rgba(255, 255, 255, 0.9);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Компактный чат с ИИ
-            .chatInputContainer {
-                margin: 8px 0;
-
-                .chatInputWrapper {
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-
-                    .chatInput {
-                        width: 100%;
-                        height: 36px;
-                        padding: 0 40px 0 12px;
-                        background: rgba(255, 255, 255, 0.06);
-                        border: 1px solid rgba(255, 255, 255, 0.1);
-                        border-radius: 8px;
-                        color: white;
-                        font-size: 12px;
-                        transition: all 0.2s ease;
-
-                        &::placeholder {
-                            color: rgba(255, 255, 255, 0.4);
-                        }
-
-                        &:focus {
-                            outline: none;
-                            border-color: rgba(255, 255, 255, 0.2);
-                            background: rgba(255, 255, 255, 0.08);
-                        }
-                    }
-
-                    .chatSendButton {
-                        position: absolute;
-                        right: 6px;
-                        width: 24px;
-                        height: 24px;
-                        background: rgba(108, 115, 218, 0.8);
-                        border: none;
-                        border-radius: 6px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        cursor: pointer;
-                        transition: all 0.2s ease;
-                        color: white;
-
-                        &:hover:not(:disabled) {
-                            background: rgba(108, 115, 218, 1);
-                            transform: scale(1.05);
-                        }
-
-                        &:disabled {
-                            opacity: 0.4;
-                            cursor: not-allowed;
-                        }
-
-                        svg {
-                            width: 12px;
-                            height: 12px;
-                        }
-                    }
-                }
-            }
+        &:focus {
+          outline: none;
+          border-color: rgba(255, 255, 255, 0.3);
+          background: rgba(255, 255, 255, 0.12);
         }
+      }
     }
+  }
 
-    .bottomSection {
-        padding: 20px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        margin-top: auto;
+  .category {
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
 
-        .newProjectBtn {
+    .categoryItem {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0 12px 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: rgba(255, 255, 255, 0.6);
+
+      svg {
+        width: 20px;
+        height: 20px;
+        stroke: rgba(255, 255, 255, 0.6);
+        transition: all 0.2s ease;
+      }
+
+      p {
+        margin: 0;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.8);
+
+        svg {
+          stroke: rgba(255, 255, 255, 0.8);
+        }
+      }
+
+      &.active {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+
+        svg {
+          stroke: white;
+        }
+      }
+    }
+  }
+
+  // Секция ИИ
+  .suggestions {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .glassCard {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: fit-content;
+
+      .cardHeader {
+        .aiIdentity {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          .aiIcon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(
+              135deg,
+              rgba(108, 115, 218, 0.2),
+              rgba(117, 85, 175, 0.2)
+            );
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: rgba(255, 255, 255, 0.9);
-            padding: 12px 16px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+          }
 
-            .btnIcon {
-                display: flex;
-                align-items: center;
+          .aiInfo {
+            .aiName {
+              font-size: 14px;
+              font-weight: 600;
+              color: white;
+              margin-bottom: 2px;
+            }
+
+            .aiStatus {
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              font-size: 11px;
+              color: rgba(255, 255, 255, 0.5);
+
+              .statusDot {
+                width: 6px;
+                height: 6px;
+                background: #10b981;
+                border-radius: 50%;
+                animation: pulse 2s infinite;
+              }
+            }
+          }
+        }
+      }
+
+      .cardContent {
+        .suggestionsTitle {
+          font-size: 13px;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 0.9);
+          margin-bottom: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .suggestionsList {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
+          .suggestionItem {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+
+            .suggestionIcon {
+              width: 16px;
+              height: 16px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              opacity: 0.5;
+              transition: opacity 0.2s ease;
+            }
+
+            .suggestionText {
+              font-size: 12px;
+              color: rgba(255, 255, 255, 0.7);
+              transition: color 0.2s ease;
             }
 
             &:hover {
-                background: rgba(255, 255, 255, 0.12);
-                border-color: rgba(255, 255, 255, 0.2);
-                transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+              background: rgba(255, 255, 255, 0.05);
+
+              .suggestionIcon {
+                opacity: 0.8;
+              }
+
+              .suggestionText {
+                color: rgba(255, 255, 255, 0.9);
+              }
+            }
+          }
+        }
+      }
+
+      // Компактный чат с ИИ
+      .chatInputContainer {
+        margin: 8px 0;
+
+        .chatInputWrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+
+          .chatInput {
+            width: 100%;
+            height: 36px;
+            padding: 0 40px 0 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 12px;
+            transition: all 0.2s ease;
+
+            &::placeholder {
+              color: rgba(255, 255, 255, 0.4);
             }
 
-            &:active {
-                transform: translateY(0);
-                background: rgba(255, 255, 255, 0.1);
+            &:focus {
+              outline: none;
+              border-color: rgba(255, 255, 255, 0.2);
+              background: rgba(255, 255, 255, 0.08);
             }
+          }
+
+          .chatSendButton {
+            position: absolute;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            background: rgba(108, 115, 218, 0.8);
+            border: none;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: white;
+
+            &:hover:not(:disabled) {
+              background: rgba(108, 115, 218, 1);
+              transform: scale(1.05);
+            }
+
+            &:disabled {
+              opacity: 0.4;
+              cursor: not-allowed;
+            }
+
+            svg {
+              width: 12px;
+              height: 12px;
+            }
+          }
         }
+      }
     }
+  }
+
+  .bottomSection {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto;
+
+    .newProjectBtn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.9);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+
+      .btnIcon {
+        display: flex;
+        align-items: center;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      &:active {
+        transform: translateY(0);
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
