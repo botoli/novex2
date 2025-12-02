@@ -37,11 +37,8 @@
 
 .title {
   margin: 0;
-  font-family: "Inter", sans-serif;
-  font-weight: 400;
   font-size: 36px;
   line-height: 44px;
-  color: #6e6cd0;
 }
 
 .subtitle {
@@ -363,7 +360,13 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: #001eff;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 30, 255, 1) 50%,
+    rgba(153, 167, 99, 1) 51%,
+    rgba(251, 255, 0, 1) 100%
+  );
   display: grid;
   place-items: center;
   font-weight: 500;

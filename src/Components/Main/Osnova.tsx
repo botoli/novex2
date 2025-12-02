@@ -1,5 +1,3 @@
-// src/components/Main/Osnova.jsx
-
 import React from "react";
 import style from "../../style/Main/Osnova.module.scss";
 import { osnovaIcons } from "../../assets/LeftPanel/index.js";
@@ -7,13 +5,12 @@ import { osnovaIcons } from "../../assets/LeftPanel/index.js";
 const Osnova = () => {
   return (
     <div className={style.container}>
-      {/* ==================== ШАПКА ==================== */}
       <header className={style.header}>
         <div className={style.topBar}>
           <div className={style.logo}>
-            <h1 className={style.title}>AetherWorks</h1>
+            <h1 className={style.title}>Novex</h1>
             <p className={style.subtitle}>
-              Intelligent Workspace for Modern Teams
+              Интеллектуальное рабочее пространство для современных команд
             </p>
           </div>
 
@@ -36,20 +33,18 @@ const Osnova = () => {
 
         <div className={style.bottomBar}>
           <div className={style.statusBlock}>
-            <span>Current Sprint:</span> Sprint 24
+            <span>Текущий спринт:</span> Спринт 24
           </div>
           <div className={style.statusBlock}>
-            <span>Team:</span> Product & Design
+            <span>Команда:</span> Продукт & Дизайн
           </div>
           <div className={style.statusBlockAI}>
-            <span>AI Status:</span> <span className={style.dot}>●</span> Active
+            <span>Статус ИИ:</span> <span className={style.dot}>●</span> Активен
           </div>
         </div>
       </header>
 
-      {/* ==================== QUICK ACTIONS — ТВОИ ОРИГИНАЛЬНЫЕ ИКОНКИ ==================== */}
       <div className={style.quickActions}>
-        {/* Create Task — три круга */}
         <button className={style.quickBtn}>
           <div className={style.quickIcon}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -58,10 +53,9 @@ const Osnova = () => {
               <circle cx="12" cy="12" r="2" stroke="white" strokeWidth="2" />
             </svg>
           </div>
-          <span>Create Task</span>
+          <span>Создать задачу</span>
         </button>
 
-        {/* Team Chat — твой правильный SVG */}
         <button className={style.quickBtn}>
           <div className={style.quickIcon}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -95,10 +89,9 @@ const Osnova = () => {
               />
             </svg>
           </div>
-          <span>Team Chat</span>
+          <span>Командный чат</span>
         </button>
 
-        {/* Schedule — календарь */}
         <button className={style.quickBtn}>
           <div className={style.quickIcon}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -119,10 +112,9 @@ const Osnova = () => {
               />
             </svg>
           </div>
-          <span>Schedule</span>
+          <span>Расписание</span>
         </button>
 
-        {/* Quick Note */}
         <button className={style.quickBtn}>
           <div className={style.quickIcon}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -148,11 +140,10 @@ const Osnova = () => {
               />
             </svg>
           </div>
-          <span>Quick Note</span>
+          <span>Быстрая заметка</span>
         </button>
       </div>
 
-      {/* ==================== ACTIVE PROJECTS ==================== */}
       <div className={style.projectsSection}>
         <div className={style.sectionHeader}>
           <div className={style.sectionTitle}>
@@ -160,18 +151,18 @@ const Osnova = () => {
               <circle cx="12" cy="12" r="8" stroke="#667EEA" strokeWidth="2" />
               <circle cx="12" cy="12" r="4" stroke="#667EEA" strokeWidth="2" />
             </svg>
-            <h2>Active Projects</h2>
+            <h2>Активные проекты</h2>
           </div>
-          <button className={style.viewAll}>View All →</button>
+          <button className={style.viewAll}>Смотреть все →</button>
         </div>
 
         <div className={style.projectCards}>
-          {/* Project 1 */}
+          {/* Проект 1 */}
           <div className={style.projectCard}>
             <div className={style.projectHeader}>
               <div className={style.projectName}>
-                <h3>Product Redesign</h3>
-                <span className={style.statusActive}>active</span>
+                <h3>Редизайн продукта</h3>
+                <span className={style.statusActive}>активен</span>
               </div>
               <div className={style.projectStats}>
                 <div className={style.stat}>
@@ -230,7 +221,7 @@ const Osnova = () => {
             </div>
             <div className={style.progressContainer}>
               <div className={style.progressLabel}>
-                <span>Progress</span>
+                <span>Прогресс</span>
                 <span>75%</span>
               </div>
               <div className={style.progressBar}>
@@ -242,12 +233,12 @@ const Osnova = () => {
             </div>
           </div>
 
-          {/* Project 2 */}
+          {/* Проект 2 */}
           <div className={style.projectCard}>
             <div className={style.projectHeader}>
               <div className={style.projectName}>
-                <h3>Marketing Campaign</h3>
-                <span className={style.statusActive}>active</span>
+                <h3>Маркетинговая кампания</h3>
+                <span className={style.statusActive}>активен</span>
               </div>
               <div className={style.projectStats}>
                 <div className={style.stat}>
@@ -306,7 +297,7 @@ const Osnova = () => {
             </div>
             <div className={style.progressContainer}>
               <div className={style.progressLabel}>
-                <span>Progress</span>
+                <span>Прогресс</span>
                 <span>45%</span>
               </div>
               <div className={style.progressBar}>
@@ -318,12 +309,12 @@ const Osnova = () => {
             </div>
           </div>
 
-          {/* Project 3 */}
+          {/* Проект 3 */}
           <div className={style.projectCard}>
             <div className={style.projectHeader}>
               <div className={style.projectName}>
-                <h3>API Integration</h3>
-                <span className={style.statusReview}>review</span>
+                <h3>Интеграция API</h3>
+                <span className={style.statusReview}>на проверке</span>
               </div>
               <div className={style.projectStats}>
                 <div className={style.stat}>
@@ -382,7 +373,7 @@ const Osnova = () => {
             </div>
             <div className={style.progressContainer}>
               <div className={style.progressLabel}>
-                <span>Progress</span>
+                <span>Прогресс</span>
                 <span>90%</span>
               </div>
               <div className={style.progressBar}>
@@ -396,7 +387,6 @@ const Osnova = () => {
         </div>
       </div>
 
-      {/* ==================== RECENT ACTIVITY ==================== */}
       <div className={style.activitySection}>
         <div className={style.sectionHeader}>
           <div className={style.sectionTitle}>
@@ -410,30 +400,30 @@ const Osnova = () => {
                 strokeLinejoin="round"
               />
             </svg>
-            <h2>Recent Activity</h2>
+            <h2>Недавняя активность</h2>
           </div>
         </div>
 
         <div className={style.activityList}>
           <div className={style.activityItem}>
-            <div className={style.avatar}>S</div>
+            <div className={style.avatar}>Ж</div>
             <div className={style.activityContent}>
-              <p>Sarah Chen completed design review</p>
-              <span>5m ago</span>
+              <p>Жирный Жид завершила проверку дизайна</p>
+              <span>5 минут назад</span>
             </div>
           </div>
           <div className={style.activityItem}>
-            <div className={style.avatar}>M</div>
+            <div className={style.avatar}>Е</div>
             <div className={style.activityContent}>
-              <p>Mike Johnson commented on roadmap</p>
-              <span>12m ago</span>
+              <p>Ебаное чмо прокомментировал дорожную карту</p>
+              <span>12 минут назад</span>
             </div>
           </div>
           <div className={style.activityItem}>
-            <div className={style.avatar}>A</div>
+            <div className={style.avatar}>Т</div>
             <div className={style.activityContent}>
-              <p>Alex Rivera created new sprint</p>
-              <span>1h ago</span>
+              <p>ТЦК создал новый спринт</p>
+              <span>1 час назад</span>
             </div>
           </div>
         </div>
