@@ -1,6 +1,6 @@
 import React from "react";
 import LeftPanel from "./LeftPanel";
-import Osnova from "./Osnova";
+import Hero from "./Hero";
 import Dashboard from "./Dashboard";
 import style from "../../style/Main/MainPage.module.scss";
 
@@ -12,7 +12,7 @@ function MainPage() {
       </div>
       <div className={style.contentContainer}>
         <div className={style.contentColumn}>
-          <Osnova />
+          <Hero />
           <Dashboard />
         </div>
       </div>

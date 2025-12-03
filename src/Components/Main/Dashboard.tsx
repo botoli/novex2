@@ -7,7 +7,7 @@ import {
   SmartSuggestionData,
   KnolageGraphData,
   FlowDashboardData,
-} from "../../assets/Osnova";
+} from "../../assets/Hero";
 
 interface Suggestion {
   title: string;
