@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
 import style from "../../style/Main/Osnova.module.scss";
 import { osnovaIcons } from "../../assets/LeftPanel/index.js";
 import { 
