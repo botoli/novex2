@@ -12,4 +12,6 @@ Route::get('/user', function (Request $request) {
 Route::post('/create', [AuthController::class, 'create']);
 Route::get('/check-user', [AuthController::class, 'checkUser']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/createProj', [ProjectController::class, 'create']); 
+
+Route::post('/createProj', [ProjectController::class, 'create']);
+Route::get('/projects', [ProjectController::class, 'show']);
