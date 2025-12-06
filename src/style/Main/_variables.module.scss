@@ -1,0 +1,59 @@
+// _variables.module.scss (обновленная версия)
+$bg-dark: #0a0a0a;
+$bg-panel: #202020;
+$bg-card: rgba(20, 20, 20, 0.95);
+$bg-content: #161617;
+
+$border-color: rgba(255, 255, 255, 0.1);
+$border-light: rgba(255, 255, 255, 0.05);
+
+$text-main: white;
+$text-secondary: rgba(255, 255, 255, 0.6);
+$text-muted: rgba(255, 255, 255, 0.4);
+$text-disabled: rgba(255, 255, 255, 0.3);
+
+$primary-color: #667eea;
+$primary-purple: #6c73da;
+$primary-light: #7a92f0;
+$accent-blue: #2b7fff;
+$accent-purple: #764ba2;
+$accent-green: #10b981;
+$accent-green-light: #05df72;
+$accent-red: #f87171;
+$accent-orange: #ff6900;
+$accent-pink: #f6339a;
+
+$glass-bg: rgba(255, 255, 255, 0.08);
+$glass-border: rgba(255, 255, 255, 0.1);
+
+$gradient-blue: linear-gradient(135deg, #2b7fff 0%, #00b8db 100%);
+$gradient-purple: linear-gradient(135deg, #ad46ff 0%, #f6339a 100%);
+$gradient-orange: linear-gradient(135deg, #ff6900 0%, #fb2c36 100%);
+$gradient-green: linear-gradient(135deg, #00c950 0%, #00bc7d 100%);
+$gradient-primary: linear-gradient(90deg, #667eea, #764ba2);
+
+$shadow-card: 0 20px 60px rgba(0, 0, 0, 0.5);
+$shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.4);
+
+$z-modal: 1000;
+$z-dropdown: 100;
+$z-header: 100;
+
+$transition-default: all 0.2s ease;
+$transition-smooth: all 0.3s ease;
+
+$border-radius-sm: 4px;
+$border-radius-md: 6px;
+$border-radius-lg: 8px;
+$border-radius-xl: 10px;
+$border-radius-2xl: 14px;
+$border-radius-3xl: 16px;
+
+$font-size-xs: 11px;
+$font-size-sm: 12px;
+$font-size-md: 13px;
+$font-size-lg: 14px;
+$font-size-xl: 15px;
+$font-size-2xl: 18px;
+$font-size-3xl: 24px;
+$font-size-4xl: 36px;
