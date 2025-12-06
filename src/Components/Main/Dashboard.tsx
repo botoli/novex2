@@ -181,7 +181,7 @@ const Dashboard: React.FC = () => {
                 <h2>{NeuralNetworkData[0].title}</h2>
               </div>
               <button className={styles.iconButton}>
-                <div className={styles.closeIcon}></div>
+                <div>{renderIcon(NeuralNetworkData[1].icon)}</div>
               </button>
             </div>
 

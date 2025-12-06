@@ -15,12 +15,37 @@ const Hero = () => {
   const statIcons = {
     members: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-        {/* ... существующий код ... */}
+        <path
+          d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2" />
+        <path
+          d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
+          stroke="currentColor"
+          strokeWidth="2"
+        />
       </svg>
     ),
     tasks: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-        {/* ... существующий код ... */}
+        <path
+          d="M22 11.08V12a10 10 0 1 1-5.93-9.14"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M22 4L12 14.01l-3-3"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     ),
   };
@@ -207,7 +232,13 @@ const Hero = () => {
           </div>
 
           <div className={style.projectCards}>
-            {projectsData.map(renderProjectCard)}
+            {projectsData.length > 0 ? (
+              projectsData.map(renderProjectCard)
+            ) : (
+              <div className={style.noProjects}>
+                <p>Нет активных проектов</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

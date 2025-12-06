@@ -1,20 +1,22 @@
+// LeftPanel.module.scss
+@import "./variables.module";
+
 .main {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 320px;
   flex-shrink: 0;
-  background-color: #202020;
-  color: white;
+  background-color: $bg-panel;
+  color: $text-main;
   position: relative;
-  overflow: hidden;
 
   .header {
     display: flex;
     flex-direction: column;
     margin-top: 20px;
     gap: 25px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid $border-color;
     height: 120px;
     padding-left: 20px;
 
@@ -30,22 +32,16 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background: rgba(255, 255, 255, 0.1);
+        background: $glass-bg;
         backdrop-filter: blur(10px);
         border-radius: 30%;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid $glass-border;
       }
 
-      .namingtxt {
-        display: flex;
-        justify-content: start;
-        align-items: center;
-
-        p {
-          margin: 0;
-          font-size: 15px;
-          font-weight: 500;
-        }
+      .namingtxt p {
+        margin: 0;
+        font-size: $font-size-xl;
+        font-weight: 500;
       }
     }
 
@@ -64,15 +60,15 @@
         width: 75%;
         height: 36px;
         padding-left: 40px;
-        border-radius: 8px;
+        border-radius: $border-radius-md;
         background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white;
-        font-size: 13px;
-        transition: all 0.2s ease;
+        border: 1px solid $glass-border;
+        color: $text-main;
+        font-size: $font-size-md;
+        transition: $transition-default;
 
         &::placeholder {
-          color: rgba(255, 255, 255, 0.4);
+          color: $text-muted;
         }
 
         &:focus {
@@ -88,7 +84,7 @@
     display: flex;
     flex-direction: column;
     padding-top: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid $border-color;
     flex-shrink: 0;
 
     .categoryItem {
@@ -98,20 +94,21 @@
       gap: 12px;
       padding: 12px 0 12px 20px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      color: rgba(255, 255, 255, 0.6);
+      transition: $transition-default;
+      color: $text-secondary;
 
       svg {
         width: 20px;
         height: 20px;
-        stroke: rgba(255, 255, 255, 0.6);
-        transition: all 0.2s ease;
+        stroke: $text-secondary;
+        transition: $transition-default;
       }
 
       p {
         margin: 0;
-        font-size: 14px;
-        transition: all 0.2s ease;
+        font-size: $font-size-lg;
+        transition: $transition-default;
+        flex: 1;
       }
 
       &:hover {
@@ -125,16 +122,15 @@
 
       &.active {
         background-color: rgba(255, 255, 255, 0.1);
-        color: white;
+        color: $text-main;
 
         svg {
-          stroke: white;
+          stroke: $text-main;
         }
       }
     }
   }
 
-  // Секция ИИ
   .suggestions {
     padding: 20px;
     flex: 1;
@@ -142,10 +138,10 @@
     flex-direction: column;
 
     .glassCard {
-      background: rgba(255, 255, 255, 0.08);
+      background: $glass-bg;
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
+      border: 1px solid $glass-border;
+      border-radius: $border-radius-2xl;
       padding: 20px;
       display: flex;
       flex-direction: column;
@@ -166,18 +162,18 @@
               rgba(108, 115, 218, 0.2),
               rgba(117, 85, 175, 0.2)
             );
-            border-radius: 10px;
+            border-radius: $border-radius-lg;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid $glass-border;
           }
 
           .aiInfo {
             .aiName {
-              font-size: 14px;
+              font-size: $font-size-lg;
               font-weight: 600;
-              color: white;
+              color: $text-main;
               margin-bottom: 2px;
             }
 
@@ -185,13 +181,13 @@
               display: flex;
               align-items: center;
               gap: 6px;
-              font-size: 11px;
-              color: rgba(255, 255, 255, 0.5);
+              font-size: $font-size-xs;
+              color: $text-muted;
 
               .statusDot {
                 width: 6px;
                 height: 6px;
-                background: #10b981;
+                background: $accent-green;
                 border-radius: 50%;
                 animation: pulse 2s infinite;
               }
@@ -202,7 +198,7 @@
 
       .cardContent {
         .suggestionsTitle {
-          font-size: 13px;
+          font-size: $font-size-md;
           font-weight: 600;
           color: rgba(255, 255, 255, 0.9);
           margin-bottom: 12px;
@@ -221,8 +217,8 @@
             gap: 8px;
             padding: 8px 0;
             cursor: pointer;
-            transition: all 0.2s ease;
-            border-radius: 6px;
+            transition: $transition-default;
+            border-radius: $border-radius-sm;
 
             .suggestionIcon {
               width: 16px;
@@ -235,7 +231,7 @@
             }
 
             .suggestionText {
-              font-size: 12px;
+              font-size: $font-size-sm;
               color: rgba(255, 255, 255, 0.7);
               transition: color 0.2s ease;
             }
@@ -255,7 +251,6 @@
         }
       }
 
-      // Компактный чат с ИИ
       .chatInputContainer {
         margin: 8px 0;
 
@@ -269,14 +264,14 @@
             height: 36px;
             padding: 0 40px 0 12px;
             background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: white;
-            font-size: 12px;
-            transition: all 0.2s ease;
+            border: 1px solid $glass-border;
+            border-radius: $border-radius-md;
+            color: $text-main;
+            font-size: $font-size-sm;
+            transition: $transition-default;
 
             &::placeholder {
-              color: rgba(255, 255, 255, 0.4);
+              color: $text-muted;
             }
 
             &:focus {
@@ -291,18 +286,18 @@
             right: 6px;
             width: 24px;
             height: 24px;
-            background: rgba(108, 115, 218, 0.8);
+            background: rgba($primary-purple, 0.8);
             border: none;
-            border-radius: 6px;
+            border-radius: $border-radius-sm;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s ease;
-            color: white;
+            transition: $transition-default;
+            color: $text-main;
 
             &:hover:not(:disabled) {
-              background: rgba(108, 115, 218, 1);
+              background: rgba($primary-purple, 1);
               transform: scale(1.05);
             }
 
@@ -321,60 +316,10 @@
     }
   }
 
-  .bottomSection {
-    padding: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: auto;
-
-    .newProjectBtn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: rgba(255, 255, 255, 0.9);
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-
-      .btnIcon {
-        display: flex;
-        align-items: center;
-      }
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.12);
-        border-color: rgba(255, 255, 255, 0.2);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      }
-
-      &:active {
-        transform: translateY(0);
-        background: rgba(255, 255, 255, 0.1);
-      }
-    }
-  }
+  // Удалена секция bottomSection
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-// Добавьте эти стили в конец файла LeftPanel.module.scss
-
-// Стили для модального окна
+// Модальное окно
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -386,7 +331,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: $z-modal;
   animation: fadeIn 0.2s ease;
 }
 
@@ -394,12 +339,14 @@
   background: rgba(32, 32, 32, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
+  border-radius: $border-radius-2xl;
   padding: 30px;
-  width: 420px;
+  width: 500px;
   max-width: 90vw;
-  color: white;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  color: $text-main;
+  box-shadow: $shadow-card;
+  max-height: 80vh;
+  overflow-y: auto;
   animation: slideUp 0.3s ease;
 }
 
@@ -411,28 +358,33 @@
 
   h3 {
     margin: 0;
-    font-size: 18px;
+    font-size: $font-size-2xl;
     font-weight: 600;
-    color: white;
+    color: $text-main;
   }
 }
 
 .closeButton {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.6);
+  color: $text-secondary;
   cursor: pointer;
   padding: 8px;
-  border-radius: 6px;
+  border-radius: $border-radius-sm;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: $transition-default;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.1);
-    color: white;
+    color: $text-main;
   }
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
 }
 
 .formGroup {
@@ -441,37 +393,145 @@
   label {
     display: block;
     margin-bottom: 8px;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.7);
+    font-size: $font-size-md;
+    color: $text-secondary;
     font-weight: 500;
-  }
-
-  input,
-  textarea {
-    width: 100%;
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: white;
-    font-size: 14px;
-    transition: all 0.2s ease;
-    font-family: inherit;
-
-    &:focus {
-      outline: none;
-      border-color: rgba(255, 255, 255, 0.2);
-      background: rgba(255, 255, 255, 0.12);
-    }
-  }
-
-  textarea {
-    resize: vertical;
-    min-height: 80px;
   }
 }
 
-.formActions {
+.formInput,
+.formTextarea {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid $glass-border;
+  border-radius: $border-radius-md;
+  color: $text-main;
+  font-size: $font-size-lg;
+  transition: $transition-default;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  &.error {
+    border-color: rgba($accent-red, 0.5);
+  }
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.formError {
+  padding: 12px;
+  background: rgba($accent-red, 0.1);
+  border: 1px solid rgba($accent-red, 0.3);
+  border-radius: $border-radius-md;
+  color: lighten($accent-red, 10%);
+  font-size: $font-size-lg;
+  margin-bottom: 20px;
+}
+
+// Секция проектов в модалке
+.projectsSection {
+  margin-bottom: 30px;
+}
+
+.projectsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.viewAllProjectsBtn {
+  background: none;
+  border: none;
+  color: $primary-purple;
+  font-size: $font-size-sm;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: $transition-default;
+
+  &:hover {
+    background-color: rgba($primary-purple, 0.1);
+  }
+}
+
+.projectsLoading,
+.projectsEmpty {
+  padding: 20px;
+  text-align: center;
+  color: $text-secondary;
+  font-size: $font-size-md;
+}
+
+.projectsList {
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: $border-radius-md;
+  border: 1px solid $border-color;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.projectItem {
+  padding: 12px 16px;
+  border-bottom: 1px solid $border-light;
+  cursor: pointer;
+  transition: $transition-default;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.projectItemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.projectItemTitle {
+  font-size: $font-size-lg;
+  color: $text-main;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.projectItemDate {
+  font-size: $font-size-xs;
+  color: $text-muted;
+  white-space: nowrap;
+}
+
+.projectItemDescription {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Кнопки действий модалки
+.modalActions {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
@@ -479,43 +539,205 @@
 
 .cancelButton {
   padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.08);
+  background: $glass-bg;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
+  border-radius: $border-radius-md;
   color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
+  font-size: $font-size-lg;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: $transition-smooth;
+  font-family: inherit;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 }
 
 .submitButton {
   padding: 10px 24px;
-  background: rgba(108, 115, 218, 0.8);
+  background: rgba($primary-purple, 0.8);
   border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 14px;
+  border-radius: $border-radius-md;
+  color: $text-main;
+  font-size: $font-size-lg;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: $transition-smooth;
   display: flex;
   align-items: center;
   gap: 8px;
+  font-family: inherit;
 
   &:hover:not(:disabled) {
-    background: rgba(108, 115, 218, 1);
+    background: rgba($primary-purple, 1);
     transform: translateY(-1px);
   }
 
   &:disabled {
-    background: rgba(108, 115, 218, 0.5);
+    background: rgba($primary-purple, 0.5);
     cursor: not-allowed;
+  }
+}
+
+// Секция проектов в левой панели (под кнопкой "Проекты")
+.projectsCategoryContainer {
+  position: relative;
+}
+
+.addProjectBtn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba($primary-purple, 0.2);
+  border: 1px solid rgba($primary-purple, 0.3);
+  border-radius: $border-radius-sm;
+  color: $primary-purple;
+  cursor: pointer;
+  transition: $transition-default;
+  margin-right: 20px;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba($primary-purple, 0.3);
+    border-color: rgba($primary-purple, 0.4);
+    transform: scale(1.05);
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.5;
+  }
+}
+
+.projectsListSection {
+  background: rgba(255, 255, 255, 0.03);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin: 0;
+  padding: 0;
+}
+
+.projectsListTitle {
+  padding: 8px 20px;
+  font-size: $font-size-sm;
+  color: $text-muted;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.projectListItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: $transition-default;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .projectIcon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      stroke: $text-secondary;
+    }
+  }
+
+  .projectInfo {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .projectTitle {
+    font-size: $font-size-md;
+    color: $text-main;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 2px;
+  }
+
+  .projectDate {
+    font-size: $font-size-xs;
+    color: $text-muted;
+  }
+}
+
+.viewAllProjectsLink {
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: rgba($primary-purple, 0.08);
+  border-top: 1px solid rgba($primary-purple, 0.1);
+  transition: $transition-default;
+  font-size: $font-size-md;
+  color: $primary-purple;
+  text-decoration: none;
+
+  &:hover {
+    background-color: rgba($primary-purple, 0.15);
+  }
+
+  svg {
+    opacity: 0.8;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.projectsLoading,
+.projectsEmpty {
+  padding: 16px 20px;
+  text-align: center;
+  color: $text-secondary;
+  font-size: $font-size-md;
+}
+
+.projectsMore {
+  padding: 8px 20px;
+  text-align: center;
+  color: $text-muted;
+  font-size: $font-size-sm;
+  font-style: italic;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
   }
 }
 
@@ -536,5 +758,11 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

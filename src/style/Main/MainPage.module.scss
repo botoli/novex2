@@ -1,28 +1,62 @@
+// MainPage.module.scss
+@import "./variables.module";
+
 .mainContainer {
   display: flex;
+  width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-color: #0a0a0a;
+  background-color: $bg-dark;
 }
 
 .leftPanelContainer {
-  width: 320px;
-  flex-shrink: 0;
-  height: 100vh;
+  flex: 0 0 320px;
+  height: 100%;
   overflow-y: auto;
-  background-color: #202020;
+  background-color: $bg-panel;
+  border-right: 1px solid $border-light;
+
+  &::-webkit-scrollbar {
+    width: 0;
+  }
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
 }
 
 .contentContainer {
   flex: 1;
-  overflow: hidden;
   display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: $bg-content;
+  position: relative;
 }
 
 .contentColumn {
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow-y: auto; // Вернули скролл
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
 }

@@ -1,10 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import style from "../../style/Main/LeftPanel.module.scss";
 import { leftPanelIcons } from "../../assets/LeftPanel/index.js";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../store/user.js";
+import { ProjectService, formatDate } from "../../assets/MockData/index.js";
 
-function LeftPanel() {
+interface Project {
+  id: number;
+  tittle: string;
+  description: string;
+  owner_id: number;
+  created_at: string;
+  updated_at: string;
+  progress?: number;
+  members?: number;
+  tasks?: number;
+  status?: string;
+}
+
+interface LeftPanelProps {
+  onPageChange?: (page: string) => void;
+}
+
+function LeftPanel({ onPageChange }: LeftPanelProps) {
   const user = useSelector(selectUser);
   const [activeCategory, setActiveCategory] = useState(0);
   const [chatMessage, setChatMessage] = useState("");
@@ -13,12 +31,40 @@ function LeftPanel() {
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [userProjects, setUserProjects] = useState<Project[]>([]);
+  const [projectsLoading, setProjectsLoading] = useState(true);
 
   const suggestions = [
     "Обзор дорожной карты Q4",
     "Обновить документацию дизайн-системы",
     "Запланировать синхронизацию команды",
   ];
+
+  // Получаем 3 последних проекта
+  const recentProjects = userProjects
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    )
+    .slice(0, 3);
+
+  useEffect(() => {
+    if (user.id) {
+      fetchUserProjects();
+    }
+  }, [user.id]);
+
+  const fetchUserProjects = async () => {
+    try {
+      setProjectsLoading(true);
+      const projects = await ProjectService.getUserProjects(user.id);
+      setUserProjects(projects);
+    } catch (error) {
+      console.error("Ошибка загрузки проектов:", error);
+    } finally {
+      setProjectsLoading(false);
+    }
+  };
 
   const handleChatSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,6 +77,9 @@ function LeftPanel() {
   const handleNewProject = () => {
     setIsModalOpen(true);
     setError("");
+    if (user.id) {
+      fetchUserProjects();
+    }
   };
 
   const closeModal = () => {
@@ -51,92 +100,49 @@ function LeftPanel() {
     setError("");
 
     try {
-      console.log("Отправка данных:", {
+      const newProject = await ProjectService.createProject({
         tittle: tittle.trim(),
         description: description.trim(),
         owner_id: user.id,
       });
 
-      const response = await fetch("http://127.0.0.1:8000/api/createProj", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          tittle: tittle.trim(), // Исправлено: 'title' вместо 'tittle'
-          description: description.trim(),
-          owner_id: user.id,
-        }),
-      });
-
-      console.log("Статус ответа:", response.status);
-      console.log("Заголовки ответа:", response.headers);
-
-      const responseText = await response.text();
-      console.log("Текст ответа:", responseText);
-
-      let responseData;
-      try {
-        responseData = JSON.parse(responseText);
-      } catch (e) {
-        console.error("Ошибка парсинга JSON:", e);
-        throw new Error("Некорректный ответ от сервера");
-      }
-
-      if (response.ok) {
-        console.log("Проект успешно создан:", responseData);
-        closeModal();
-        // Можно добавить уведомление об успехе или обновить список проектов
-      } else {
-        console.error("Ошибка сервера:", responseData);
-        const errorMessage =
-          responseData.error ||
-          responseData.message ||
-          `Ошибка ${response.status}: ${response.statusText}`;
-        setError(errorMessage);
-      }
+      console.log("Проект успешно создан:", newProject);
+      fetchUserProjects();
+      closeModal();
     } catch (error) {
-      console.error("Ошибка сети:", error);
-      setError(
-        "Ошибка подключения к серверу. Проверьте подключение и попробуйте снова."
-      );
+      console.error("Ошибка создания проекта:", error);
+      setError("Ошибка создания проекта");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Стили для модального окна
-  const modalOverlayStyle = {
-    position: "fixed" as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    backdropFilter: "blur(4px)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
+  const handleCategoryClick = (index: number, categoryName: string) => {
+    setActiveCategory(index);
+
+    if (categoryName === "Проекты" && onPageChange) {
+      onPageChange("projects");
+    } else if (onPageChange && categoryName !== "Проекты") {
+      onPageChange("main");
+    }
   };
 
-  const modalStyle = {
-    background: "rgba(32, 32, 32, 0.95)",
-    backdropFilter: "blur(20px)",
-    border: "1px solid rgba(255, 255, 255, 0.15)",
-    borderRadius: "16px",
-    padding: "30px",
-    width: "420px",
-    maxWidth: "90vw",
-    color: "white",
-    boxShadow: "0 20px 60px rgba(0, 0, 0, 0.5)",
+  const handleProjectClick = (projectId: number) => {
+    console.log("Открыть проект:", projectId);
+    if (onPageChange) {
+      onPageChange("projects");
+    }
+  };
+
+  const handleViewAllProjects = () => {
+    if (onPageChange) {
+      onPageChange("projects");
+    }
   };
 
   return (
     <>
       <div className={style.main}>
-        {/* Остальной код компонента без изменений */}
         <div className={style.header}>
           <div className={style.naming}>
             <div className={style.svgbox}>
@@ -179,30 +185,151 @@ function LeftPanel() {
         </div>
 
         <div className={style.category}>
-          {leftPanelIcons.map((element, index) => (
-            <div
-              key={element.name}
-              className={`${style.categoryItem} ${
-                activeCategory === index ? style.active : ""
-              }`}
-              onClick={() => setActiveCategory(index)}
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
+          {leftPanelIcons.map((element, index) => {
+            if (element.name === "Проекты") {
+              return (
+                <div
+                  key={element.name}
+                  className={style.projectsCategoryContainer}
+                >
+                  <div
+                    className={`${style.categoryItem} ${
+                      activeCategory === index ? style.active : ""
+                    }`}
+                    onClick={() => handleCategoryClick(index, element.name)}
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d={element.icon} />
+                    </svg>
+                    <p>{element.name}</p>
+                    <button
+                      className={style.addProjectBtn}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNewProject();
+                      }}
+                      title="Создать новый проект"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                      >
+                        <path d="M12 5v14M5 12h14" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Список последних проектов */}
+                  <div className={style.projectsListSection}>
+                    <div className={style.projectsListTitle}>
+                      Последние проекты
+                    </div>
+
+                    {projectsLoading ? (
+                      <div className={style.projectsLoading}>
+                        Загрузка проектов...
+                      </div>
+                    ) : recentProjects.length === 0 ? (
+                      <div className={style.projectsEmpty}>Нет проектов</div>
+                    ) : (
+                      <>
+                        {recentProjects.map((project) => (
+                          <div
+                            key={project.id}
+                            className={style.projectListItem}
+                            onClick={() => handleProjectClick(project.id)}
+                          >
+                            <div className={style.projectIcon}>
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                              </svg>
+                            </div>
+                            <div className={style.projectInfo}>
+                              <div className={style.projectTitle}>
+                                {project.tittle}
+                              </div>
+                              <div className={style.projectDate}>
+                                {formatDate(project.created_at)}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+
+                        {userProjects.length > 3 && (
+                          <div className={style.projectsMore}>
+                            И еще {userProjects.length - 3} проектов
+                          </div>
+                        )}
+
+                        <div
+                          className={style.viewAllProjectsLink}
+                          onClick={handleViewAllProjects}
+                        >
+                          <span>Все проекты</span>
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <path
+                              d="M5 12h14M12 5l7 7-7 7"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div
+                key={element.name}
+                className={`${style.categoryItem} ${
+                  activeCategory === index ? style.active : ""
+                }`}
+                onClick={() => handleCategoryClick(index, element.name)}
               >
-                <path d={element.icon} />
-              </svg>
-              <p>{element.name}</p>
-            </div>
-          ))}
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d={element.icon} />
+                </svg>
+                <p>{element.name}</p>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Секция ИИ */}
         <div className={style.suggestions}>
           <div className={style.glassCard}>
             <div className={style.cardHeader}>
@@ -253,7 +380,6 @@ function LeftPanel() {
               </div>
             </div>
 
-            {/* Компактный чат с ИИ */}
             <form
               onSubmit={handleChatSubmit}
               className={style.chatInputContainer}
@@ -287,73 +413,15 @@ function LeftPanel() {
             </form>
           </div>
         </div>
-
-        {/* Кнопка нового проекта в самом низу */}
-        <div className={style.bottomSection}>
-          <button className={style.newProjectBtn} onClick={handleNewProject}>
-            <div className={style.btnIcon}>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-            </div>
-            <span>Новый проект</span>
-          </button>
-        </div>
       </div>
 
       {/* Модальное окно создания проекта */}
       {isModalOpen && (
-        <div style={modalOverlayStyle} onClick={closeModal}>
-          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "25px",
-              }}
-            >
-              <h3
-                style={{
-                  margin: 0,
-                  fontSize: "18px",
-                  fontWeight: 600,
-                  color: "white",
-                }}
-              >
-                Создать новый проект
-              </h3>
-              <button
-                onClick={closeModal}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: "rgba(255, 255, 255, 0.6)",
-                  cursor: "pointer",
-                  padding: "8px",
-                  borderRadius: "6px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  transition: "all 0.2s ease",
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor =
-                    "rgba(255, 255, 255, 0.1)";
-                  e.currentTarget.style.color = "white";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)";
-                }}
-              >
+        <div className={style.modalOverlay} onClick={closeModal}>
+          <div className={style.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={style.modalHeader}>
+              <h3>Создать новый проект</h3>
+              <button onClick={closeModal} className={style.closeButton}>
                 <svg
                   width="18"
                   height="18"
@@ -367,35 +435,11 @@ function LeftPanel() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit}>
-              {error && (
-                <div
-                  style={{
-                    padding: "12px",
-                    background: "rgba(239, 68, 68, 0.1)",
-                    border: "1px solid rgba(239, 68, 68, 0.3)",
-                    borderRadius: "8px",
-                    color: "#f87171",
-                    fontSize: "14px",
-                    marginBottom: "20px",
-                  }}
-                >
-                  {error}
-                </div>
-              )}
+            <form onSubmit={handleSubmit} className={style.modalForm}>
+              {error && <div className={style.formError}>{error}</div>}
 
-              <div style={{ marginBottom: "20px" }}>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: "8px",
-                    fontSize: "13px",
-                    color: "rgba(255, 255, 255, 0.7)",
-                    fontWeight: 500,
-                  }}
-                >
-                  Название проекта *
-                </label>
+              <div className={style.formGroup}>
+                <label>Название проекта *</label>
                 <input
                   type="text"
                   value={tittle}
@@ -404,149 +448,107 @@ function LeftPanel() {
                     setError("");
                   }}
                   placeholder="Введите название проекта"
-                  style={{
-                    width: "90%",
-                    padding: "12px 16px",
-                    background: "rgba(255, 255, 255, 0.08)",
-                    border: error
-                      ? "1px solid rgba(239, 68, 68, 0.5)"
-                      : "1px solid rgba(255, 255, 255, 0.1)",
-                    borderRadius: "8px",
-                    color: "white",
-                    fontSize: "14px",
-                    transition: "all 0.2s ease",
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = "rgba(255, 255, 255, 0.2)";
-                    e.target.style.background = "rgba(255, 255, 255, 0.12)";
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = error
-                      ? "1px solid rgba(239, 68, 68, 0.5)"
-                      : "rgba(255, 255, 255, 0.1)";
-                    e.target.style.background = "rgba(255, 255, 255, 0.08)";
-                  }}
+                  className={style.formInput}
                   required
                   autoFocus
                 />
               </div>
 
-              <div style={{ marginBottom: "30px" }}>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: "8px",
-                    fontSize: "13px",
-                    color: "rgba(255, 255, 255, 0.7)",
-                    fontWeight: 500,
-                  }}
-                >
-                  Описание
-                </label>
+              <div className={style.formGroup}>
+                <label>Описание</label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Опишите ваш проект..."
                   rows={4}
-                  style={{
-                    width: "90%",
-                    padding: "12px 16px",
-                    background: "rgba(255, 255, 255, 0.08)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    borderRadius: "8px",
-                    color: "white",
-                    fontSize: "14px",
-                    fontFamily: "inherit",
-                    resize: "vertical",
-                    minHeight: "80px",
-                    transition: "all 0.2s ease",
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = "rgba(255, 255, 255, 0.2)";
-                    e.target.style.background = "rgba(255, 255, 255, 0.12)";
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                    e.target.style.background = "rgba(255, 255, 255, 0.08)";
-                  }}
+                  className={style.formTextarea}
                 />
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  gap: "12px",
-                  justifyContent: "flex-end",
-                }}
-              >
+              <div className={style.projectsSection}>
+                <div className={style.projectsHeader}>
+                  <label>Ваши проекты ({userProjects.length})</label>
+                  {onPageChange && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onPageChange("projects");
+                        closeModal();
+                      }}
+                      className={style.viewAllProjectsBtn}
+                    >
+                      <span>Все проекты</span>
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          d="M5 12h14M12 5l7 7-7 7"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+
+                {projectsLoading ? (
+                  <div className={style.projectsLoading}>
+                    Загрузка проектов...
+                  </div>
+                ) : userProjects.length === 0 ? (
+                  <div className={style.projectsEmpty}>
+                    У вас еще нет проектов. Создайте первый!
+                  </div>
+                ) : (
+                  <div className={style.projectsList}>
+                    {recentProjects.map((project) => (
+                      <div
+                        key={project.id}
+                        className={style.projectItem}
+                        onClick={() => handleProjectClick(project.id)}
+                      >
+                        <div className={style.projectItemHeader}>
+                          <div className={style.projectItemTitle}>
+                            {project.tittle}
+                          </div>
+                          <div className={style.projectItemDate}>
+                            {formatDate(project.created_at)}
+                          </div>
+                        </div>
+                        {project.description && (
+                          <div className={style.projectItemDescription}>
+                            {project.description}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                    {userProjects.length > 3 && (
+                      <div className={style.projectsMore}>
+                        И еще {userProjects.length - 3} проектов
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className={style.modalActions}>
                 <button
                   type="button"
                   onClick={closeModal}
                   disabled={isLoading}
-                  style={{
-                    padding: "10px 20px",
-                    background: "rgba(255, 255, 255, 0.08)",
-                    border: "1px solid rgba(255, 255, 255, 0.15)",
-                    borderRadius: "8px",
-                    color: "rgba(255, 255, 255, 0.9)",
-                    fontSize: "14px",
-                    fontWeight: 500,
-                    cursor: isLoading ? "not-allowed" : "pointer",
-                    transition: "all 0.3s ease",
-                    opacity: isLoading ? 0.6 : 1,
-                  }}
-                  onMouseOver={(e) => {
-                    if (!isLoading) {
-                      e.currentTarget.style.background =
-                        "rgba(255, 255, 255, 0.12)";
-                      e.currentTarget.style.borderColor =
-                        "rgba(255, 255, 255, 0.2)";
-                    }
-                  }}
-                  onMouseOut={(e) => {
-                    if (!isLoading) {
-                      e.currentTarget.style.background =
-                        "rgba(255, 255, 255, 0.08)";
-                      e.currentTarget.style.borderColor =
-                        "rgba(255, 255, 255, 0.15)";
-                    }
-                  }}
+                  className={style.cancelButton}
                 >
                   Отмена
                 </button>
                 <button
                   type="submit"
                   disabled={!tittle.trim() || isLoading}
-                  style={{
-                    padding: "10px 24px",
-                    background: isLoading
-                      ? "rgba(108, 115, 218, 0.5)"
-                      : "rgba(108, 115, 218, 0.8)",
-                    border: "none",
-                    borderRadius: "8px",
-                    color: "white",
-                    fontSize: "14px",
-                    fontWeight: 500,
-                    cursor: isLoading ? "not-allowed" : "pointer",
-                    transition: "all 0.3s ease",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                  onMouseOver={(e) => {
-                    if (!isLoading && tittle.trim()) {
-                      e.currentTarget.style.background =
-                        "rgba(108, 115, 218, 1)";
-                      e.currentTarget.style.transform = "translateY(-1px)";
-                    }
-                  }}
-                  onMouseOut={(e) => {
-                    if (!isLoading && tittle.trim()) {
-                      e.currentTarget.style.background =
-                        "rgba(108, 115, 218, 0.8)";
-                      e.currentTarget.style.transform = "translateY(0)";
-                    }
-                  }}
+                  className={style.submitButton}
                 >
                   {isLoading ? (
                     <>

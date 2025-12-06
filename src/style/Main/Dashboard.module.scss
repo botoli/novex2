@@ -1,10 +1,11 @@
-.dashboard {
-  flex: none;
+// Dashboard.module.scss
+@import "./variables.module";
 
-  background-color: #161617;
+.dashboard {
+  background-color: $bg-content;
   color: white;
   font-family: "Inter", sans-serif;
-  min-height: auto; // Добавлено
+  min-height: auto;
 }
 
 .dashboardContent {
@@ -27,8 +28,8 @@
 
 .panel {
   flex: 1;
-  background: rgba(20, 20, 20, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: $bg-card;
+  border: 1px solid $border-color;
   backdrop-filter: blur(12px);
   border-radius: 16px;
   padding: 24px;
