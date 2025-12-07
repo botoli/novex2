@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Project extends Model
 {
     protected $fillable = [
-        'title',
+        'tittle',
         'description',
         'owner_id',
     ];

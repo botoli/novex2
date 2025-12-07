@@ -1,25 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import style from "../../style/Main/Hero.module.scss";
 import { HeroIcons } from "../../assets/LeftPanel/index.js";
-import {
-  statusBlocksData,
-  projectsData,
-  activitiesData,
-  progressStatusIcons,
-} from "../../assets/Hero/index.js";
+import { progressStatusIcons } from "../../assets/Hero/index.js";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../store/user.js";
 import {
-  mockUsers,
-  projectTeams,
-  deadlinesData,
-  quickAccessData,
   formatDeadlineDate,
   getPriorityColor,
+  getStatusText,
+  getStatusColor,
 } from "../../assets/MockData/index.js";
 
 interface HeroProps {
   onNavigateToProjects?: () => void;
+}
+
+interface Project {
+  id: number;
+  tittle: string;
+  description: string;
+  owner_id: number;
+  created_at: string;
+  updated_at: string;
+  progress?: number;
+  members?: number;
+  tasks?: number;
+  status?: string;
+  owner?: User;
+  users?: User[];
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  status: string;
+  avatar?: string;
+  position?: string;
+  department?: string;
+  online?: boolean;
 }
 
 const Hero: React.FC<HeroProps> = ({ onNavigateToProjects }) => {
@@ -36,7 +55,509 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProjects }) => {
     deadlines: false,
     quickAccess: false,
   });
+
+  const [statusBlocks, setStatusBlocks] = useState<any[]>([]);
+  const [heroProjects, setHeroProjects] = useState<Project[]>([]);
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
+  const [deadlines, setDeadlines] = useState<any[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   const user = useSelector(selectUser);
+
+  // Загрузка проектов пользователя
+  const fetchUserProjects = async (userId: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/projects?user_id=${userId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Ошибка загрузки проектов");
+      }
+
+      return data.projects || [];
+    } catch (error) {
+      console.error("Ошибка загрузки проектов:", error);
+      return [];
+    }
+  };
+
+  // Загрузка данных для Hero
+  const loadHeroData = async () => {
+    if (user?.id) {
+      try {
+        setIsLoading(true);
+
+        // Загружаем проекты пользователя
+        const projects = await fetchUserProjects(user.id);
+        setHeroProjects(projects);
+
+        // Создаем статус блоки на основе проектов
+        const totalProjects = projects.length;
+        const activeProjects = projects.filter(
+          (p) => p.status === "active"
+        ).length;
+        const completedProjects = projects.filter(
+          (p) => p.status === "completed"
+        ).length;
+
+        setStatusBlocks([
+          {
+            id: 1,
+            text: "Проекты",
+            value: totalProjects,
+            className: "projectsCount",
+            hasDot: false,
+          },
+          {
+            id: 2,
+            text: "Активные",
+            value: activeProjects,
+            className: "activeProjects",
+            hasDot: true,
+          },
+          {
+            id: 3,
+            text: "Завершено",
+            value: completedProjects,
+            className: "completedProjects",
+            hasDot: false,
+          },
+        ]);
+
+        // Получаем участников первого проекта (если есть)
+        if (projects.length > 0) {
+          const firstProject = projects[0];
+          const members = firstProject.users || [];
+          setTeamMembers(
+            members.map((member: User) => ({
+              id: member.id,
+              name: member.name,
+              email: member.email,
+              avatar: member.name?.charAt(0) || "П",
+              role: "Участник",
+              online: true,
+            }))
+          );
+        }
+
+        // Устанавливаем текущего пользователя
+        setCurrentUser({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          avatar: user.name?.charAt(0) || "П",
+          position: "",
+          department: "",
+          status: "active",
+          online: true,
+        });
+
+        // Дедлайны пока оставляем пустыми (нет endpoint)
+        setDeadlines([]);
+      } catch (error) {
+        console.error("Ошибка загрузки данных:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    loadHeroData();
+  }, [user?.id]);
+
+  // Функция для обработки клика по иконкам в header
+  const handleTopButtonClick = (iconName: string) => {
+    if (iconName === "notifications") {
+      setIsActivityModalOpen(true);
+    } else {
+      console.log(`Нажата иконка: ${iconName}`);
+      // Обработка других иконок
+    }
+  };
+
+  // Функция для закрытия модального окна
+  const closeActivityModal = () => {
+    setIsActivityModalOpen(false);
+  };
+
+  const handleProjectClick = (id: number) => {
+    console.log(`Выбран проект: ${id}`);
+  };
+
+  const handleViewAllClick = () => {
+    console.log("Переход на страницу проектов");
+    if (onNavigateToProjects) {
+      onNavigateToProjects();
+    }
+  };
+
+  const toggleSection = (section: keyof typeof collapsedSections) => {
+    setCollapsedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
+  // Получаем информацию о текущем пользователе
+  const userData = currentUser || {
+    id: user?.id || 1,
+    name: user?.name || "Пользователь",
+    email: user?.email || "",
+    avatar: user?.name?.charAt(0) || "П",
+    position: "",
+    department: "",
+    status: "active",
+    online: true,
+  };
+
+  // Получаем команду для первого активного проекта
+  const activeProject = heroProjects[0];
+
+  // Получаем ближайшие дедлайны (исключая завершенные)
+  const upcomingDeadlines = deadlines.filter((d) => d.status !== "completed");
+
+  const renderStatusBlock = (block: any) => (
+    <div key={block.id} className={style[block.className]}>
+      <span>{block.text}</span>
+      {block.hasDot && <span className={style.dot}>●</span>}
+      {block.value}
+    </div>
+  );
+
+  const renderProjectCard = (project: Project) => {
+    // Функция для расчета цвета прогресса
+    const getProgressColor = (progress: number): string => {
+      if (progress <= 33) {
+        const ratio = progress / 33;
+        const r = Math.floor(255);
+        const g = Math.floor(165 * ratio);
+        const b = Math.floor(0);
+        return `rgb(${r}, ${g}, ${b})`;
+      } else if (progress <= 66) {
+        const ratio = (progress - 33) / 33;
+        const r = Math.floor(255);
+        const g = Math.floor(165 + 90 * ratio);
+        const b = Math.floor(0);
+        return `rgb(${r}, ${g}, ${b})`;
+      } else {
+        const ratio = (progress - 66) / 34;
+        const r = Math.floor(255 - 155 * ratio);
+        const g = Math.floor(255);
+        const b = Math.floor(0);
+        return `rgb(${r}, ${g}, ${b})`;
+      }
+    };
+
+    // Получение статуса проекта с иконками
+    const getProgressStatus = (p: number) => {
+      if (p === 0)
+        return {
+          text: "Не начат",
+          icon: progressStatusIcons.notStarted,
+          color: "statusNotStarted",
+        };
+      if (p < 25)
+        return {
+          text: "Начальная стадия",
+          icon: progressStatusIcons.earlyStage,
+          color: "statusEarly",
+        };
+      if (p < 50)
+        return {
+          text: "В процессе",
+          icon: progressStatusIcons.inProgress,
+          color: "statusInProgress",
+        };
+      if (p < 75)
+        return {
+          text: "Хороший прогресс",
+          icon: progressStatusIcons.goodProgress,
+          color: "statusGood",
+        };
+      if (p < 100)
+        return {
+          text: "Почти готово",
+          icon: progressStatusIcons.almostDone,
+          color: "statusAlmost",
+        };
+      return {
+        text: "Завершено",
+        icon: progressStatusIcons.completed,
+        color: "statusCompleted",
+      };
+    };
+
+    const progress = project.progress || 0;
+    const status = getProgressStatus(progress);
+
+    // Рассчитываем выполненные задачи
+    const totalTasks = project.tasks || 0;
+    const completedTasks = Math.floor((progress / 100) * totalTasks);
+
+    // Примерная дата дедлайна
+    const deadlineDate = new Date();
+    deadlineDate.setDate(
+      deadlineDate.getDate() + Math.floor((100 - progress) / 10)
+    );
+    const deadline = deadlineDate.toLocaleDateString("ru-RU", {
+      day: "numeric",
+      month: "short",
+    });
+
+    return (
+      <div
+        key={project.id}
+        className={style.projectCard}
+        onClick={() => handleProjectClick(project.id)}
+      >
+        <div className={style.projectHeader}>
+          <div className={style.projectName}>
+            <h3>{project.tittle}</h3>
+            <span
+              className={
+                project.status === "active"
+                  ? style.statusActive
+                  : style.statusReview
+              }
+              style={{
+                backgroundColor: `${getStatusColor(project.status)}20`,
+                color: getStatusColor(project.status),
+              }}
+            >
+              {getStatusText(project.status)}
+            </span>
+          </div>
+          <div className={style.projectStats}>
+            {project.users && (
+              <div className={style.stat}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle
+                    cx="9"
+                    cy="7"
+                    r="4"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <path
+                    d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                </svg>
+                <span>{project.users.length}</span>
+              </div>
+            )}
+            {project.tasks !== undefined && (
+              <div className={style.stat}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M22 11.08V12a10 10 0 1 1-5.93-9.14"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M22 4L12 14.01l-3-3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span>{project.tasks}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* УЛУЧШЕННЫЙ ПРОГРЕСС-БАР */}
+        <div className={style.enhancedProgress}>
+          <div className={style.progressHeader}>
+            <div className={style.progressStatus}>
+              <div
+                className={`${style.statusIcon} ${style[status.color]}`}
+                dangerouslySetInnerHTML={{ __html: status.icon }}
+              />
+              <span className={style.statusText}>{status.text}</span>
+            </div>
+
+            <div className={style.progressTooltip}>
+              <span className={style.percentage}>{progress}%</span>
+              <div className={style.tooltip}>
+                <div className={style.tooltipItem}>
+                  <span className={style.tooltipLabel}>Задачи:</span>
+                  <span className={style.tooltipValue}>
+                    {completedTasks}/{totalTasks}
+                  </span>
+                </div>
+                <div className={style.tooltipItem}>
+                  <span className={style.tooltipLabel}>Дедлайн:</span>
+                  <span className={style.tooltipValue}>~{deadline}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ПРОГРЕСС-БАР */}
+          <div className={style.progressBar}>
+            <div
+              className={style.progressFill}
+              style={{
+                width: `${progress}%`,
+                background: getProgressColor(progress),
+              }}
+            />
+          </div>
+        </div>
+        {/* КОНЕЦ УЛУЧШЕННОГО ПРОГРЕСС-БАРА */}
+      </div>
+    );
+  };
+
+  const renderActivityItem = (activity: any) => (
+    <div key={activity.id} className={style.activityItem}>
+      <div className={style.avatar}>{activity.avatar}</div>
+      <div className={style.activityContent}>
+        <p>{activity.text}</p>
+        <span>{activity.time}</span>
+      </div>
+    </div>
+  );
+
+  // Рендер участника команды
+  const renderTeamMember = (member: any) => (
+    <div key={member.id} className={style.teamMember}>
+      <div className={style.memberAvatar}>
+        <div className={style.avatarCircle}>{member.avatar}</div>
+        {member.online && <div className={style.onlineIndicator} />}
+      </div>
+      <div className={style.memberInfo}>
+        <span className={style.memberName}>{member.name}</span>
+        <span className={style.memberRole}>{member.role}</span>
+      </div>
+    </div>
+  );
+
+  // Рендер дедлайна
+  const renderDeadline = (deadline: any) => {
+    const deadlineDate = new Date(deadline.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const daysUntil = Math.ceil(
+      (deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    const isUrgent = daysUntil <= 1;
+    const isSoon = daysUntil <= 3 && daysUntil > 1;
+
+    return (
+      <div
+        key={deadline.id}
+        className={`${style.deadlineItem} ${isUrgent ? style.urgent : ""} ${
+          isSoon ? style.soon : ""
+        }`}
+      >
+        <div
+          className={style.deadlineDate}
+          style={{
+            backgroundColor: `${getPriorityColor(deadline.priority)}20`,
+            borderColor: `${getPriorityColor(deadline.priority)}30`,
+          }}
+        >
+          {formatDeadlineDate(deadline.date)}
+        </div>
+        <div className={style.deadlineInfo}>
+          <div className={style.deadlineTitleRow}>
+            <span className={style.deadlineTitle}>{deadline.title}</span>
+            {isUrgent && (
+              <span className={style.urgentBadge}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 2L2 7L12 12L22 7L12 2Z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M2 17L12 22L22 17"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M2 12L12 17L22 12"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Срочно
+              </span>
+            )}
+          </div>
+          <div className={style.deadlineMeta}>
+            <span
+              className={style.deadlinePriority}
+              style={{ color: getPriorityColor(deadline.priority) }}
+            >
+              {deadline.priority === "high"
+                ? "Высокий"
+                : deadline.priority === "medium"
+                ? "Средний"
+                : "Низкий"}
+            </span>
+            {daysUntil >= 0 && (
+              <span className={style.deadlineDays}>
+                {daysUntil === 0
+                  ? "Сегодня"
+                  : daysUntil === 1
+                  ? "Завтра"
+                  : `Через ${daysUntil} дн.`}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Рендер быстрого доступа
+  const renderQuickAccess = (item: any) => (
+    <button
+      key={item.id}
+      className={style.quickAccessItem}
+      onClick={() => console.log(`Быстрый доступ: ${item.action}`)}
+    >
+      <div
+        className={style.quickAccessIcon}
+        dangerouslySetInnerHTML={{ __html: item.icon }}
+      />
+      <span className={style.quickAccessTitle}>{item.title}</span>
+    </button>
+  );
 
   const statIcons = {
     members: (
@@ -165,347 +686,66 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProjects }) => {
     ),
   };
 
-  // Функция для обработки клика по иконкам в header
-  const handleTopButtonClick = (iconName: string) => {
-    if (iconName === "notifications") {
-      setIsActivityModalOpen(true);
-    } else {
-      console.log(`Нажата иконка: ${iconName}`);
-      // Обработка других иконок
-    }
-  };
+  // Данные для быстрого доступа (константы, так как нет API)
+  const quickAccessData = [
+    {
+      id: 1,
+      title: "Создать отчет",
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>`,
+      action: "createReport",
+    },
+    {
+      id: 2,
+      title: "Планирование",
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+        <path d="M16 2V6M8 2V6M3 10H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      </svg>`,
+      action: "planning",
+    },
+    {
+      id: 3,
+      title: "Аналитика",
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M18 20V10M12 20V4M6 20v-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>`,
+      action: "analytics",
+    },
+    {
+      id: 4,
+      title: "Документы",
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M9 21H5C4.44772 21 4 20.5523 4 20V4C4 3.44772 4.44772 3 5 3H16L20 7V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M16 3V7H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M9 14H15M9 17H12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      </svg>`,
+      action: "documents",
+    },
+  ];
 
-  // Функция для закрытия модального окна
-  const closeActivityModal = () => {
-    setIsActivityModalOpen(false);
-  };
-
-  const handleProjectClick = (id: number) => {
-    console.log(`Выбран проект: ${id}`);
-  };
-
-  const handleViewAllClick = () => {
-    console.log("Переход на страницу проектов");
-    if (onNavigateToProjects) {
-      onNavigateToProjects();
-    }
-  };
-
-  const toggleSection = (section: keyof typeof collapsedSections) => {
-    setCollapsedSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
-  };
-
-  // Получаем информацию о текущем пользователе
-  const currentUser = mockUsers.find((u) => u.id === user?.id) || mockUsers[0];
-
-  // Получаем команду для первого активного проекта
-  const activeProject = projectsData[0];
-  const projectTeam = projectTeams.find(
-    (team) => team.projectId === activeProject?.id
-  );
-
-  // Получаем участников команды
-  const teamMembers = projectTeam
-    ? projectTeam.members.map((member) => ({
-        ...mockUsers.find((u) => u.id === member.userId),
-        role: member.role,
-      }))
-    : [];
-
-  // Получаем ближайшие дедлайны (исключая завершенные)
-  const upcomingDeadlines = deadlinesData.filter(
-    (d) => d.status !== "completed"
-  );
-
-  const renderStatusBlock = (block: (typeof statusBlocksData)[0]) => (
-    <div key={block.id} className={style[block.className]}>
-      <span>{block.text}</span>
-      {block.hasDot && <span className={style.dot}>●</span>}
-      {block.value}
-    </div>
-  );
-
-  const renderProjectCard = (project: (typeof projectsData)[0]) => {
-    // Функция для расчета цвета
-    const getProgressColor = (progress: number): string => {
-      if (progress <= 33) {
-        const ratio = progress / 33;
-        const r = Math.floor(255);
-        const g = Math.floor(165 * ratio);
-        const b = Math.floor(0);
-        return `rgb(${r}, ${g}, ${b})`;
-      } else if (progress <= 66) {
-        const ratio = (progress - 33) / 33;
-        const r = Math.floor(255);
-        const g = Math.floor(165 + 90 * ratio);
-        const b = Math.floor(0);
-        return `rgb(${r}, ${g}, ${b})`;
-      } else {
-        const ratio = (progress - 66) / 34;
-        const r = Math.floor(255 - 155 * ratio);
-        const g = Math.floor(255);
-        const b = Math.floor(0);
-        return `rgb(${r}, ${g}, ${b})`;
-      }
-    };
-
-    // Получение статуса проекта с иконками
-    const getProgressStatus = (p: number) => {
-      if (p === 0)
-        return {
-          text: "Не начат",
-          icon: progressStatusIcons.notStarted,
-          color: "statusNotStarted",
-        };
-      if (p < 25)
-        return {
-          text: "Начальная стадия",
-          icon: progressStatusIcons.earlyStage,
-          color: "statusEarly",
-        };
-      if (p < 50)
-        return {
-          text: "В процессе",
-          icon: progressStatusIcons.inProgress,
-          color: "statusInProgress",
-        };
-      if (p < 75)
-        return {
-          text: "Хороший прогресс",
-          icon: progressStatusIcons.goodProgress,
-          color: "statusGood",
-        };
-      if (p < 100)
-        return {
-          text: "Почти готово",
-          icon: progressStatusIcons.almostDone,
-          color: "statusAlmost",
-        };
-      return {
-        text: "Завершено",
-        icon: progressStatusIcons.completed,
-        color: "statusCompleted",
-      };
-    };
-
-    const status = getProgressStatus(project.progress);
-
-    // Рассчитываем выполненные задачи
-    const totalTasks = project.tasks || 0;
-    const completedTasks = Math.floor((project.progress / 100) * totalTasks);
-
-    // Примерная дата дедлайна
-    const deadlineDate = new Date();
-    deadlineDate.setDate(
-      deadlineDate.getDate() + Math.floor((100 - project.progress) / 10)
-    );
-    const deadline = deadlineDate.toLocaleDateString("ru-RU", {
-      day: "numeric",
-      month: "short",
-    });
-
-    return (
-      <div
-        key={project.id}
-        className={style.projectCard}
-        onClick={() => handleProjectClick(project.id)}
-      >
-        <div className={style.projectHeader}>
-          <div className={style.projectName}>
-            <h3>{project.name}</h3>
-            <span
-              className={
-                project.status === "active"
-                  ? style.statusActive
-                  : style.statusReview
-              }
-            >
-              {project.statusText}
-            </span>
-          </div>
-          <div className={style.projectStats}>
-            <div className={style.stat}>
-              {statIcons.members}
-              <span>{project.members}</span>
-            </div>
-            <div className={style.stat}>
-              {statIcons.tasks}
-              <span>{project.tasks}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* УЛУЧШЕННЫЙ ПРОГРЕСС-БАР */}
-        <div className={style.enhancedProgress}>
-          <div className={style.progressHeader}>
-            <div className={style.progressStatus}>
-              <div
-                className={`${style.statusIcon} ${style[status.color]}`}
-                dangerouslySetInnerHTML={{ __html: status.icon }}
-              />
-              <span className={style.statusText}>{status.text}</span>
-            </div>
-
-            <div className={style.progressTooltip}>
-              <span className={style.percentage}>{project.progress}%</span>
-              <div className={style.tooltip}>
-                <div className={style.tooltipItem}>
-                  <span className={style.tooltipLabel}>Задачи:</span>
-                  <span className={style.tooltipValue}>
-                    {completedTasks}/{totalTasks}
-                  </span>
-                </div>
-                <div className={style.tooltipItem}>
-                  <span className={style.tooltipLabel}>Дедлайн:</span>
-                  <span className={style.tooltipValue}>~{deadline}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ПРОГРЕСС-БАР */}
-          <div className={style.progressBar}>
-            <div
-              className={style.progressFill}
-              style={{
-                width: `${project.progress}%`,
-                background: getProgressColor(project.progress),
-              }}
-            />
-          </div>
-        </div>
-        {/* КОНЕЦ УЛУЧШЕННОГО ПРОГРЕСС-БАРА */}
-      </div>
-    );
-  };
-
-  const renderActivityItem = (activity: (typeof activitiesData)[0]) => (
-    <div key={activity.id} className={style.activityItem}>
-      <div className={style.avatar}>{activity.avatar}</div>
-      <div className={style.activityContent}>
-        <p>{activity.text}</p>
-        <span>{activity.time}</span>
-      </div>
-    </div>
-  );
-
-  // Рендер участника команды
-  const renderTeamMember = (member: any) => (
-    <div key={member.id} className={style.teamMember}>
-      <div className={style.memberAvatar}>
-        <div className={style.avatarCircle}>{member.avatar}</div>
-        {member.online && <div className={style.onlineIndicator} />}
-      </div>
-      <div className={style.memberInfo}>
-        <span className={style.memberName}>{member.name}</span>
-        <span className={style.memberRole}>{member.role}</span>
-      </div>
-    </div>
-  );
-
-  // Рендер дедлайна
-  const renderDeadline = (deadline: any) => {
-    const deadlineDate = new Date(deadline.date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const daysUntil = Math.ceil(
-      (deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    const isUrgent = daysUntil <= 1;
-    const isSoon = daysUntil <= 3 && daysUntil > 1;
-
-    return (
-      <div
-        key={deadline.id}
-        className={`${style.deadlineItem} ${isUrgent ? style.urgent : ""} ${
-          isSoon ? style.soon : ""
-        }`}
-      >
-        <div
-          className={style.deadlineDate}
-          style={{
-            backgroundColor: `${getPriorityColor(deadline.priority)}20`,
-            borderColor: `${getPriorityColor(deadline.priority)}30`,
-          }}
-        >
-          {formatDeadlineDate(deadline.date)}
-        </div>
-        <div className={style.deadlineInfo}>
-          <div className={style.deadlineTitleRow}>
-            <span className={style.deadlineTitle}>{deadline.title}</span>
-            {isUrgent && (
-              <span className={style.urgentBadge}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 2L2 7L12 12L22 7L12 2Z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M2 17L12 22L22 17"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M2 12L12 17L22 12"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                Срочно
-              </span>
-            )}
-          </div>
-          <div className={style.deadlineMeta}>
-            <span
-              className={style.deadlinePriority}
-              style={{ color: getPriorityColor(deadline.priority) }}
-            >
-              {deadline.priority === "high"
-                ? "Высокий"
-                : deadline.priority === "medium"
-                ? "Средний"
-                : "Низкий"}
-            </span>
-            {daysUntil >= 0 && (
-              <span className={style.deadlineDays}>
-                {daysUntil === 0
-                  ? "Сегодня"
-                  : daysUntil === 1
-                  ? "Завтра"
-                  : `Через ${daysUntil} дн.`}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Рендер быстрого доступа
-  const renderQuickAccess = (item: any) => (
-    <button
-      key={item.id}
-      className={style.quickAccessItem}
-      onClick={() => console.log(`Быстрый доступ: ${item.action}`)}
-    >
-      <div
-        className={style.quickAccessIcon}
-        dangerouslySetInnerHTML={{ __html: item.icon }}
-      />
-      <span className={style.quickAccessTitle}>{item.title}</span>
-    </button>
-  );
+  // Данные для активности (константы, так как нет API)
+  const activitiesData = [
+    {
+      id: 1,
+      avatar: "АИ",
+      text: "Алексей Иванов создал новый проект",
+      time: "10 минут назад",
+    },
+    {
+      id: 2,
+      avatar: "МП",
+      text: "Мария Петрова обновила дизайн",
+      time: "30 минут назад",
+    },
+    {
+      id: 3,
+      avatar: "ДС",
+      text: "Дмитрий Сидоров завершил задачу",
+      time: "1 час назад",
+    },
+  ];
 
   return (
     <>
@@ -563,7 +803,7 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProjects }) => {
             <div className={style.rightSection}>
               {/* Статус-блоки (компактные) */}
               <div className={style.statusBlocksCompact}>
-                {statusBlocksData.map(renderStatusBlock)}
+                {statusBlocks.map(renderStatusBlock)}
               </div>
 
               {/* Кнопки действий */}
@@ -605,18 +845,16 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProjects }) => {
               <div className={style.userProfileHeader}>
                 <div className={style.userAvatarHeader}>
                   <div className={style.avatarCircleHeader}>
-                    {currentUser.avatar}
+                    {userData.avatar}
                   </div>
-                  {currentUser.online && (
+                  {userData.online && (
                     <div className={style.onlineIndicatorHeader} />
                   )}
                 </div>
                 <div className={style.userInfoHeader}>
-                  <span className={style.userNameHeader}>
-                    {currentUser.name}
-                  </span>
+                  <span className={style.userNameHeader}>{userData.name}</span>
                   <span className={style.userPositionHeader}>
-                    {currentUser.position}
+                    {userData.position}
                   </span>
                 </div>
               </div>
@@ -672,8 +910,13 @@ const Hero: React.FC<HeroProps> = ({ onNavigateToProjects }) => {
 
               {!collapsedSections.projects && (
                 <div className={style.projectCards}>
-                  {projectsData.length > 0 ? (
-                    projectsData.map(renderProjectCard)
+                  {isLoading ? (
+                    <div className={style.loading}>
+                      <div className={style.spinner}></div>
+                      <p>Загрузка проектов...</p>
+                    </div>
+                  ) : heroProjects.length > 0 ? (
+                    heroProjects.map(renderProjectCard)
                   ) : (
                     <div className={style.noProjects}>
                       <p>Нет активных проектов</p>

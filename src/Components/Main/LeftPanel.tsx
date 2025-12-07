@@ -86,22 +86,17 @@ function LeftPanel({
   }, []);
 
   const fetchUserProjects = async () => {
-    const response =await fetch ("http://localhost:8000/api/createProj",{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({
-        tittle:tittle,
-        description:description,
-        owner_id:user.id,
-      }),
-
-    })
-    const data=await response.json()
-    console.log(data)
-
+    try {
+      setProjectsLoading(true);
+      if (user?.id) {
+        const projects = await ProjectService.getUserProjects(user.id);
+        setUserProjects(projects);
+      }
+    } catch (error) {
+      console.error("Ошибка загрузки проектов:", error);
+    } finally {
+      setProjectsLoading(false);
+    }
   };
 
   const handleChatSubmit = (e: React.FormEvent) => {
@@ -143,7 +138,7 @@ function LeftPanel({
       });
 
       console.log("Проект успешно создан:", newProject);
-      fetchUserProjects();
+      fetchUserProjects(); // Обновить список проектов
       closeModal();
     } catch (error) {
       console.error("Ошибка создания проекта:", error);

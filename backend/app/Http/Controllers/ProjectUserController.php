@@ -7,7 +7,5 @@ use Illuminate\Http\Request;
 class ProjectUser
 {
     public function create(){
-
-
     }
 }
