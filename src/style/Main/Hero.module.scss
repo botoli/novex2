@@ -466,6 +466,31 @@
   transition: all 0.3s ease;
 }
 
+.analyticsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.analyticsCard {
+  padding: 14px;
+  border: 1px solid $border-light;
+  border-radius: $border-radius-xl;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.analyticsTitle {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: $text-main;
+}
+
+.analyticsText {
+  margin: 0;
+  color: $text-secondary;
+  line-height: 1.5;
+}
+
 .sectionHeader {
   display: flex;
   justify-content: space-between;

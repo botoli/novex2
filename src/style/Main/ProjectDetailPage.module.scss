@@ -168,6 +168,83 @@
   }
 }
 
+.dragDropZone {
+  border: 2px dashed #cccccc;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 15px;
+
+  &.dragOver {
+    background-color: #f9f9f9;
+    border-color: #999999;
+  }
+}
+
+.dragDropContent {
+  p {
+    margin-bottom: 10px;
+  }
+}
+
+.selectFilesButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadedFiles {
+  margin-top: 10px;
+}
+
+.fileItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid #eeeeee;
+  border-radius: 5px;
+  margin-bottom: 5px;
+
+  span {
+    flex-grow: 1;
+    margin-right: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.removeFile {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+
+  &:hover {
+    background-color: #c82333;
+  }
+}
+
 .metaItem {
   display: flex;
   align-items: center;
@@ -986,6 +1063,116 @@
   }
 }
 
+.dropZone {
+  border: 2px dashed rgba(102, 126, 234, 0.3);
+  border-radius: $border-radius-md;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: $transition-default;
+  background: rgba(102, 126, 234, 0.02);
+
+  &:hover {
+    border-color: $primary-purple;
+    background: rgba(102, 126, 234, 0.05);
+  }
+
+  &.dragOver {
+    border-color: $primary-purple;
+    background: rgba(102, 126, 234, 0.08);
+    transform: scale(1.02);
+  }
+}
+
+.dropZoneContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  svg {
+    color: $primary-purple;
+    opacity: 0.7;
+  }
+
+  p {
+    margin: 0;
+    font-size: $font-size-sm;
+    color: $text-main;
+    font-weight: 500;
+  }
+}
+
+.dropZoneIcon {
+  color: $primary-purple;
+  opacity: 0.8;
+}
+
+.dropZoneHint {
+  font-size: $font-size-xs;
+  color: $text-secondary;
+}
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(102, 126, 234, 0.06);
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  border-radius: $border-radius-sm;
+}
+
+.fileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.fileName {
+  font-size: $font-size-sm;
+  color: $text-main;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileSize {
+  font-size: $font-size-xs;
+  color: $text-secondary;
+}
+
+.removeFileButton {
+  background: none;
+  border: none;
+  color: $accent-red;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: $transition-default;
+
+  &:hover {
+    background: rgba(255, 0, 0, 0.1);
+  }
+}
+
 .teamMembersGroup {
   position: relative;
 }
@@ -1106,6 +1293,80 @@
   gap: 10px;
   justify-content: flex-end;
   margin-top: 20px;
+}
+
+// Quick Access (перенесено с главной страницы)
+.quickAccessSection {
+  margin-top: 16px;
+  padding: 16px;
+  background: $bg-card;
+  border: 1px solid $border-light;
+  border-radius: $border-radius-2xl;
+}
+
+.quickAccessHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  h3 {
+    margin: 0;
+    font-size: $font-size-xl;
+    font-weight: 600;
+    color: $text-main;
+  }
+}
+
+.quickAccessHint {
+  font-size: $font-size-sm;
+  color: $text-muted;
+}
+
+.quickAccessGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.quickAccessItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid $border-light;
+  border-radius: $border-radius-lg;
+  background: rgba(255, 255, 255, 0.02);
+  color: $text-main;
+  cursor: pointer;
+  transition: $transition-default;
+
+  &:hover {
+    background: color-mix(in srgb, $primary-color, transparent 90%);
+    border-color: $primary-color;
+  }
+}
+
+.quickAccessIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: $border-radius-lg;
+  background: rgba(102, 126, 234, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    color: $primary-color;
+  }
+}
+
+.quickAccessTitle {
+  font-size: $font-size-md;
+  color: $text-main;
 }
 
 .cancelButton,

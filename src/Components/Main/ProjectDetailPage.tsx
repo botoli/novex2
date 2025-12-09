@@ -33,6 +33,7 @@ interface TaskData {
   deadline: string;
   teamMembers: string[];
   gitBranch: string;
+  files: File[];
 }
 
 interface ProjectDetailPageProps {
@@ -41,6 +42,7 @@ interface ProjectDetailPageProps {
   onNavigateToTeamChat?: (projectId: number) => void;
   onNavigateToSchedule?: (projectId: number) => void;
   onNavigateToQuickNote?: (projectId: number) => void;
+  onNavigateToAI?: () => void;
 }
 
 function ProjectDetailPage({
@@ -49,6 +51,7 @@ function ProjectDetailPage({
   onNavigateToTeamChat,
   onNavigateToSchedule,
   onNavigateToQuickNote,
+  onNavigateToAI,
 }: ProjectDetailPageProps) {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [taskData, setTaskData] = useState<TaskData>({
@@ -57,6 +60,7 @@ function ProjectDetailPage({
     deadline: "",
     teamMembers: [],
     gitBranch: "",
+    files: [],
   });
 
   const [showTeamDropdown, setShowTeamDropdown] = useState(false);
@@ -64,6 +68,8 @@ function ProjectDetailPage({
   const aiDropdownRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<"overview" | "tasks">("overview");
   const [chatMessage, setChatMessage] = useState("");
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const teamMembersAvailable: string[] = [
     "Иван Иванов",
@@ -78,6 +84,57 @@ function ProjectDetailPage({
     "Запланировать синхронизацию команды",
   ];
 
+  const quickAccessData = [
+    {
+      id: 1,
+      title: "Создать отчет",
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>`,
+      action: "createReport",
+    },
+    {
+      id: 2,
+      title: "Планирование",
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+        <path d="M16 2V6M8 2V6M3 10H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      </svg>`,
+      action: "planning",
+    },
+    {
+      id: 3,
+      title: "Аналитика",
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M18 20V10M12 20V4M6 20v-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>`,
+      action: "analytics",
+    },
+    {
+      id: 4,
+      title: "Документы",
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M9 21H5C4.44772 21 4 20.5523 4 20V4C4 3.44772 4.44772 3 5 3H16L20 7V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M16 3V7H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M9 14H15M9 17H12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      </svg>`,
+      action: "documents",
+    },
+  ];
+
+  const renderQuickAccess = (item: (typeof quickAccessData)[number]) => (
+    <button
+      key={item.id}
+      className={style.quickAccessItem}
+      onClick={() => console.log(`Быстрый доступ: ${item.action}`)}
+    >
+      <div
+        className={style.quickAccessIcon}
+        dangerouslySetInnerHTML={{ __html: item.icon }}
+      />
+      <span className={style.quickAccessTitle}>{item.title}</span>
+    </button>
+  );
 
   // Закрытие AI dropdown при клике вне его
   useEffect(() => {
@@ -116,6 +173,51 @@ function ProjectDetailPage({
     });
   };
 
+  const handleAddFiles = (files: FileList | File[]) => {
+    const imageFiles = Array.from(files).filter((file) =>
+      file.type.startsWith("image/")
+    );
+
+    if (imageFiles.length === 0) return;
+
+    setTaskData((prev) => ({
+      ...prev,
+      files: [...prev.files, ...imageFiles],
+    }));
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragOver(false);
+    if (event.dataTransfer?.files) {
+      handleAddFiles(event.dataTransfer.files);
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      handleAddFiles(event.target.files);
+      event.target.value = "";
+    }
+  };
+
+  const handleRemoveFile = (fileName: string) => {
+    setTaskData((prev) => ({
+      ...prev,
+      files: prev.files.filter((file) => file.name !== fileName),
+    }));
+  };
+
   const handleTaskSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(
@@ -132,6 +234,7 @@ function ProjectDetailPage({
       deadline: "",
       teamMembers: [],
       gitBranch: "",
+      files: [],
     });
     setIsTaskModalOpen(false);
   };
@@ -148,7 +251,10 @@ function ProjectDetailPage({
     try {
       setIsLoading(true);
       setError("");
-      const projectData = await ProjectService.getProjectById(projectId, user?.id);
+      const projectData = await ProjectService.getProjectById(
+        projectId,
+        user?.id
+      );
       setProject(projectData);
     } catch (error) {
       console.error("Ошибка загрузки проекта:", error);
@@ -160,6 +266,10 @@ function ProjectDetailPage({
 
   const handleCreateTask = () => {
     setIsTaskModalOpen(true);
+  };
+
+  const handleAIPage = () => {
+    onNavigateToAI?.();
   };
 
   const handleTeamChat = () => {
@@ -276,15 +386,19 @@ function ProjectDetailPage({
               <div className={style.actionButtons}>
                 <button
                   className={style.actionButton}
-                  onClick={handleCreateTask}
-                  data-action="create-task"
+                  onClick={handleAIPage}
+                  data-action="ai"
                 >
-                  <img
-                    src={taskIcon}
-                    alt="Создать задачу"
+                  <svg
                     width="20"
                     height="20"
-                  />
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
                 </button>
 
                 <button
@@ -325,113 +439,6 @@ function ProjectDetailPage({
                     height="20"
                   />
                 </button>
-
-                {/* Кнопка AI */}
-                <div className={style.aiButtonWrapper} ref={aiDropdownRef}>
-                  <button
-                    className={style.aiButton}
-                    onClick={() => setIsAIDropdownOpen(!isAIDropdownOpen)}
-                  >
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                  </button>
-
-                  {isAIDropdownOpen && (
-                    <div className={style.aiDropdown}>
-                      <div className={style.aiDropdownHeader}>
-                        <div className={style.aiIdentity}>
-                          <div className={style.aiIcon}>
-                            <svg
-                              width="18"
-                              height="18"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
-                          </div>
-                          <div className={style.aiInfo}>
-                            <div className={style.aiName}>AI</div>
-                            <div className={style.aiStatus}>
-                              <div className={style.statusDot}></div>
-                              <span>Всегда учится</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className={style.aiDropdownContent}>
-                        <div className={style.suggestionsTitle}>
-                          Умные предложения
-                        </div>
-
-                        <div className={style.suggestionsList}>
-                          {aiSuggestions.map((suggestion, index) => (
-                            <div key={index} className={style.suggestionItem}>
-                              <div className={style.suggestionIcon}>
-                                <svg
-                                  width="14"
-                                  height="14"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                >
-                                  <path d="M9 18l6-6-6-6" />
-                                </svg>
-                              </div>
-                              <span className={style.suggestionText}>
-                                {suggestion}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-
-                        <form
-                          onSubmit={handleChatSubmit}
-                          className={style.chatInputContainer}
-                        >
-                          <div className={style.chatInputWrapper}>
-                            <input
-                              type="text"
-                              value={chatMessage}
-                              onChange={(e) => setChatMessage(e.target.value)}
-                              placeholder="Спросите AI..."
-                              className={style.chatInput}
-                              maxLength={100}
-                            />
-                            <button
-                              type="submit"
-                              className={style.chatSendButton}
-                              disabled={!chatMessage.trim()}
-                            >
-                              <svg
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              >
-                                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-                              </svg>
-                            </button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
           </div>
@@ -554,6 +561,80 @@ function ProjectDetailPage({
                     placeholder="Опишите задачу подробно..."
                     rows={4}
                   />
+                </div>
+
+                <div className={style.formGroup}>
+                  <label>
+                    Фото задачи
+                    <span className={style.optionalLabel}> (png/jpg)</span>
+                  </label>
+                  <div
+                    className={`${style.dropZone} ${
+                      isDragOver ? style.dragOver : ""
+                    }`}
+                    onDragOver={handleDragOver}
+                    onDragEnter={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <div className={style.dropZoneContent}>
+                      <svg
+                        width="28"
+                        height="28"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        className={style.dropZoneIcon}
+                      >
+                        <path d="M12 5v14M5 12h14" />
+                        <rect
+                          x="3"
+                          y="3"
+                          width="18"
+                          height="18"
+                          rx="4"
+                          ry="4"
+                        />
+                      </svg>
+                      <p>Перетащите фото сюда или нажмите, чтобы выбрать</p>
+                      <span className={style.dropZoneHint}>
+                        Поддерживаются изображения (PNG, JPG)
+                      </span>
+                    </div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className={style.fileInput}
+                      onChange={handleFileChange}
+                    />
+                  </div>
+
+                  {taskData.files.length > 0 && (
+                    <div className={style.fileList}>
+                      {taskData.files.map((file, index) => (
+                        <div key={`${file.name}-${index}`} className={style.fileItem}>
+                          <div className={style.fileInfo}>
+                            <div className={style.fileName}>{file.name}</div>
+                            <div className={style.fileSize}>
+                              {(file.size / 1024).toFixed(1)} КБ
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            className={style.removeFileButton}
+                            onClick={() => handleRemoveFile(file.name)}
+                            aria-label={`Удалить файл ${file.name}`}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className={style.formGroup}>
@@ -734,7 +815,9 @@ function ProjectDetailPage({
                           <path d="M6 3v12a4 4 0 0 0 4 4 4 4 0 0 0 4-4V3" />
                         </svg>
                         <span className={style.branchNameCompact}>main</span>
-                        <span className={style.branchCommitCompact}>a1b2c3d</span>
+                        <span className={style.branchCommitCompact}>
+                          a1b2c3d
+                        </span>
                       </div>
                       <div className={style.branchItemCompact}>
                         <svg
@@ -750,7 +833,9 @@ function ProjectDetailPage({
                         <span className={style.branchNameCompact}>
                           feature/new-task
                         </span>
-                        <span className={style.branchCommitCompact}>e4f5g6h</span>
+                        <span className={style.branchCommitCompact}>
+                          e4f5g6h
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -816,7 +901,9 @@ function ProjectDetailPage({
                       </svg>
                     </div>
                     <div className={style.activityContent}>
-                      <p>Создана задача "Реализовать авторизацию через OAuth"</p>
+                      <p>
+                        Создана задача "Реализовать авторизацию через OAuth"
+                      </p>
                       <span>2 часа назад</span>
                     </div>
                   </div>
@@ -862,6 +949,19 @@ function ProjectDetailPage({
                 </div>
               </div>
 
+              {/* Быстрый доступ — перенесен с главной */}
+              <div className={style.quickAccessSection}>
+                <div className={style.quickAccessHeader}>
+                  <h3>Быстрый доступ</h3>
+                  <span className={style.quickAccessHint}>
+                    Шорткаты для текущего проекта
+                  </span>
+                </div>
+                <div className={style.quickAccessGrid}>
+                  {quickAccessData.map(renderQuickAccess)}
+                </div>
+              </div>
+
               {/* Команда проекта */}
               <div className={style.teamCard}>
                 <div className={style.cardHeader}>
@@ -885,7 +985,9 @@ function ProjectDetailPage({
                   <div className={style.teamMemberItem}>
                     <div className={style.memberAvatar}>
                       <div className={style.avatarInitial}>ИИ</div>
-                      <div className={`${style.statusIndicator} ${style.online}`}></div>
+                      <div
+                        className={`${style.statusIndicator} ${style.online}`}
+                      ></div>
                     </div>
                     <div className={style.memberInfo}>
                       <div className={style.memberName}>Иван Иванов</div>
@@ -896,7 +998,9 @@ function ProjectDetailPage({
                   <div className={style.teamMemberItem}>
                     <div className={style.memberAvatar}>
                       <div className={style.avatarInitial}>ПП</div>
-                      <div className={`${style.statusIndicator} ${style.online}`}></div>
+                      <div
+                        className={`${style.statusIndicator} ${style.online}`}
+                      ></div>
                     </div>
                     <div className={style.memberInfo}>
                       <div className={style.memberName}>Петр Петров</div>
@@ -907,7 +1011,9 @@ function ProjectDetailPage({
                   <div className={style.teamMemberItem}>
                     <div className={style.memberAvatar}>
                       <div className={style.avatarInitial}>АС</div>
-                      <div className={`${style.statusIndicator} ${style.away}`}></div>
+                      <div
+                        className={`${style.statusIndicator} ${style.away}`}
+                      ></div>
                     </div>
                     <div className={style.memberInfo}>
                       <div className={style.memberName}>Анна Сидорова</div>
@@ -918,7 +1024,9 @@ function ProjectDetailPage({
                   <div className={style.teamMemberItem}>
                     <div className={style.memberAvatar}>
                       <div className={style.avatarInitial}>МК</div>
-                      <div className={`${style.statusIndicator} ${style.offline}`}></div>
+                      <div
+                        className={`${style.statusIndicator} ${style.offline}`}
+                      ></div>
                     </div>
                     <div className={style.memberInfo}>
                       <div className={style.memberName}>Михаил Кузнецов</div>

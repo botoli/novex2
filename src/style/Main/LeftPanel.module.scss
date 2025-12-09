@@ -185,6 +185,14 @@
   cursor: pointer;
 }
 
+.themeName {
+  margin-left: auto;
+  font-size: $font-size-xs;
+  color: $text-muted;
+  text-transform: none;
+  flex-shrink: 0;
+}
+
 .themeDropdown {
   position: absolute;
   top: calc(100% + 8px);

@@ -4,6 +4,9 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../store/user.js";
 import LeftPanel from "./LeftPanel";
 import Hero from "./Hero";
+import Dashboard from "./Dashboard";
+import TasksPage from "./TasksPage";
+import SettingsPage from "./SettingsPage";
 import ProjectsPage from "./ProjectsPage";
 import ProjectDetailPage from "./ProjectDetailPage";
 import TeamChat from "./TeamChat";
@@ -11,6 +14,7 @@ import Schedule from "./Schedule";
 import QuickNote from "./QuickNote";
 import { ProjectService } from "../../assets/MockData/index.js";
 import style from "../../style/Main/MainPage.module.scss";
+import AIAssistantPage from "./AIAssistantPage";
 
 type Page =
   | "main"
@@ -18,7 +22,11 @@ type Page =
   | "project-detail"
   | "team-chat"
   | "schedule"
-  | "quick-note";
+  | "quick-note"
+  | "tasks"
+  | "dashboard"
+  | "settings"
+  | "ai";
 
 function MainPage() {
   const user = useSelector(selectUser);
@@ -51,6 +59,10 @@ function MainPage() {
       "team-chat",
       "schedule",
       "quick-note",
+      "tasks",
+      "dashboard",
+      "settings",
+      "ai",
     ];
     if (validPages.includes(page as Page)) {
       setCurrentPage(page as Page);
@@ -115,6 +127,10 @@ function MainPage() {
     }
   };
 
+  const handleNavigateToAI = () => {
+    setCurrentPage("ai");
+  };
+
   const renderContent = () => {
     switch (currentPage) {
       case "project-detail":
@@ -126,6 +142,7 @@ function MainPage() {
               onNavigateToTeamChat={handleNavigateToTeamChat}
               onNavigateToSchedule={handleNavigateToSchedule}
               onNavigateToQuickNote={handleNavigateToQuickNote}
+              onNavigateToAI={handleNavigateToAI}
             />
           );
         }
@@ -165,6 +182,14 @@ function MainPage() {
         return <ProjectsPage onProjectClick={handleProjectClick} />;
       case "projects":
         return <ProjectsPage onProjectClick={handleProjectClick} />;
+      case "tasks":
+        return <TasksPage />;
+      case "dashboard":
+        return <Dashboard />;
+      case "settings":
+        return <SettingsPage />;
+      case "ai":
+        return <AIAssistantPage />;
       case "main":
       default:
         return (

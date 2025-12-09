@@ -28,7 +28,11 @@ interface LeftPanelProps {
     | "project-detail"
     | "team-chat"
     | "schedule"
-    | "quick-note";
+    | "quick-note"
+    | "tasks"
+    | "dashboard"
+    | "settings"
+    | "ai";
   onProjectClick?: (projectId: number) => void;
   activeProjectId?: number | null;
 }
@@ -66,6 +70,29 @@ function LeftPanel({
   });
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   const themeMenuRef = useRef<HTMLDivElement | null>(null);
+  const currentThemeLabel = selectedTheme || "По умолчанию";
+
+  const categoryToPage: Record<string, string> = {
+    Главная: "main",
+    Проекты: "projects",
+    Задания: "tasks",
+    "Панель управления": "dashboard",
+    Настройки: "settings",
+    AI: "ai",
+  };
+
+  const pageToCategory: Record<string, string> = {
+    main: "Главная",
+    projects: "Проекты",
+    "project-detail": "Проекты",
+    "team-chat": "Проекты",
+    schedule: "Проекты",
+    "quick-note": "Проекты",
+    tasks: "Задания",
+    dashboard: "Панель управления",
+    settings: "Настройки",
+    ai: "AI",
+  };
 
   useEffect(() => {
     if (activeProjectId && currentPage === "project-detail") {
@@ -74,20 +101,15 @@ function LeftPanel({
   }, [activeProjectId, currentPage]);
 
   useEffect(() => {
-    if (currentPage === "projects") {
-      const projectsIndex = leftPanelIcons.findIndex(
-        (icon) => icon.name === "Проекты"
-      );
-      if (projectsIndex !== -1) {
-        setActiveCategory(projectsIndex);
-      }
-    } else if (currentPage === "main") {
-      const mainIndex = leftPanelIcons.findIndex(
-        (icon) => icon.name === "Главная"
-      );
-      if (mainIndex !== -1) {
-        setActiveCategory(mainIndex);
-      }
+    if (!currentPage) return;
+    const categoryName = pageToCategory[currentPage];
+    if (!categoryName) return;
+
+    const index = leftPanelIcons.findIndex(
+      (icon) => icon.name === categoryName
+    );
+    if (index !== -1) {
+      setActiveCategory(index);
     }
   }, [currentPage]);
 
@@ -180,13 +202,8 @@ function LeftPanel({
     setActiveCategory(index);
 
     if (onPageChange) {
-      if (categoryName === "Проекты") {
-        onPageChange("projects");
-      } else if (categoryName === "Главная") {
-        onPageChange("main");
-      } else {
-        onPageChange("main");
-      }
+      const nextPage = categoryToPage[categoryName] || "main";
+      onPageChange(nextPage);
     }
   };
 
@@ -488,6 +505,7 @@ function LeftPanel({
                       <path d={element.icon} />
                     </svg>
                     <p>{element.name}</p>
+                    <span className={style.themeName}>{currentThemeLabel}</span>
 
                     {isThemeMenuOpen && (
                       <div className={style.themeDropdown} role="menu">
