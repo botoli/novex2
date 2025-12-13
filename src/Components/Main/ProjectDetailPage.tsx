@@ -34,12 +34,14 @@ interface Project {
   budget?: number;
 }
 
-interface TaskData {
+interface TaskFormData {
   title: string;
   description: string;
-  deadline: string;
-  teamMembers: string[];
-  gitBranch: string;
+  due_date: string;
+  status: string;
+  priority: string;
+  assigned_to: number | null;
+  tags: string[];
   files: File[];
 }
 
@@ -50,6 +52,7 @@ interface ProjectDetailPageProps {
   onNavigateToSchedule?: (projectId: number) => void;
   onNavigateToQuickNote?: (projectId: number) => void;
   onNavigateToAI?: () => void;
+  onProjectDeleted?: () => void;
 }
 
 function ProjectDetailPage({
@@ -59,14 +62,17 @@ function ProjectDetailPage({
   onNavigateToSchedule,
   onNavigateToQuickNote,
   onNavigateToAI,
+  onProjectDeleted,
 }: ProjectDetailPageProps) {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [taskData, setTaskData] = useState<TaskData>({
+  const [taskData, setTaskData] = useState<TaskFormData>({
     title: "",
     description: "",
-    deadline: "",
-    teamMembers: [],
-    gitBranch: "",
+    due_date: "",
+    status: "pending",
+    priority: "medium",
+    assigned_to: null,
+    tags: [],
     files: [],
   });
 
@@ -77,13 +83,15 @@ function ProjectDetailPage({
   const [chatMessage, setChatMessage] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const teamMembersAvailable: string[] = [
-    "Иван Иванов",
-    "Петр Петров",
-    "Анна Сидорова",
-    "Михаил Кузнецов",
-  ];
+  const [availableUsers, setAvailableUsers] = useState<
+    { id: number; name: string }[]
+  >([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [githubRepos, setGithubRepos] = useState<any[]>([]);
+  const [loadingRepos, setLoadingRepos] = useState(false);
+  const [projectMembers, setProjectMembers] = useState<any[]>([]);
+  const [activityLogs, setActivityLogs] = useState<any[]>([]);
+  const [taskRefreshKey, setTaskRefreshKey] = useState(0);
 
   const aiSuggestions = [
     "Обзор дорожной карты Q4",
@@ -171,15 +179,6 @@ function ProjectDetailPage({
     }
   };
 
-  const removeTeamMember = (memberToRemove: string) => {
-    setTaskData({
-      ...taskData,
-      teamMembers: taskData.teamMembers.filter(
-        (member) => member !== memberToRemove
-      ),
-    });
-  };
-
   const handleAddFiles = (files: FileList | File[]) => {
     const imageFiles = Array.from(files).filter((file) =>
       file.type.startsWith("image/")
@@ -225,25 +224,53 @@ function ProjectDetailPage({
     }));
   };
 
-  const handleTaskSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleTaskSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(
       "Создание задачи для проекта",
       projectId,
-      "с mock данными:",
+      "с данными:",
       taskData
     );
-    // TODO: Здесь легко заменить на реальный fetch запрос к БД
-    // Например: await ProjectService.createTask(projectId, taskData);
-    setTaskData({
-      title: "",
-      description: "",
-      deadline: "",
-      teamMembers: [],
-      gitBranch: "",
-      files: [],
-    });
-    setIsTaskModalOpen(false);
+    try {
+      // Подготовка данных для отправки
+      const taskPayload = {
+        ...taskData,
+        project_id: projectId,
+        created_by: user?.id,
+        // tags уже массив
+        tags: taskData.tags,
+        // due_date должен быть в формате YYYY-MM-DD или null
+        due_date: taskData.due_date || null,
+      };
+      // Вызов API
+      const createdTask = await ProjectService.createTask(taskPayload);
+      console.log("Задача успешно создана:", createdTask);
+      // Сброс формы
+      setTaskData({
+        title: "",
+        description: "",
+        due_date: "",
+        status: "pending",
+        priority: "medium",
+        assigned_to: null,
+        tags: [],
+        files: [],
+      });
+      setIsTaskModalOpen(false);
+      // Увеличиваем ключ обновления для перезагрузки Dashboard
+      setTaskRefreshKey(prev => prev + 1);
+      // Можно показать уведомление или обновить список задач
+      // Например, перезагрузить Dashboard
+    } catch (error) {
+      console.error("Ошибка создания задачи:", error);
+      // Здесь можно показать ошибку пользователю
+      alert(
+        `Ошибка создания задачи: ${
+          error instanceof Error ? error.message : "Неизвестная ошибка"
+        }`
+      );
+    }
   };
   const user = useSelector(selectUser);
   const [project, setProject] = useState<Project | null>(null);
@@ -252,7 +279,72 @@ function ProjectDetailPage({
 
   useEffect(() => {
     fetchProject();
+    loadGithubRepos();
+    loadProjectMembers();
+    loadActivityLogs();
   }, [projectId]);
+
+  // Загрузка пользователей для назначения задач
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        setLoadingUsers(true);
+        const users = await ProjectService.getUsers();
+        setAvailableUsers(
+          users.map((user: any) => ({ id: user.id, name: user.name }))
+        );
+      } catch (error) {
+        console.error("Ошибка загрузки пользователей:", error);
+        // Можно оставить пустой массив или показать уведомление
+      } finally {
+        setLoadingUsers(false);
+      }
+    };
+    loadUsers();
+  }, []);
+
+  // Загрузка GitHub репозиториев проекта
+  const loadGithubRepos = async () => {
+    try {
+      setLoadingRepos(true);
+      const repos = await ProjectService.getProjectRepos(projectId);
+      setGithubRepos(repos);
+    } catch (error) {
+      console.error("Ошибка загрузки репозиториев:", error);
+      setGithubRepos([]);
+    } finally {
+      setLoadingRepos(false);
+    }
+  };
+
+  // Загрузка участников проекта
+  const loadProjectMembers = async () => {
+    try {
+      const members = await ProjectService.getProjectMembers(projectId);
+      // Преобразуем данные из API в ожидаемый формат
+      const formattedMembers = members.map((member: any) => ({
+        id: member.id,
+        name: member.name,
+        role: member.role || 'member',
+        status: 'online' // TODO: получить реальный статус из API
+      }));
+      setProjectMembers(formattedMembers);
+    } catch (error) {
+      console.error("Ошибка загрузки участников:", error);
+      setProjectMembers([]);
+    }
+  };
+
+  // Загрузка логов активности
+  const loadActivityLogs = async () => {
+    try {
+      const logs = await ProjectService.getActivityLogs(projectId);
+      setActivityLogs(logs);
+    } catch (error) {
+      console.error("Ошибка загрузки логов:", error);
+      setActivityLogs([]);
+    }
+  };
 
   const fetchProject = async () => {
     try {
@@ -289,6 +381,56 @@ function ProjectDetailPage({
 
   const handleQuickNote = () => {
     onNavigateToQuickNote?.(projectId);
+  };
+
+  const handleEditProject = (projectId: number) => {
+    console.log("Редактирование проекта", projectId);
+    // TODO: открыть модальное окно редактирования или перейти на страницу редактирования
+    alert(`Редактирование проекта ${projectId} (заглушка)`);
+  };
+
+  const handleDeleteProject = async (projectId: number) => {
+    console.log("handleDeleteProject вызван в ProjectDetailPage для проекта", projectId);
+    
+    // Временное решение для отладки: всегда удаляем без подтверждения
+    // TODO: вернуть confirm после отладки
+    const shouldDelete = true; // confirm("Вы уверены, что хотите удалить проект? Это действие нельзя отменить.");
+    
+    if (!shouldDelete) {
+      console.log("Удаление отменено пользователем");
+      return;
+    }
+    
+    try {
+      console.log("Удаление проекта", projectId);
+      if (!user?.id) {
+        alert("Ошибка: пользователь не авторизован");
+        return;
+      }
+      const result = await ProjectService.deleteProject(projectId, user.id);
+      console.log("Результат удаления:", result);
+      if (result.success) {
+        alert(`Проект ${projectId} успешно удален`);
+        // Вызываем callback для обновления данных в других компонентах
+        if (onProjectDeleted) {
+          onProjectDeleted();
+        }
+        // После удаления можно вернуться к списку проектов
+        if (onBack) {
+          onBack();
+        }
+      } else {
+        alert(`Ошибка удаления проекта: ${result.message || "Неизвестная ошибка"}`);
+      }
+    } catch (error) {
+      console.error("Ошибка удаления проекта:", error);
+      alert(`Не удалось удалить проект: ${error instanceof Error ? error.message : "Неизвестная ошибка"}`);
+    }
+  };
+
+  const handleAddGithubRepo = () => {
+    // TODO: открыть модальное окно для добавления репозитория
+    alert("Функция добавления GitHub репозитория в разработке");
   };
 
   if (isLoading) {
@@ -446,6 +588,20 @@ function ProjectDetailPage({
               <div className={style.actionButtons}>
                 <button
                   className={style.actionButton}
+                  onClick={handleCreateTask}
+                  data-action="add-task"
+                  title="Добавить задачу"
+                >
+                  <img
+                    src={taskIcon}
+                    alt="Добавить задачу"
+                    width="20"
+                    height="20"
+                  />
+                </button>
+
+                <button
+                  className={style.actionButton}
                   onClick={handleAIPage}
                   data-action="ai"
                 >
@@ -498,6 +654,44 @@ function ProjectDetailPage({
                     width="20"
                     height="20"
                   />
+                </button>
+
+                {/* Кнопки редактирования и удаления проекта */}
+                <button
+                  className={style.actionButton}
+                  onClick={() => handleEditProject(project.id)}
+                  data-action="edit-project"
+                  title="Редактировать проект"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  </svg>
+                </button>
+
+                <button
+                  className={style.actionButton}
+                  onClick={() => handleDeleteProject(project.id)}
+                  data-action="delete-project"
+                  title="Удалить проект"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
+                  </svg>
                 </button>
               </div>
             </div>
@@ -738,99 +932,89 @@ function ProjectDetailPage({
                 </div>
 
                 <div className={style.formGroup}>
-                  <label htmlFor="task-deadline">Дедлайн</label>
+                  <label htmlFor="task-due-date">Дата выполнения</label>
                   <input
-                    id="task-deadline"
-                    type="text"
-                    value={taskData.deadline || ""}
+                    id="task-due-date"
+                    type="date"
+                    value={taskData.due_date}
                     onChange={(e) =>
-                      setTaskData({ ...taskData, deadline: e.target.value })
+                      setTaskData({ ...taskData, due_date: e.target.value })
                     }
-                    placeholder="Дедлайн (например: завтра, через 3 часа, 10.07)"
+                    placeholder="YYYY-MM-DD"
                   />
                 </div>
 
                 <div className={style.formGroup}>
-                  <label>Члены команды</label>
-                  <div className={style.teamMembersGroup}>
-                    <button
-                      type="button"
-                      className={`${style.selectTeamButton} ${
-                        showTeamDropdown ? style.open : ""
-                      }`}
-                      onClick={() => setShowTeamDropdown((prev) => !prev)}
-                    >
-                      <span>
-                        {taskData.teamMembers.length === 0
-                          ? "Выбрать участников"
-                          : `Выбрано ${taskData.teamMembers.length} участник(ов)`}
-                      </span>
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        className={style.selectArrow}
-                      >
-                        <path d="m6 8 4 4 4-4" />
-                      </svg>
-                    </button>
-                    {showTeamDropdown && (
-                      <div className={style.teamDropdown}>
-                        {teamMembersAvailable.map((member) => (
-                          <label key={member} className={style.teamOption}>
-                            <input
-                              type="checkbox"
-                              checked={taskData.teamMembers.includes(member)}
-                              onChange={(e) => {
-                                const newMembers = e.target.checked
-                                  ? [...taskData.teamMembers, member]
-                                  : taskData.teamMembers.filter(
-                                      (m) => m !== member
-                                    );
-                                setTaskData({
-                                  ...taskData,
-                                  teamMembers: newMembers,
-                                });
-                              }}
-                            />
-                            <span>{member}</span>
-                          </label>
-                        ))}
-                      </div>
-                    )}
-                    {taskData.teamMembers.length > 0 && (
-                      <div className={style.chipsContainer}>
-                        {taskData.teamMembers.map((member, index) => (
-                          <div key={index} className={style.chip}>
-                            {member}
-                            <button
-                              type="button"
-                              className={style.chipRemove}
-                              onClick={() => removeTeamMember(member)}
-                            >
-                              ×
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  <label htmlFor="task-status">Статус</label>
+                  <select
+                    id="task-status"
+                    value={taskData.status}
+                    onChange={(e) =>
+                      setTaskData({ ...taskData, status: e.target.value })
+                    }
+                  >
+                    <option value="pending">Ожидание</option>
+                    <option value="in_progress">В работе</option>
+                    <option value="completed">Завершено</option>
+                    <option value="cancelled">Отменено</option>
+                  </select>
                 </div>
 
                 <div className={style.formGroup}>
-                  <label htmlFor="task-branch">Ветка Git</label>
-                  <input
-                    id="task-branch"
-                    type="text"
-                    value={taskData.gitBranch}
+                  <label htmlFor="task-priority">Приоритет</label>
+                  <select
+                    id="task-priority"
+                    value={taskData.priority}
                     onChange={(e) =>
-                      setTaskData({ ...taskData, gitBranch: e.target.value })
+                      setTaskData({ ...taskData, priority: e.target.value })
                     }
-                    placeholder="Например: feature/new-task"
-                    required
+                  >
+                    <option value="low">Низкий</option>
+                    <option value="medium">Средний</option>
+                    <option value="high">Высокий</option>
+                    <option value="urgent">Срочный</option>
+                  </select>
+                </div>
+
+                <div className={style.formGroup}>
+                  <label htmlFor="task-assigned-to">Назначить на</label>
+                  <select
+                    id="task-assigned-to"
+                    value={taskData.assigned_to || ""}
+                    onChange={(e) =>
+                      setTaskData({
+                        ...taskData,
+                        assigned_to: e.target.value
+                          ? parseInt(e.target.value)
+                          : null,
+                      })
+                    }
+                  >
+                    <option value="">Не назначено</option>
+                    {availableUsers.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className={style.formGroup}>
+                  <label htmlFor="task-tags">Теги (через запятую)</label>
+                  <input
+                    id="task-tags"
+                    type="text"
+                    value={taskData.tags.join(", ")}
+                    onChange={(e) =>
+                      setTaskData({
+                        ...taskData,
+                        tags: e.target.value
+                          .split(",")
+                          .map((tag) => tag.trim())
+                          .filter((tag) => tag.length > 0),
+                      })
+                    }
+                    placeholder="например, frontend, bug, urgent"
                   />
                 </div>
 
@@ -874,7 +1058,7 @@ function ProjectDetailPage({
 
           {activeTab === "overview" && (
             <div className={style.overviewContent}>
-              {/* GitHub репозиторий */}
+              {/* GitHub репозитории */}
               <div className={style.githubCard}>
                 <div className={style.cardHeader}>
                   <div className={style.cardHeaderLeft}>
@@ -888,85 +1072,132 @@ function ProjectDetailPage({
                     >
                       <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
                     </svg>
-                    <h3 className={style.cardTitle}>GitHub репозиторий</h3>
+                    <h3 className={style.cardTitle}>GitHub репозитории</h3>
                   </div>
-                  <a
-                    href="https://github.com/example/repo"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={style.repoLink}
-                  >
-                    Открыть репозиторий
-                  </a>
+                  {githubRepos.length > 0 ? (
+                    <button
+                      className={style.repoLink}
+                      onClick={handleAddGithubRepo}
+                    >
+                      + Добавить репозиторий
+                    </button>
+                  ) : null}
                 </div>
-                <div className={style.githubContent}>
-                  <div className={style.branchesCompact}>
-                    <h4 className={style.subsectionTitle}>Ветки</h4>
-                    <div className={style.branchesListCompact}>
-                      <div className={style.branchItemCompact}>
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
+                {loadingRepos ? (
+                  <div className={style.loadingRepos}>
+                    <div className={style.spinnerSmall}></div>
+                    <p>Загрузка репозиториев...</p>
+                  </div>
+                ) : githubRepos.length === 0 ? (
+                  <div className={style.noRepos}>
+                    <svg
+                      width="48"
+                      height="48"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    >
+                      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                    </svg>
+                    <h4>Нет привязанных репозиториев</h4>
+                    <p>
+                      Привяжите GitHub репозиторий для отслеживания коммитов и
+                      веток
+                    </p>
+                    <button
+                      className={style.addRepoButton}
+                      onClick={handleAddGithubRepo}
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <path
+                          d="M12 5v14M5 12h14"
                           stroke="currentColor"
                           strokeWidth="2"
-                        >
-                          <path d="M6 3v12a4 4 0 0 0 4 4 4 4 0 0 0 4-4V3" />
-                        </svg>
-                        <span className={style.branchNameCompact}>main</span>
-                        <span className={style.branchCommitCompact}>
-                          a1b2c3d
-                        </span>
-                      </div>
-                      <div className={style.branchItemCompact}>
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path d="M6 3v12a4 4 0 0 0 4 4 4 4 0 0 0 4-4V3" />
-                        </svg>
-                        <span className={style.branchNameCompact}>
-                          feature/new-task
-                        </span>
-                        <span className={style.branchCommitCompact}>
-                          e4f5g6h
-                        </span>
-                      </div>
-                    </div>
+                        />
+                      </svg>
+                      Добавить GitHub репозиторий
+                    </button>
                   </div>
-                  <div className={style.commitsCompact}>
-                    <h4 className={style.subsectionTitle}>Последние коммиты</h4>
-                    <div className={style.commitsListCompact}>
-                      <div className={style.commitItemCompact}>
-                        <span className={style.commitHashCompact}>a1b2c3d</span>
-                        <p className={style.commitMessageCompact}>
-                          Добавлена авторизация через OAuth
-                        </p>
-                        <div className={style.commitMetaCompact}>
-                          <span>Иван Иванов</span>
-                          <span>•</span>
-                          <span>2 часа назад</span>
+                ) : (
+                  <div className={style.githubContent}>
+                    {githubRepos.map((repo) => (
+                      <div key={repo.id} className={style.repoItem}>
+                        <div className={style.repoHeader}>
+                          <div className={style.repoName}>
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                            >
+                              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                            </svg>
+                            <span>{repo.name}</span>
+                          </div>
+                          <a
+                            href={repo.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={style.repoLinkSmall}
+                          >
+                            Открыть
+                          </a>
+                        </div>
+                        <div className={style.repoDetails}>
+                          <div className={style.branchesCompact}>
+                            <h4 className={style.subsectionTitle}>Ветки</h4>
+                            <div className={style.branchesListCompact}>
+                              {repo.branches.map(
+                                (branch: string, idx: number) => (
+                                  <div
+                                    key={idx}
+                                    className={style.branchItemCompact}
+                                  >
+                                    <svg
+                                      width="16"
+                                      height="16"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                    >
+                                      <path d="M6 3v12a4 4 0 0 0 4 4 4 4 0 0 0 4-4V3" />
+                                    </svg>
+                                    <span className={style.branchNameCompact}>
+                                      {branch}
+                                    </span>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </div>
+                          <div className={style.commitsCompact}>
+                            <h4 className={style.subsectionTitle}>
+                              Последний коммит
+                            </h4>
+                            <div className={style.commitItemCompact}>
+                              <span className={style.commitHashCompact}>
+                                {repo.lastCommit.hash}
+                              </span>
+                              <p className={style.commitMessageCompact}>
+                                {repo.lastCommit.message}
+                              </p>
+                              <div className={style.commitMetaCompact}>
+                                <span>{repo.lastCommit.author}</span>
+                                <span>•</span>
+                                <span>{repo.lastCommit.date}</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div className={style.commitItemCompact}>
-                        <span className={style.commitHashCompact}>e4f5g6h</span>
-                        <p className={style.commitMessageCompact}>
-                          Исправлен баг с отображением карточек
-                        </p>
-                        <div className={style.commitMetaCompact}>
-                          <span>Петр Петров</span>
-                          <span>•</span>
-                          <span>5 часов назад</span>
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Логи последних действий */}
@@ -987,65 +1218,53 @@ function ProjectDetailPage({
                   </div>
                 </div>
                 <div className={style.activityList}>
-                  <div className={style.activityItem}>
-                    <div className={style.activityIcon}>
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                      </svg>
+                  {activityLogs.length === 0 ? (
+                    <div className={style.noActivity}>
+                      <p>Нет записей о действиях</p>
                     </div>
-                    <div className={style.activityContent}>
-                      <p>
-                        Создана задача "Реализовать авторизацию через OAuth"
-                      </p>
-                      <span>2 часа назад</span>
-                    </div>
-                  </div>
-                  <div className={style.activityItem}>
-                    <div className={style.activityIcon}>
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                      </svg>
-                    </div>
-                    <div className={style.activityContent}>
-                      <p>Добавлен новый участник: Анна Сидорова</p>
-                      <span>5 часов назад</span>
-                    </div>
-                  </div>
-                  <div className={style.activityItem}>
-                    <div className={style.activityIcon}>
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                        <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
-                      </svg>
-                    </div>
-                    <div className={style.activityContent}>
-                      <p>Обновлена документация проекта</p>
-                      <span>1 день назад</span>
-                    </div>
-                  </div>
+                  ) : (
+                    activityLogs.map((log) => (
+                      <div key={log.id} className={style.activityItem}>
+                        <div className={style.activityIcon}>
+                          {log.action === "task_created" ? (
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                            >
+                              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                            </svg>
+                          ) : log.action === "member_added" ? (
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                            >
+                              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                              <circle cx="9" cy="7" r="4" />
+                              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                            </svg>
+                          ) : (
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                            >
+                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                              <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                            </svg>
+                          )}
+                        </div>
+                        <div className={style.activityContent}>
+                          <p>{log.description}</p>
+                          <span>{log.time}</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 
@@ -1082,58 +1301,41 @@ function ProjectDetailPage({
                   </div>
                 </div>
                 <div className={style.teamList}>
-                  <div className={style.teamMemberItem}>
-                    <div className={style.memberAvatar}>
-                      <div className={style.avatarInitial}>ИИ</div>
-                      <div
-                        className={`${style.statusIndicator} ${style.online}`}
-                      ></div>
+                  {projectMembers.length === 0 ? (
+                    <div className={style.noMembers}>
+                      <p>Нет участников проекта</p>
                     </div>
-                    <div className={style.memberInfo}>
-                      <div className={style.memberName}>Иван Иванов</div>
-                      <div className={style.memberRole}>Разработчик</div>
-                    </div>
-                    <div className={style.memberActivity}>Активен</div>
-                  </div>
-                  <div className={style.teamMemberItem}>
-                    <div className={style.memberAvatar}>
-                      <div className={style.avatarInitial}>ПП</div>
-                      <div
-                        className={`${style.statusIndicator} ${style.online}`}
-                      ></div>
-                    </div>
-                    <div className={style.memberInfo}>
-                      <div className={style.memberName}>Петр Петров</div>
-                      <div className={style.memberRole}>Дизайнер</div>
-                    </div>
-                    <div className={style.memberActivity}>Активен</div>
-                  </div>
-                  <div className={style.teamMemberItem}>
-                    <div className={style.memberAvatar}>
-                      <div className={style.avatarInitial}>АС</div>
-                      <div
-                        className={`${style.statusIndicator} ${style.away}`}
-                      ></div>
-                    </div>
-                    <div className={style.memberInfo}>
-                      <div className={style.memberName}>Анна Сидорова</div>
-                      <div className={style.memberRole}>Тестировщик</div>
-                    </div>
-                    <div className={style.memberActivity}>Отошла</div>
-                  </div>
-                  <div className={style.teamMemberItem}>
-                    <div className={style.memberAvatar}>
-                      <div className={style.avatarInitial}>МК</div>
-                      <div
-                        className={`${style.statusIndicator} ${style.offline}`}
-                      ></div>
-                    </div>
-                    <div className={style.memberInfo}>
-                      <div className={style.memberName}>Михаил Кузнецов</div>
-                      <div className={style.memberRole}>Менеджер проекта</div>
-                    </div>
-                    <div className={style.memberActivity}>Не в сети</div>
-                  </div>
+                  ) : (
+                    projectMembers.map((member) => (
+                      <div key={member.id} className={style.teamMemberItem}>
+                        <div className={style.memberAvatar}>
+                          <div className={style.avatarInitial}>
+                            {member.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()}
+                          </div>
+                          <div
+                            className={`${style.statusIndicator} ${
+                              style[member.status]
+                            }`}
+                          ></div>
+                        </div>
+                        <div className={style.memberInfo}>
+                          <div className={style.memberName}>{member.name}</div>
+                          <div className={style.memberRole}>{member.role}</div>
+                        </div>
+                        <div className={style.memberActivity}>
+                          {member.status === "online"
+                            ? "Активен"
+                            : member.status === "away"
+                            ? "Отошёл"
+                            : "Не в сети"}
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </div>
@@ -1141,7 +1343,7 @@ function ProjectDetailPage({
 
           {activeTab === "tasks" && (
             <div className={style.tasksContent}>
-              <Dashboard />
+              <Dashboard projectId={projectId} refreshKey={taskRefreshKey} />
             </div>
           )}
         </div>

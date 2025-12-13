@@ -26,31 +26,20 @@
   margin-bottom: 20px;
 
   .svgbox {
-    width: 40px;
-    height: 40px;
-    background: $primary-color;
+    width: 50px;
+    height: 50px;
     border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     svg {
-      width: 22px;
-      height: 22px;
-    }
-  }
-
-  .namingtxt {
-    p {
-      margin: 0;
-      font-size: $font-size-lg;
-      font-weight: 500;
-      color: $text-main;
-      line-height: 1.4;
+      width: 50px;
+      height: 50px;
     }
   }
 }
-
+.namingh1 {
+  margin: 0;
+  padding: 0;
+  color: $text-main;
+}
 .searchcont {
   position: relative;
 

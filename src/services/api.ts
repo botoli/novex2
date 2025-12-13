@@ -63,7 +63,7 @@ class ApiService {
     };
 
     const response = await fetch(url, { ...defaultOptions, ...options });
-    const data: ApiResponse<T> = await response.json();
+    const data = await response.json();
 
     if (!response.ok) {
       throw new Error(
@@ -71,11 +71,18 @@ class ApiService {
       );
     }
 
-    if (!data.success) {
-      throw new Error(data.message || "Request error");
+    // Проверяем, есть ли поле success в ответе
+    if (data.success !== undefined) {
+      // Ответ в формате ApiResponse
+      if (!data.success) {
+        throw new Error(data.message || "Request error");
+      }
+      // Если data.data существует, возвращаем его, иначе весь data
+      return (data.data !== undefined ? data.data : data) as T;
     }
 
-    return data.data as T;
+    // Если success отсутствует, считаем ответ успешным и возвращаем как есть
+    return data as T;
   }
 
   // Auth methods
@@ -148,9 +155,20 @@ class ApiService {
     if (params?.per_page) query.append('per_page', params.per_page.toString());
     const queryString = query.toString();
     const endpoint = `/tasks${queryString ? `?${queryString}` : ''}`;
-    return this.request<Task[]>(endpoint, {
+    const result = await this.request<any>(endpoint, {
       method: "GET",
     });
+    // Обработка пагинированного ответа (если result содержит поле data с массивом)
+    if (result && typeof result === 'object' && Array.isArray(result.data)) {
+      return result.data as Task[];
+    }
+    // Если ответ уже массив, возвращаем его
+    if (Array.isArray(result)) {
+      return result as Task[];
+    }
+    // Иначе возвращаем пустой массив (или можно выбросить ошибку)
+    console.warn('Непредвиденный формат ответа от /tasks:', result);
+    return [] as Task[];
   }
 
   async getTaskById(id: number) {

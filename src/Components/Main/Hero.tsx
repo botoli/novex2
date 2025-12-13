@@ -13,6 +13,7 @@ import {
 interface HeroProps {
   onNavigateToProjects?: () => void;
   onProjectClick?: (projectId: number) => void;
+  projectRefreshKey?: number;
 }
 
 interface Project {
@@ -46,6 +47,7 @@ interface User {
 const Hero: React.FC<HeroProps> = ({
   onNavigateToProjects,
   onProjectClick,
+  projectRefreshKey,
 }) => {
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -180,7 +182,7 @@ const Hero: React.FC<HeroProps> = ({
 
   useEffect(() => {
     loadHeroData();
-  }, [user?.id]);
+  }, [user?.id, projectRefreshKey]);
 
   // Функция для обработки клика по иконкам в header
   const handleTopButtonClick = (iconName: string) => {
@@ -666,43 +668,7 @@ const Hero: React.FC<HeroProps> = ({
       <div className={style.container}>
         <header className={style.header}>
           <div className={style.topBar}>
-            {/* Логотип и поиск */}
             <div className={style.leftSection}>
-              <div className={style.logo}>
-                <h1 className={style.title}>
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    style={{ marginRight: "5px", verticalAlign: "middle" }}
-                  >
-                    <path
-                      d="M12 2L2 7L12 12L22 7L12 2Z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M2 17L12 22L22 17"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M2 12L12 17L22 12"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  Novex
-                </h1>
-              </div>
-
               {/* Поиск */}
               <div className={style.searchBar}>
                 <svg

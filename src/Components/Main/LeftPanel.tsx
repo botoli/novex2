@@ -35,6 +35,7 @@ interface LeftPanelProps {
     | "ai";
   onProjectClick?: (projectId: number) => void;
   activeProjectId?: number | null;
+  projectRefreshKey?: number;
 }
 
 function LeftPanel({
@@ -42,6 +43,7 @@ function LeftPanel({
   currentPage,
   onProjectClick,
   activeProjectId,
+  projectRefreshKey = 0,
 }: LeftPanelProps) {
   const user = useSelector(selectUser);
   const [activeCategory, setActiveCategory] = useState(0);
@@ -128,7 +130,7 @@ function LeftPanel({
 
   useEffect(() => {
     fetchUserProjects();
-  }, []);
+  }, [projectRefreshKey]);
 
   const fetchUserProjects = async () => {
     try {
@@ -310,15 +312,29 @@ function LeftPanel({
           <div className={style.naming}>
             <div className={style.svgbox}>
               <svg
-                width="20"
-                height="22"
-                viewBox="0 0 20 22"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
                 fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+                style={{ marginRight: "5px", verticalAlign: "middle" }}
               >
                 <path
-                  d="M2.00341 13.0026C1.81418 13.0032 1.62864 12.9502 1.46836 12.8496C1.30809 12.749 1.17964 12.605 1.09796 12.4343C1.01628 12.2636 0.984703 12.0732 1.00691 11.8853C1.02912 11.6973 1.10419 11.5196 1.22341 11.3726L11.1234 1.1726C11.1977 1.08689 11.2989 1.02896 11.4104 1.00834C11.5219 0.987714 11.6371 1.00562 11.7371 1.05911C11.8371 1.1126 11.916 1.1985 11.9607 1.30271C12.0055 1.40692 12.0135 1.52325 11.9834 1.6326L10.0634 7.6526C10.0068 7.80413 11.9844 8.96444 12.0046 9.12493C12.0248 9.28541 12.0837 9.4386 12.1761 9.57135C12.2685 9.70409 12.3918 9.81243 12.5353 9.88708C12.6788 9.96172 12.8382 10.0004 13 9.99992H20C20.1892 9.99927 20.3748 10.0523 20.535 10.1529C20.6953 10.2535 20.8238 10.3976 20.9054 10.5683C20.9871 10.739 21.0187 10.9293 20.9965 11.1173C20.9743 11.3052 20.8992 11.483 20.78 11.6299L10.88 21.8299C10.8057 21.9156 10.7045 21.9736 10.593 21.9942C10.4815 22.0148 10.3663 21.9969 10.2663 21.9434C10.1663 21.8899 10.0874 21.804 10.0427 21.6998C9.99791 21.5956 9.98991 21.4793 10.02 21.3699L11.94 15.3499C11.9966 15.1984 12.0156 15.0354 11.9954 14.8749C11.9752 14.7144 11.9163 14.5612 11.8239 14.4285C11.7315 14.2957 11.6082 14.1874 11.4647 14.1128C11.3212 14.0381 11.1617 13.9994 11 13.9999H2.00341Z"
-                  stroke="white"
+                  d="M12 2L2 7L12 12L22 7L12 2Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M2 17L12 22L22 17"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M2 12L12 17L22 12"
+                  stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -326,7 +342,7 @@ function LeftPanel({
               </svg>
             </div>
             <div className={style.namingtxt}>
-              <p>Рабочее пространство</p>
+              <h1 className={style.namingh1}>Novex</h1>
             </div>
           </div>
           <div className={style.searchcont}>
@@ -832,4 +848,3 @@ function LeftPanel({
 }
 
 export default LeftPanel;
-export { LeftPanel };

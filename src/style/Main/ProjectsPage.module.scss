@@ -987,3 +987,301 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
     }
   }
 }
+
+// Стили для кнопок действий проекта в карточке
+.projectActions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.projectActionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: $text-main;
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Модальное окно создания проекта */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modalContent {
+  background: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-xl;
+  padding: 32px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: $shadow-card-hover;
+  animation: fadeIn 0.3s ease;
+}
+
+.modalTitle {
+  margin: 0 0 24px 0;
+  font-size: $font-size-2xl;
+  font-weight: 600;
+  color: $text-main;
+  text-align: center;
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: $text-secondary;
+  }
+
+  input,
+  textarea {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid $border-light;
+    border-radius: $border-radius-md;
+    color: $text-main;
+    font-size: $font-size-md;
+    font-family: inherit;
+    transition: $transition-default;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-purple;
+      background: rgba(102, 126, 234, 0.1);
+    }
+
+    &::placeholder {
+      color: $text-muted;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+}
+
+.modalButtons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+
+  .cancelButton,
+  .submitButton {
+    padding: 10px 24px;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    cursor: pointer;
+    transition: $transition-default;
+    border: 1px solid transparent;
+  }
+
+  .cancelButton {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: $border-light;
+    color: $text-secondary;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  .submitButton {
+    background: $primary-purple;
+    color: white;
+    border-color: rgba(102, 126, 234, 0.3);
+
+    &:hover {
+      background: color-mix(in srgb, $primary-purple, white 10%);
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Дополнительные стили модалки из LeftPanel */
+.modal {
+  background: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-2xl;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid $border-color;
+
+  h3 {
+    margin: 0;
+    font-size: $font-size-xl;
+    font-weight: 500;
+    color: $text-main;
+  }
+
+  .closeButton {
+    background: transparent;
+    border: none;
+    padding: 8px;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+
+    svg {
+      width: 18px;
+      height: 18px;
+      color: $text-secondary;
+    }
+  }
+}
+
+.formError {
+  background: rgba(255, 100, 103, 0.1);
+  border: 1px solid rgba(255, 100, 103, 0.2);
+  border-radius: $border-radius-md;
+  padding: 12px;
+  margin-bottom: 20px;
+  color: #ff6467;
+  font-size: $font-size-sm;
+}
+
+.formInput,
+.formTextarea {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(102, 126, 234, 0.08);
+  border: 1px solid $border-light;
+  border-radius: $border-radius-lg;
+  color: $text-main;
+  font-size: $font-size-md;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    background: rgba(102, 126, 234, 0.12);
+  }
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid $border-light;
+
+  .cancelButton,
+  .submitButton {
+    padding: 12px 24px;
+    border-radius: $border-radius-lg;
+    font-size: $font-size-md;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .cancelButton {
+    background: rgba(102, 126, 234, 0.08);
+    border: 1px solid $border-light;
+    color: $text-secondary;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .submitButton {
+    background: color-mix(in srgb, $primary-color, transparent 90%);
+    border: 1px solid color-mix(in srgb, $primary-color, transparent 80%);
+    color: $primary-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    &:hover:not(:disabled) {
+      background: color-mix(in srgb, $primary-color, transparent 80%);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}

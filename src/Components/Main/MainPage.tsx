@@ -37,6 +37,11 @@ function MainPage() {
   const [selectedProjectTitle, setSelectedProjectTitle] = useState<
     string | null
   >(null);
+  const [projectRefreshKey, setProjectRefreshKey] = useState(0);
+
+  const refreshProjects = () => {
+    setProjectRefreshKey(prev => prev + 1);
+  };
 
   const handleProjectClick = async (projectId: number) => {
     try {
@@ -143,10 +148,11 @@ function MainPage() {
               onNavigateToSchedule={handleNavigateToSchedule}
               onNavigateToQuickNote={handleNavigateToQuickNote}
               onNavigateToAI={handleNavigateToAI}
+              onProjectDeleted={refreshProjects}
             />
           );
         }
-        return <ProjectsPage onProjectClick={handleProjectClick} />;
+        return <ProjectsPage onProjectClick={handleProjectClick} projectRefreshKey={projectRefreshKey} />;
       case "team-chat":
         if (selectedProjectId) {
           return (
@@ -197,6 +203,7 @@ function MainPage() {
             <Hero
               onNavigateToProjects={() => setCurrentPage("projects")}
               onProjectClick={handleProjectClick}
+              projectRefreshKey={projectRefreshKey}
             />
           </div>
         );
@@ -211,6 +218,7 @@ function MainPage() {
           currentPage={currentPage}
           onProjectClick={handleProjectClick}
           activeProjectId={selectedProjectId}
+          projectRefreshKey={projectRefreshKey}
         />
       </div>
       <div className={style.contentContainer}>{renderContent()}</div>

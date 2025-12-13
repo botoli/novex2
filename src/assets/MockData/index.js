@@ -77,7 +77,7 @@ export const ProjectService = {
     if (!userId) {
       throw new Error("ID пользователя не указан");
     }
-    
+
     console.log(`[API] Получение проектов пользователя ${userId}`);
     try {
       const response = await fetch(
@@ -126,7 +126,7 @@ export const ProjectService = {
     if (!userId) {
       throw new Error("ID пользователя не указан");
     }
-    
+
     console.log(`[API] Получение всех проектов пользователя ${userId}`);
     // Используем getUserProjects, так как это то же самое
     return ProjectService.getUserProjects(userId);
@@ -135,7 +135,7 @@ export const ProjectService = {
   // Создать проект (реальная версия)
   createProject: async (projectData) => {
     console.log("[API] Создание проекта:", projectData);
-    
+
     // Валидация данных перед отправкой
     if (!projectData.tittle || !projectData.tittle.trim()) {
       throw new Error("Название проекта обязательно");
@@ -143,7 +143,7 @@ export const ProjectService = {
     if (!projectData.owner_id) {
       throw new Error("ID владельца проекта обязателен");
     }
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/projects/create`, {
         method: "POST",
@@ -167,7 +167,9 @@ export const ProjectService = {
           errorMessage = errorData.message || errorMessage;
           // Если есть ошибки валидации, добавляем их
           if (errorData.errors) {
-            const validationErrors = Object.values(errorData.errors).flat().join(", ");
+            const validationErrors = Object.values(errorData.errors)
+              .flat()
+              .join(", ");
             errorMessage = `${errorMessage}: ${validationErrors}`;
           }
         } catch {
@@ -198,14 +200,14 @@ export const ProjectService = {
     if (!projectId) {
       throw new Error("ID проекта не указан");
     }
-    
+
     console.log(`[API] Получение проекта ${projectId}`);
     try {
       // Используем getUserProjects и фильтруем по ID проекта
       if (!userId) {
         throw new Error("ID пользователя не указан");
       }
-      
+
       const allProjects = await ProjectService.getUserProjects(userId);
       const project = allProjects.find((p) => p.id === projectId);
 
@@ -222,5 +224,234 @@ export const ProjectService = {
       }
       throw new Error(`Не удалось загрузить проект: ${error.message}`);
     }
+  },
+
+  // Создать задачу (реальная версия)
+  createTask: async (taskData) => {
+    console.log("[API] Создание задачи:", taskData);
+
+    // Валидация данных перед отправкой
+    if (!taskData.title || !taskData.title.trim()) {
+      throw new Error("Название задачи обязательно");
+    }
+    if (!taskData.created_by) {
+      throw new Error("ID создателя задачи обязателен");
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/tasks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          title: taskData.title.trim(),
+          description: taskData.description?.trim() || "",
+          status: taskData.status || "pending",
+          priority: taskData.priority || "medium",
+          due_date: taskData.due_date || null,
+          project_id: taskData.project_id || null,
+          assigned_to: taskData.assigned_to || null,
+          tags: taskData.tags || [],
+          created_by: taskData.created_by,
+        }),
+      });
+
+      // Проверяем статус ответа перед парсингом JSON
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorMessage = "Ошибка создания задачи";
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+          // Если есть ошибки валидации, добавляем их
+          if (errorData.errors) {
+            const validationErrors = Object.values(errorData.errors)
+              .flat()
+              .join(", ");
+            errorMessage = `${errorMessage}: ${validationErrors}`;
+          }
+        } catch {
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+
+      // В TaskController метод store возвращает задачу напрямую, без обертки success
+      // Проверим структуру ответа
+      if (data.id) {
+        return data;
+      } else if (data.success === false) {
+        throw new Error(data.message || "Ошибка создания задачи");
+      } else {
+        return data;
+      }
+    } catch (error) {
+      console.error("Ошибка создания задачи:", error);
+      // Если это уже наша ошибка, пробрасываем дальше
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("Неожиданная ошибка при создании задачи");
+    }
+  },
+
+  // Получить список пользователей (реальная версия)
+  getUsers: async () => {
+    console.log("[API] Получение списка пользователей");
+    try {
+      const response = await fetch(`${API_BASE_URL}/users`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorMessage = "Ошибка загрузки пользователей";
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message || "Ошибка загрузки пользователей");
+      }
+
+      // Обработка пагинированного ответа (users может быть объектом с data)
+      let users = data.users;
+      if (
+        users &&
+        typeof users === "object" &&
+        users.data &&
+        Array.isArray(users.data)
+      ) {
+        users = users.data;
+      } else if (!Array.isArray(users)) {
+        users = [];
+      }
+
+      return users;
+    } catch (error) {
+      console.error("Ошибка загрузки пользователей:", error);
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("Неожиданная ошибка при загрузки пользователей");
+    }
+  },
+
+  // Удалить проект (реальная версия)
+  deleteProject: async (projectId, userId) => {
+    if (!projectId || !userId) {
+      throw new Error("ID проекта и пользователя обязательны");
+    }
+
+    console.log(`[API] Удаление проекта ${projectId} пользователем ${userId}`);
+    try {
+      const response = await fetch(`${API_BASE_URL}/projects/delete`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          project_id: projectId,
+          user_id: userId,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorMessage = "Ошибка удаления проекта";
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Ошибка удаления проекта:", error);
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("Неожиданная ошибка при удалении проекта");
+    }
+  },
+
+  // Получить GitHub репозитории проекта (заглушка)
+  getProjectRepos: async (projectId) => {
+    console.log(`[API] Получение GitHub репозиториев проекта ${projectId}`);
+    // TODO: реализовать реальный API
+    // Возвращаем пустой массив, так как функционал ещё не реализован
+    return [];
+  },
+
+  // Получить участников проекта (реальная версия)
+  getProjectMembers: async (projectId) => {
+    console.log(`[API] Получение участников проекта ${projectId}`);
+    try {
+      const response = await fetch(`${API_BASE_URL}/projects/${projectId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        // Если ошибка 500 из-за отсутствия отношения tasks, возвращаем пустой массив
+        if (response.status === 500) {
+          console.warn(`Сервер вернул 500 для проекта ${projectId}, возвращаем пустой массив участников`);
+          return [];
+        }
+        const errorText = await response.text();
+        let errorMessage = "Ошибка загрузки участников проекта";
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.message || "Ошибка загрузки участников проекта");
+      }
+
+      // Возвращаем участников из данных проекта
+      return data.project?.users || [];
+    } catch (error) {
+      console.error("Ошибка загрузки участников проекта:", error);
+      // В случае любой ошибки возвращаем пустой массив, чтобы не ломать UI
+      console.warn("Возвращаем пустой массив участников из-за ошибки");
+      return [];
+    }
+  },
+
+  // Получить логи активности проекта (заглушка)
+  getActivityLogs: async (projectId) => {
+    console.log(`[API] Получение логов активности проекта ${projectId}`);
+    // TODO: реализовать реальный API
+    // Возвращаем пустой массив, так как функционал ещё не реализован
+    return [];
   },
 };

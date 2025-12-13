@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../store/user.js";
-import { ProjectService } from "../../assets/MockData/index.js";
+import { apiService } from "../../services/api.ts";
+import type { Task as ApiTask } from "../../services/api.ts";
 import styles from "../../style/Main/SimplePage.module.scss";
 
 type StatusTone = "info" | "warning" | "success";
@@ -13,6 +14,7 @@ type TaskCard = {
   status: "todo" | "in-progress" | "done";
   due?: string;
   project?: string;
+  projectId?: number;
   tone: StatusTone;
 };
 
@@ -38,47 +40,58 @@ const TasksPage: React.FC = () => {
       setIsLoading(true);
       setError("");
       try {
-        // Берём проекты, где участвует пользователь, и генерируем "личные" задачи
-        const projects = await ProjectService.getUserProjects(user.id);
-        const generated: TaskCard[] = projects.flatMap((project, idx) => {
-          const baseId = `${project.id}-${idx}`;
-          const baseTitle = project.title || "Проект";
-          const desc =
-            project.description ||
-            "Описание будет добавлено, когда владелец уточнит детали.";
+        // Загружаем реальные задачи, назначенные пользователю или созданные им
+        const apiTasks = await apiService.getTasks({ assigned_to: user.id });
+        // Преобразуем в TaskCard
+        const transformed: TaskCard[] = apiTasks.map((task: ApiTask) => {
+          // Определяем статус для отображения
+          let status: "todo" | "in-progress" | "done";
+          switch (task.status?.toLowerCase()) {
+            case "completed":
+            case "done":
+              status = "done";
+              break;
+            case "in_progress":
+            case "in-progress":
+              status = "in-progress";
+              break;
+            default:
+              status = "todo";
+          }
 
-          // Простая генерация трёх типов задач на проект
-          return [
-            {
-              id: `${baseId}-todo`,
-              title: `Подготовить задачи по ${baseTitle}`,
-              description: `Сформировать список задач и уточнить приоритеты. ${desc}`,
-              status: "todo",
-              due: "Завтра",
-              project: baseTitle,
-              tone: "info",
-            },
-            {
-              id: `${baseId}-in-progress`,
-              title: `Основная работа по ${baseTitle}`,
-              description: "Активно выполняется: синхронизация с командой и ревью.",
-              status: "in-progress",
-              due: "Через 3 дня",
-              project: baseTitle,
-              tone: "warning",
-            },
-            {
-              id: `${baseId}-done`,
-              title: `Недавний результат в ${baseTitle}`,
-              description: "Задача закрыта и ждёт релиза.",
-              status: "done",
-              project: baseTitle,
-              tone: "success",
-            },
-          ];
+          // Определяем tone на основе статуса
+          let tone: StatusTone = "info";
+          if (status === "done") tone = "success";
+          else if (status === "in-progress") tone = "warning";
+
+          // Форматируем дату выполнения
+          let due: string | undefined;
+          if (task.due_date) {
+            const dueDate = new Date(task.due_date);
+            const today = new Date();
+            const diffDays = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+            if (diffDays === 0) due = "Сегодня";
+            else if (diffDays === 1) due = "Завтра";
+            else if (diffDays > 1 && diffDays <= 7) due = `Через ${diffDays} дня`;
+            else due = dueDate.toLocaleDateString("ru-RU", { day: "numeric", month: "short" });
+          }
+
+          // Название проекта (пока неизвестно, нужно загрузить отдельно или из задачи)
+          const project = task.project_id ? `Проект ${task.project_id}` : undefined;
+
+          return {
+            id: task.id.toString(),
+            title: task.title,
+            description: task.description || "Описание отсутствует",
+            status,
+            due,
+            project,
+            projectId: task.project_id,
+            tone,
+          };
         });
 
-        setTasks(generated);
+        setTasks(transformed);
       } catch (e) {
         console.error(e);
         setError("Не удалось загрузить ваши задания");
