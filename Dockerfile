@@ -1,3 +1,7 @@
+# ===============================
+# Laravel Backend (PHP 8.2 + FPM)
+# ===============================
+
 FROM php:8.2-fpm
 
 # === Системные зависимости
@@ -8,25 +12,37 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
- && docker-php-ext-install pdo_mysql zip gd
+ && docker-php-ext-install \
+    pdo_mysql \
+    zip \
+    gd \
+ && rm -rf /var/lib/apt/lists/*
 
 # === Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# === Рабочая директория = Laravel
+# === Рабочая директория Laravel
 WORKDIR /var/www/backend
 
-# === Сначала только composer-файлы (кеш)
+# === Копируем ТОЛЬКО composer-файлы (кеш Docker)
 COPY composer.json composer.lock ./
 
-RUN composer install --no-dev --optimize-autoloader
+# === Установка зависимостей Laravel
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction \
+    --no-progress
 
-# === Потом весь проект
+# === Копируем ВЕСЬ проект
 COPY . .
 
-# === Права (обязательно для Laravel)
+# === Права для Laravel
 RUN chown -R www-data:www-data /var/www/backend \
  && chmod -R 775 storage bootstrap/cache
 
+# === Открываем порт php-fpm
 EXPOSE 9000
+
+# === Запуск php-fpm
 CMD ["php-fpm"]
