@@ -58,6 +58,7 @@ function LeftPanel({
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [isProjectsListCollapsed, setIsProjectsListCollapsed] = useState(false);
   const [isAIPanelCollapsed, setIsAIPanelCollapsed] = useState(true); // По умолчанию свернуто
+  const [isPanelCollapsed, setIsPanelCollapsed] = useState(false); // Состояние свертывания всей панели
 
   // Список доступных тем (берём из src/assets/LeftPanel/themes.ts)
   const themes = [...themeNames];
@@ -246,6 +247,10 @@ function LeftPanel({
     setIsAIPanelCollapsed(!isAIPanelCollapsed);
   };
 
+  const togglePanelCollapsed = () => {
+    setIsPanelCollapsed(!isPanelCollapsed);
+  };
+
   const toggleTheme = () => {
     setIsThemeMenuOpen((s) => !s);
   };
@@ -321,7 +326,7 @@ function LeftPanel({
 
   return (
     <>
-      <div className={style.main}>
+      <div className={`${style.main} ${isPanelCollapsed ? style.collapsed : ""}`}>
         <div className={style.header}>
           <div className={style.naming}>
             <div className={style.svgbox}>
@@ -375,6 +380,23 @@ function LeftPanel({
             </svg>
             <input type="text" placeholder="Поиск" />
           </div>
+          <button
+            className={style.collapseToggleButton}
+            onClick={togglePanelCollapsed}
+            title={isPanelCollapsed ? "Развернуть панель" : "Свернуть панель"}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className={isPanelCollapsed ? style.collapsedIcon : ""}
+            >
+              <path d={isPanelCollapsed ? "M9 18l6-6-6-6" : "M15 18l-6-6 6-6"} />
+            </svg>
+          </button>
         </div>
 
         <div className={style.category}>

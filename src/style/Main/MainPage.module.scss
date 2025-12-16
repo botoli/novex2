@@ -10,7 +10,8 @@
 }
 
 .leftPanelContainer {
-  flex: 0 0 320px;
+  flex: 0 0 auto;
+  width: auto;
   height: 100%;
   overflow-y: auto;
   background-color: $bg-panel;
