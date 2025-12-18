@@ -7,6 +7,12 @@
   height: 100vh;
   overflow: hidden;
   background-color: $bg-dark;
+
+  @media (max-width: $breakpoint-xl) {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
 }
 
 .leftPanelContainer {
@@ -16,13 +22,29 @@
   overflow-y: auto;
   background-color: $bg-panel;
   border-right: 1px solid $border-light;
+  z-index: $z-sidebar;
 
   &::-webkit-scrollbar {
     width: 0;
   }
 
-  @media (max-width: 1024px) {
-    display: none;
+  @media (max-width: $breakpoint-xl) {
+    width: 240px;
+    min-width: 240px;
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    width: 200px;
+    min-width: 200px;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    width: 100%;
+    min-width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid $border-light;
+    flex: none;
   }
 }
 
@@ -33,6 +55,10 @@
   min-width: 0;
   background-color: $bg-content;
   position: relative;
+
+  @media (max-width: $breakpoint-xl) {
+    margin-top: 0;
+  }
 }
 
 .contentColumn {
@@ -55,6 +81,10 @@
   &::-webkit-scrollbar-thumb {
     background: rgba(102, 126, 234, 0.3);
     border-radius: 4px;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding: 0 8px;
   }
 }
 

@@ -68,15 +68,15 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
   margin: 0 auto;
   box-sizing: border-box;
 
-  @media (max-width: 1200px) {
+  @media (max-width: $breakpoint-xxl) {
     padding: 32px 30px;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: $breakpoint-md) {
     padding: 20px 16px;
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: $breakpoint-xs) {
     padding: 16px 12px;
   }
 }
@@ -92,11 +92,11 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
   width: 100%;
   box-sizing: border-box;
 
-  @media (max-width: 768px) {
+  @media (max-width: $breakpoint-md) {
     padding: 20px;
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: $breakpoint-xs) {
     padding: 16px;
   }
 }
@@ -110,7 +110,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
   max-width: 500px;
   margin-bottom: 20px;
 
-  @media (max-width: 768px) {
+  @media (max-width: $breakpoint-md) {
     margin-bottom: 16px;
   }
 
@@ -149,12 +149,12 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
       box-shadow: 0 0 0 3px color-mix(in srgb, $primary-purple, transparent 90%);
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: $breakpoint-md) {
       height: 44px;
       font-size: $font-size-sm;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: $breakpoint-xs) {
       height: 42px;
       padding: 0 16px 0 44px;
     }
@@ -168,7 +168,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
   align-items: center;
   width: 100%;
 
-  @media (max-width: 768px) {
+  @media (max-width: $breakpoint-md) {
     gap: 8px;
   }
 
@@ -178,7 +178,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
     font-weight: 500;
     white-space: nowrap;
 
-    @media (max-width: 480px) {
+    @media (max-width: $breakpoint-xs) {
       font-size: $font-size-sm;
     }
   }
@@ -188,7 +188,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
     flex-wrap: wrap;
     gap: 8px;
 
-    @media (max-width: 480px) {
+    @media (max-width: $breakpoint-xs) {
       gap: 6px;
     }
 
@@ -216,12 +216,12 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
         color: $primary-purple;
       }
 
-      @media (max-width: 768px) {
+      @media (max-width: $breakpoint-md) {
         padding: 6px 12px;
         font-size: $font-size-xs;
       }
 
-      @media (max-width: 480px) {
+      @media (max-width: $breakpoint-xs) {
         padding: 5px 10px;
       }
     }
@@ -233,7 +233,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
   margin-bottom: 32px;
   width: 100%;
 
-  @media (max-width: 768px) {
+  @media (max-width: $breakpoint-md) {
     margin-bottom: 24px;
   }
 
@@ -243,7 +243,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
     align-items: center;
     margin-bottom: 24px;
 
-    @media (max-width: 768px) {
+    @media (max-width: $breakpoint-md) {
       flex-direction: column;
       align-items: flex-start;
       gap: 16px;
@@ -256,15 +256,15 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
       font-weight: 600;
       color: $text-main;
 
-      @media (max-width: 1200px) {
+      @media (max-width: $breakpoint-xxl) {
         font-size: $font-size-3xl;
       }
 
-      @media (max-width: 768px) {
+      @media (max-width: $breakpoint-md) {
         font-size: 28px;
       }
 
-      @media (max-width: 480px) {
+      @media (max-width: $breakpoint-xs) {
         font-size: 24px;
       }
     }
@@ -330,11 +330,11 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
     gap: 16px;
     margin-bottom: 20px;
 
-    @media (max-width: 768px) {
+    @media (max-width: $breakpoint-md) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: $breakpoint-xs) {
       grid-template-columns: 1fr;
     }
 
@@ -367,16 +367,16 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
     line-height: 1.6;
     color: $text-secondary;
 
-    @media (max-width: 1200px) {
+    @media (max-width: $breakpoint-xxl) {
       font-size: $font-size-lg;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: $breakpoint-md) {
       font-size: $font-size-md;
       margin-top: 4px;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: $breakpoint-xs) {
       font-size: $font-size-sm;
     }
   }
@@ -390,32 +390,32 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
   width: 100%;
   box-sizing: border-box;
 
-  @media (max-width: 1400px) {
+  @media (max-width: $breakpoint-xxxl) {
     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: 24px;
   }
 
-  @media (max-width: 1200px) {
+  @media (max-width: $breakpoint-xxl) {
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 20px;
   }
 
-  @media (max-width: 992px) {
+  @media (max-width: $breakpoint-lg) {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 18px;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: $breakpoint-md) {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: $breakpoint-sm) {
     grid-template-columns: 1fr;
     gap: 16px;
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: $breakpoint-xs) {
     gap: 12px;
   }
 }
@@ -443,18 +443,18 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
     border-color: $border-hover;
   }
 
-  @media (max-width: 1200px) {
+  @media (max-width: $breakpoint-xxl) {
     padding: 20px;
     gap: 16px;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: $breakpoint-md) {
     padding: 18px;
     gap: 14px;
     min-height: 260px;
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: $breakpoint-xs) {
     padding: 16px;
     gap: 12px;
     min-height: 240px;
@@ -468,11 +468,11 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
     gap: 16px;
     width: 100%;
 
-    @media (max-width: 768px) {
+    @media (max-width: $breakpoint-md) {
       gap: 12px;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: $breakpoint-xs) {
       flex-direction: column;
       gap: 10px;
     }
@@ -503,11 +503,11 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
           -webkit-box-orient: vertical;
           min-height: 2.6em;
 
-          @media (max-width: 1200px) {
+          @media (max-width: $breakpoint-xxl) {
             font-size: $font-size-lg;
           }
-
-          @media (max-width: 768px) {
+    
+          @media (max-width: $breakpoint-md) {
             font-size: $font-size-md;
             min-height: 2.4em;
             -webkit-line-clamp: 2;
@@ -528,7 +528,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
             white-space: nowrap;
             display: inline-block;
 
-            @media (max-width: 768px) {
+            @media (max-width: $breakpoint-md) {
               padding: 3px 8px;
               font-size: 10px;
             }
@@ -542,7 +542,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
             white-space: nowrap;
             display: inline-block;
 
-            @media (max-width: 768px) {
+            @media (max-width: $breakpoint-md) {
               padding: 3px 8px;
               font-size: 10px;
             }
@@ -577,7 +577,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
       gap: 8px;
       flex-shrink: 0;
 
-      @media (max-width: 480px) {
+      @media (max-width: $breakpoint-xs) {
         flex-direction: row;
         width: 100%;
         justify-content: flex-start;
@@ -592,7 +592,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
         color: $text-secondary;
         font-size: $font-size-sm;
 
-        @media (max-width: 480px) {
+        @media (max-width: $breakpoint-xs) {
           justify-content: flex-start;
         }
 
@@ -601,14 +601,14 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
           width: 14px;
           height: 14px;
 
-          @media (max-width: 768px) {
+          @media (max-width: $breakpoint-md) {
             width: 12px;
             height: 12px;
           }
         }
 
         span {
-          @media (max-width: 768px) {
+          @media (max-width: $breakpoint-md) {
             font-size: $font-size-xs;
           }
         }
@@ -632,12 +632,12 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
       overflow: hidden;
       width: 100%;
 
-      @media (max-width: 1200px) {
+      @media (max-width: $breakpoint-xxl) {
         font-size: $font-size-sm;
         -webkit-line-clamp: 2;
       }
 
-      @media (max-width: 768px) {
+      @media (max-width: $breakpoint-md) {
         -webkit-line-clamp: 2;
         min-height: 2.8em;
       }
@@ -654,13 +654,13 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
     border-radius: $border-radius-md;
     border: 1px solid rgba(255, 255, 255, 0.05);
 
-    @media (max-width: 768px) {
+    @media (max-width: $breakpoint-md) {
       grid-template-columns: repeat(2, 1fr);
       gap: 8px;
       padding: 10px;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: $breakpoint-xs) {
       grid-template-columns: 1fr;
     }
 
@@ -774,7 +774,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
       color: $text-secondary;
       width: 100%;
 
-      @media (max-width: 768px) {
+      @media (max-width: $breakpoint-md) {
         font-size: $font-size-xs;
       }
     }
@@ -807,7 +807,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
     margin-top: 8px;
     width: 100%;
 
-    @media (max-width: 768px) {
+    @media (max-width: $breakpoint-md) {
       padding-top: 12px;
       flex-direction: column;
       align-items: flex-start;
@@ -827,7 +827,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
         color: rgba(255, 255, 255, 0.5);
         font-size: $font-size-xs;
 
-        @media (max-width: 768px) {
+        @media (max-width: $breakpoint-md) {
           font-size: 11px;
         }
 
@@ -836,7 +836,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
           width: 12px;
           height: 12px;
 
-          @media (max-width: 768px) {
+          @media (max-width: $breakpoint-md) {
             width: 10px;
             height: 10px;
           }
@@ -897,7 +897,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
           color: color-mix(in srgb, $primary-purple, white 10%);
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: $breakpoint-md) {
           padding: 6px 14px;
           font-size: $font-size-xs;
         }
@@ -916,7 +916,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
 }
 
 /* --- Адаптивность для маленьких экранов --- */
-@media (max-width: 480px) {
+@media (max-width: $breakpoint-xs) {
   .cardFooter {
     .footerRight {
       width: 100%;
@@ -973,7 +973,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
     font-size: $font-size-2xl;
     margin-bottom: 8px;
 
-    @media (max-width: 768px) {
+    @media (max-width: $breakpoint-md) {
       font-size: $font-size-xl;
     }
   }
@@ -982,7 +982,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
     color: $text-secondary;
     font-size: $font-size-lg;
 
-    @media (max-width: 768px) {
+    @media (max-width: $breakpoint-md) {
       font-size: $font-size-md;
     }
   }
@@ -1061,6 +1061,7 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow-x: hidden;
 }
 
 .formGroup {
@@ -1161,6 +1162,8 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
   max-width: 500px;
   max-height: 90vh;
   overflow: hidden;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .modalHeader {

@@ -259,7 +259,7 @@ function ProjectDetailPage({
       });
       setIsTaskModalOpen(false);
       // Увеличиваем ключ обновления для перезагрузки Dashboard
-      setTaskRefreshKey(prev => prev + 1);
+      setTaskRefreshKey((prev) => prev + 1);
       // Можно показать уведомление или обновить список задач
       // Например, перезагрузить Dashboard
     } catch (error) {
@@ -325,8 +325,8 @@ function ProjectDetailPage({
       const formattedMembers = members.map((member: any) => ({
         id: member.id,
         name: member.name,
-        role: member.role || 'member',
-        status: 'online' // TODO: получить реальный статус из API
+        role: member.role || "member",
+        status: "online", // TODO: получить реальный статус из API
       }));
       setProjectMembers(formattedMembers);
     } catch (error) {
@@ -390,17 +390,20 @@ function ProjectDetailPage({
   };
 
   const handleDeleteProject = async (projectId: number) => {
-    console.log("handleDeleteProject вызван в ProjectDetailPage для проекта", projectId);
-    
+    console.log(
+      "handleDeleteProject вызван в ProjectDetailPage для проекта",
+      projectId
+    );
+
     // Временное решение для отладки: всегда удаляем без подтверждения
     // TODO: вернуть confirm после отладки
     const shouldDelete = true; // confirm("Вы уверены, что хотите удалить проект? Это действие нельзя отменить.");
-    
+
     if (!shouldDelete) {
       console.log("Удаление отменено пользователем");
       return;
     }
-    
+
     try {
       console.log("Удаление проекта", projectId);
       if (!user?.id) {
@@ -420,11 +423,17 @@ function ProjectDetailPage({
           onBack();
         }
       } else {
-        alert(`Ошибка удаления проекта: ${result.message || "Неизвестная ошибка"}`);
+        alert(
+          `Ошибка удаления проекта: ${result.message || "Неизвестная ошибка"}`
+        );
       }
     } catch (error) {
       console.error("Ошибка удаления проекта:", error);
-      alert(`Не удалось удалить проект: ${error instanceof Error ? error.message : "Неизвестная ошибка"}`);
+      alert(
+        `Не удалось удалить проект: ${
+          error instanceof Error ? error.message : "Неизвестная ошибка"
+        }`
+      );
     }
   };
 
@@ -496,7 +505,7 @@ function ProjectDetailPage({
 
             <div className={style.headerRight}>
               <div className={style.projectMeta}>
-                <div className={style.metaItem}>
+                <div className={style.metaItem} title="Дата создания проекта">
                   <svg
                     width="16"
                     height="16"
@@ -515,7 +524,10 @@ function ProjectDetailPage({
                   <span>Создан {formatDate(project.created_at)}</span>
                 </div>
                 {project.updated_at && (
-                  <div className={style.metaItem}>
+                  <div
+                    className={style.metaItem}
+                    title="Дата последнего обновления проекта"
+                  >
                     <svg
                       width="16"
                       height="16"
@@ -531,7 +543,10 @@ function ProjectDetailPage({
                   </div>
                 )}
                 {project.deadline && (
-                  <div className={style.metaItem}>
+                  <div
+                    className={style.metaItem}
+                    title="Крайний срок выполнения проекта"
+                  >
                     <svg
                       width="16"
                       height="16"
@@ -546,7 +561,7 @@ function ProjectDetailPage({
                   </div>
                 )}
                 {project.owner_name && (
-                  <div className={style.metaItem}>
+                  <div className={style.metaItem} title="Владелец проекта">
                     <svg
                       width="16"
                       height="16"
@@ -562,7 +577,10 @@ function ProjectDetailPage({
                   </div>
                 )}
                 {project.priority && (
-                  <div className={style.metaItem}>
+                  <div
+                    className={style.metaItem}
+                    title="Приоритет проекта (высокий, средний, низкий)"
+                  >
                     <svg
                       width="16"
                       height="16"
@@ -592,6 +610,7 @@ function ProjectDetailPage({
                   data-action="add-task"
                   title="Добавить задачу"
                 >
+                  <p>Добавить задачу</p>
                   <img
                     src={taskIcon}
                     alt="Добавить задачу"
@@ -599,12 +618,13 @@ function ProjectDetailPage({
                     height="20"
                   />
                 </button>
-
                 <button
                   className={style.actionButton}
                   onClick={handleAIPage}
                   data-action="ai"
+                  title="ИИ-ассистент: получить рекомендации и аналитику"
                 >
+                  <p>ИИ-ассистент</p>
                   <svg
                     width="20"
                     height="20"
@@ -616,12 +636,13 @@ function ProjectDetailPage({
                     <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </button>
-
                 <button
                   className={style.actionButton}
                   onClick={handleTeamChat}
                   data-action="team-chat"
+                  title="Командный чат: обсуждение проекта с участниками"
                 >
+                  <p>Командный чат</p>
                   <img
                     src={chatIcon}
                     alt="Командный чат"
@@ -629,12 +650,13 @@ function ProjectDetailPage({
                     height="20"
                   />
                 </button>
-
                 <button
                   className={style.actionButton}
                   onClick={handleSchedule}
                   data-action="schedule"
+                  title="Расписание: управление сроками и событиями"
                 >
+                  <p>Расписание</p>
                   <img
                     src={scheduleIcon}
                     alt="Расписание"
@@ -642,12 +664,13 @@ function ProjectDetailPage({
                     height="20"
                   />
                 </button>
-
                 <button
                   className={style.actionButton}
                   onClick={handleQuickNote}
                   data-action="quick-note"
+                  title="Быстрая заметка: записать идеи или напоминания"
                 >
+                  <p>Быстрая заметка</p>
                   <img
                     src={noteIcon}
                     alt="Быстрая заметка"
@@ -655,7 +678,6 @@ function ProjectDetailPage({
                     height="20"
                   />
                 </button>
-
                 {/* Кнопки редактирования и удаления проекта */}
                 <button
                   className={style.actionButton}
@@ -663,6 +685,7 @@ function ProjectDetailPage({
                   data-action="edit-project"
                   title="Редактировать проект"
                 >
+                  <p>Редактировать проект</p>
                   <svg
                     width="20"
                     height="20"
@@ -675,13 +698,13 @@ function ProjectDetailPage({
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                   </svg>
                 </button>
-
                 <button
                   className={style.actionButton}
                   onClick={() => handleDeleteProject(project.id)}
                   data-action="delete-project"
                   title="Удалить проект"
                 >
+                  <p>Удалить проект</p>
                   <svg
                     width="20"
                     height="20"
@@ -717,7 +740,10 @@ function ProjectDetailPage({
           {/* Статистика проекта */}
           <div className={style.projectStats}>
             {project.progress !== undefined && (
-              <div className={style.statCard}>
+              <div
+                className={style.statCard}
+                title="Общий прогресс выполнения проекта в процентах"
+              >
                 <div className={style.statIcon}>
                   <svg
                     width="20"
@@ -740,7 +766,10 @@ function ProjectDetailPage({
               </div>
             )}
             {project.tasks !== undefined && (
-              <div className={style.statCard}>
+              <div
+                className={style.statCard}
+                title="Количество задач в проекте"
+              >
                 <div className={style.statIcon}>
                   <svg
                     width="20"
@@ -763,7 +792,10 @@ function ProjectDetailPage({
               </div>
             )}
             {project.members !== undefined && (
-              <div className={style.statCard}>
+              <div
+                className={style.statCard}
+                title="Количество участников проекта"
+              >
                 <div className={style.statIcon}>
                   <svg
                     width="20"
@@ -786,7 +818,7 @@ function ProjectDetailPage({
               </div>
             )}
             {project.budget !== undefined && (
-              <div className={style.statCard}>
+              <div className={style.statCard} title="Бюджет проекта в рублях">
                 <div className={style.statIcon}>
                   <svg
                     width="20"

@@ -13,6 +13,12 @@
   border-right: 1px solid $border-color;
   transition: width $animation-duration-normal $animation-timing-ease,
     min-width $animation-duration-normal $animation-timing-ease;
+  overflow-x: hidden;
+  box-sizing: border-box;
+
+  * {
+    box-sizing: border-box;
+  }
 
   &.collapsed {
     width: 80px;
@@ -211,6 +217,7 @@
   flex: 1;
   padding: 20px;
   overflow-y: auto;
+  overflow-x: hidden;
 
   &::-webkit-scrollbar {
     width: 4px;
@@ -714,6 +721,7 @@
   align-items: center;
   justify-content: center;
   z-index: $z-modal;
+  overflow: hidden;
 }
 
 .modal {
@@ -724,6 +732,8 @@
   max-width: 500px;
   max-height: 90vh;
   overflow: hidden;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .modalHeader {
@@ -810,92 +820,6 @@
   }
 }
 
-.projectsSection {
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid $border-light;
-
-  .projectsHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-
-    label {
-      font-size: $font-size-md;
-      color: $text-main;
-      font-weight: 500;
-    }
-
-    .viewAllProjectsBtn {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: transparent;
-      border: none;
-      color: $primary-color;
-      font-size: $font-size-sm;
-      cursor: pointer;
-      padding: 6px 8px;
-      border-radius: $border-radius-md;
-      transition: background-color 0.2s ease;
-
-      &:hover {
-        background: color-mix(in srgb, $primary-color, transparent 90%);
-      }
-
-      svg {
-        width: 12px;
-        height: 12px;
-      }
-    }
-  }
-
-  .projectsList {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .projectItem {
-    padding: 12px;
-    background: rgba(102, 126, 234, 0.08);
-    border: 1px solid $border-light;
-    border-radius: $border-radius-lg;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-
-    &:hover {
-      background: rgba(102, 126, 234, 0.12);
-    }
-
-    .projectItemHeader {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 6px;
-
-      .projectItemTitle {
-        font-size: $font-size-sm;
-        color: $text-main;
-        font-weight: 500;
-      }
-
-      .projectItemDate {
-        font-size: $font-size-xs;
-        color: $text-muted;
-      }
-    }
-
-    .projectItemDescription {
-      font-size: $font-size-sm;
-      color: $text-secondary;
-      line-height: 1.4;
-    }
-  }
-}
-
 .modalActions {
   display: flex;
   justify-content: flex-end;
@@ -954,13 +878,37 @@
 }
 
 // Responsive
-@media (max-width: 768px) {
+@media (max-width: $breakpoint-md) {
   .main {
     width: 100%;
     min-width: 100%;
     height: auto;
     border-right: none;
     border-bottom: 1px solid $border-color;
+  }
+
+  .header {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .naming {
+    margin-bottom: 12px;
+    .svgbox {
+      width: 40px;
+      height: 40px;
+      svg {
+        width: 40px;
+        height: 40px;
+      }
+    }
+    .namingh1 {
+      font-size: $font-size-lg;
+    }
+  }
+
+  .searchcont input {
+    width: 100%;
   }
 
   .category {
@@ -971,22 +919,60 @@
 
     .categoryItem {
       flex: 1;
-      min-width: 120px;
+      min-width: 100px;
       justify-content: center;
       text-align: center;
-      padding: 12px;
+      padding: 10px;
+      margin-bottom: 4px;
 
       p {
         display: none;
+      }
+
+      svg {
+        width: 18px;
+        height: 18px;
       }
     }
 
     .projectsCategoryContainer {
       width: 100%;
+      .projectsListTitle span {
+        font-size: $font-size-xs;
+      }
+      .projectListItem {
+        padding: 8px 10px;
+        .projectIcon {
+          width: 28px;
+          height: 28px;
+        }
+        .projectTitle {
+          font-size: $font-size-xs;
+        }
+      }
     }
   }
 
   .suggestions {
     display: none;
+  }
+}
+
+@media (max-width: $breakpoint-xs) {
+  .category {
+    .categoryItem {
+      min-width: 80px;
+      padding: 8px;
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
+  .collapseToggleButton {
+    top: 12px;
+    right: 12px;
+    padding: 4px;
   }
 }

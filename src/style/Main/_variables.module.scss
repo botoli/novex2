@@ -87,6 +87,15 @@ $font-size-2xl: 18px;
 $font-size-3xl: 24px;
 $font-size-4xl: 36px;
 
+// Breakpoints для адаптивного дизайна
+$breakpoint-xs: 480px;
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1024px;
+$breakpoint-xxl: 1200px;
+$breakpoint-xxxl: 1400px;
+
 // Новые переменные для анимаций
 $animation-duration-fast: 0.2s;
 $animation-duration-normal: 0.3s;
