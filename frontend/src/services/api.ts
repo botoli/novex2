@@ -117,20 +117,20 @@ class ApiService {
     description: string;
     owner_id: number;
   }) {
-    return this.request<Project>("/api/projects/create", {
+    return this.request<Project>("/projects/create", {
       method: "POST",
       body: JSON.stringify(projectData),
     });
   }
 
   async getUserProjects(userId: number) {
-    return this.request<Project[]>(`/api/projects?user_id=${userId}`, {
+    return this.request<Project[]>(`/projects?user_id=${userId}`, {
       method: "GET",
     });
   }
 
   async getProjectById(projectId: number) {
-    return this.request<Project>(`/api/projects/${projectId}`, {
+    return this.request<Project>(`/projects/${projectId}`, {
       method: "GET",
     });
   }
@@ -154,7 +154,7 @@ class ApiService {
     if (params?.sort_order) query.append('sort_order', params.sort_order);
     if (params?.per_page) query.append('per_page', params.per_page.toString());
     const queryString = query.toString();
-    const endpoint = `/api/tasks${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/tasks${queryString ? `?${queryString}` : ''}`;
     const result = await this.request<any>(endpoint, {
       method: "GET",
     });
@@ -172,7 +172,7 @@ class ApiService {
   }
 
   async getTaskById(id: number) {
-    return this.request<Task>(`/api/tasks/${id}`, {
+    return this.request<Task>(`/tasks/${id}`, {
       method: "GET",
     });
   }
@@ -188,27 +188,27 @@ class ApiService {
     tags?: string[];
     created_by: number;
   }) {
-    return this.request<Task>('/api/tasks', {
+    return this.request<Task>('/tasks', {
       method: "POST",
       body: JSON.stringify(taskData),
     });
   }
 
   async updateTask(id: number, taskData: Partial<Task>) {
-    return this.request<Task>(`/api/tasks/${id}`, {
+    return this.request<Task>(`/tasks/${id}`, {
       method: "PUT",
       body: JSON.stringify(taskData),
     });
   }
 
   async deleteTask(id: number) {
-    return this.request(`/api/tasks/${id}`, {
+    return this.request(`/tasks/${id}`, {
       method: "DELETE",
     });
   }
 
   async completeTask(id: number) {
-    return this.request<Task>(`/api/tasks/${id}/complete`, {
+    return this.request<Task>(`/tasks/${id}/complete`, {
       method: "POST",
     });
   }
