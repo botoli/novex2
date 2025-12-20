@@ -78,7 +78,7 @@ const Hero: React.FC<HeroProps> = ({
   const fetchUserProjects = async (userId: number) => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/projects?user_id=${userId}`,
+        `${API_BASE_URL}/projects?user_id=${userId}`,
         {
           method: "GET",
           headers: {
