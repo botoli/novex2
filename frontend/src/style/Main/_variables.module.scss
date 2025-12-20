@@ -1,0 +1,572 @@
+// _variables.module.scss (обновленная цветовая палитра - менее серая, но темная)
+// Фоны - более теплые темные оттенки с легким синим/фиолетовым оттенком
+$bg-dark: var(--bg-primary, #000000); // Черный
+$bg-panel: var(--bg-secondary, #222222); // Темный серый
+$bg-card: var(--bg-tertiary, #333333); // Темный серый
+$bg-content: var(--bg-primary, #111111); // Темный серый
+$bg-sidebar: var(--bg-secondary, #292929); // Темный серый
+
+// Бордеры - более заметные, но не яркие
+$border-color: var(
+  --border-primary,
+  rgba(127, 255, 212, 0.25)
+); // "Aquamarine" с прозрачностью
+$border-light: var(
+  --border-secondary,
+  rgba(127, 255, 212, 0.08)
+); // "Aquamarine" с прозрачностью
+.no-select {
+  -webkit-user-select: none; /* Chrome/Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+  user-select: none; /* Стандартный синтаксис */
+}
+// Текст - более контрастный
+$text-main: var(--text-main, #ffffff); // Белый
+$text-secondary: var(
+  --text-secondary,
+  rgba(255, 255, 255, 0.75)
+); // Белый с прозрачностью
+$text-muted: var(
+  --text-muted,
+  rgba(176, 224, 230, 0.55)
+); // "PowderBlue" с прозрачностью
+$text-disabled: var(
+  --text-disabled,
+  rgba(176, 224, 230, 0.4)
+); // "PowderBlue" с прозрачностью
+
+// Основные цвета - более насыщенные
+$primary-color: var(--accent-primary, #66cdaa); // MediumAquamarine
+$primary-purple: var(--accent-secondary, #8fbc8f); // DarkSeaGreen
+$primary-light: var(--accent-primary, #9acd32); // YellowGreen
+$accent-blue: var(--accent-secondary, #87ceeb); // SkyBlue
+$accent-purple: var(--accent-secondary, #ee82ee); // Violet
+$accent-green: var(--button-bg, #3cb371); // MediumSeaGreen
+$accent-green-light: var(
+  --button-hover,
+  #98fb98
+); // Светлый оттенок "PaleGreen"
+$accent-red: #cd5c5c; // IndianRed
+$accent-orange: #fa8072; // Salmon
+$accent-pink: #ff69b4; // HotPink
+
+$glass-bg: rgba(102, 126, 234, 0.1);
+$glass-border: rgba(102, 126, 234, 0.2);
+
+$shadow-card: 0 20px 60px rgba(0, 0, 0, 0.5);
+$shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.4);
+$shadow-sidebar: 0 8px 32px rgba(0, 0, 0, 0.3); // ← ДОБАВЛЕНО: тень для сайдбара
+$shadow-glow: 0 0 20px
+  color-mix(in srgb, var(--accent-primary, #66cdaa), transparent 70%); // ← ДОБАВЛЕНО: свечение
+
+$z-modal: 1000;
+$z-dropdown: 100;
+$z-header: 100;
+$z-sidebar: 50; // ← ДОБАВЛЕНО: z-index для сайдбара
+
+$transition-default: all 0.2s ease;
+$transition-smooth: all 0.3s ease;
+$transition-bounce: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); // ← ДОБАВЛЕНО: bounce анимация
+$transition-slide: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); // ← ДОБАВЛЕНО: slide анимация
+
+$border-radius-sm: 4px;
+$border-radius-md: 6px;
+$border-radius-lg: 8px;
+$border-radius-xl: 10px;
+$border-radius-2xl: 14px;
+$border-radius-3xl: 16px;
+$border-radius-full: 50%; // ← ДОБАВЛЕНО: полная округлость
+
+$font-size-xs: 11px;
+$font-size-sm: 12px;
+$font-size-md: 13px;
+$font-size-lg: 14px;
+$font-size-xl: 15px;
+$font-size-2xl: 18px;
+$font-size-3xl: 24px;
+$font-size-4xl: 36px;
+
+// Breakpoints для адаптивного дизайна
+$breakpoint-xs: 480px;
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1024px;
+$breakpoint-xxl: 1200px;
+$breakpoint-xxxl: 1400px;
+
+// Новые переменные для анимаций
+$animation-duration-fast: 0.2s;
+$animation-duration-normal: 0.3s;
+$animation-duration-slow: 0.4s;
+$animation-duration-slower: 0.5s;
+
+$animation-timing-ease: ease;
+$animation-timing-ease-out: ease-out;
+$animation-timing-ease-in-out: ease-in-out;
+$animation-timing-bounce: cubic-bezier(0.4, 0, 0.2, 1);
+
+// Новые переменные для состояний
+$state-hover-bg: rgba(102, 126, 234, 0.2);
+$state-active-bg: rgba(102, 126, 234, 0.3);
+$state-focus-ring: 0 0 0 2px rgba(102, 126, 234, 0.3);
+
+// Новые переменные для компонентов
+$input-bg: var(--input-bg, rgba(102, 126, 234, 0.15));
+$input-border: var(--border-primary, rgba(102, 126, 234, 0.3));
+$input-focus-bg: var(--bg-tertiary, rgba(102, 126, 234, 0.25));
+
+$button-primary-bg: var(--button-bg, rgba(102, 126, 234, 0.3));
+$button-primary-border: var(--border-primary, rgba(102, 126, 234, 0.5));
+$button-primary-hover-bg: var(--button-hover, rgba(102, 126, 234, 0.4));
+$button-primary-hover-border: rgba(102, 126, 234, 0.6);
+
+$button-secondary-bg: rgba(102, 126, 234, 0.15);
+$button-secondary-border: rgba(102, 126, 234, 0.3);
+$button-secondary-hover-bg: rgba(102, 126, 234, 0.25);
+$button-secondary-hover-border: rgba(102, 126, 234, 0.4);
+
+// Новые переменные для стекла (glass morphism)
+$glass-bg-light: rgba(102, 126, 234, 0.15);
+$glass-bg-medium: rgba(102, 126, 234, 0.25);
+$glass-bg-heavy: rgba(102, 126, 234, 0.35);
+$glass-blur: blur(10px);
+$glass-blur-heavy: blur(20px);
+
+// Theme classes generated from src/assets/LeftPanel/themes.ts
+// These classes set runtime CSS custom properties (--bg-primary, --accent-primary, etc.)
+// Do not change existing $-variable names above — these classes are additive and used for runtime theming.
+
+:global {
+  .theme-dark-plus {
+    transition: all 0.3s ease;
+    --bg-primary: #1e1e1e;
+    --bg-secondary: #252526;
+    --bg-tertiary: #2d2d30;
+    --accent-primary: #007acc;
+    --accent-secondary: #3794ff;
+    --border-primary: #3c3c3c;
+    --border-secondary: #454545;
+    --button-bg: #0e639c;
+    --button-hover: #1177bb;
+    --input-bg: #3c3c3c;
+    --selection: #264f78;
+    --hover: #2a2d2e;
+    --active: #094771;
+  }
+
+  .theme-light-plus {
+    transition: all 0.3s ease;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f3f3f3;
+    --bg-tertiary: #e4e4e4;
+    --accent-primary: #007acc;
+    --accent-secondary: #106ebe;
+    --border-primary: #cccccc;
+    --border-secondary: #e0e0e0;
+    --button-bg: #007acc;
+    --button-hover: #106ebe;
+    --input-bg: #ffffff;
+    --selection: #add6ff;
+    --hover: #e8e8e8;
+    --active: #cce4ff;
+    --text-main: #000000;
+    --text-secondary: #000000bf;
+    --text-muted: #0000008c;
+    --text-disabled: #00000066;
+  }
+
+  .theme-monokai {
+    transition: all 0.3s ease;
+    --bg-primary: #272822;
+    --bg-secondary: #2f3129;
+    --bg-tertiary: #383a3e;
+    --accent-primary: #a6e22e;
+    --accent-secondary: #66d9ef;
+    --border-primary: #3e3d32;
+    --border-secondary: #57584e;
+    --button-bg: #a6e22e;
+    --button-hover: #b8ef52;
+    --input-bg: #3e3d32;
+    --selection: #49483e;
+    --hover: #3c3d37;
+    --active: #57584e;
+  }
+
+  .theme-solarized-dark {
+    transition: all 0.3s ease;
+    --bg-primary: #002b36;
+    --bg-secondary: #073642;
+    --bg-tertiary: #0d4958;
+    --accent-primary: #2aa198;
+    --accent-secondary: #268bd2;
+    --border-primary: #586e75;
+    --border-secondary: #657b83;
+    --button-bg: #2aa198;
+    --button-hover: #33c5bb;
+    --input-bg: #073642;
+    --selection: #2aa19833;
+    --hover: #073642;
+    --active: #0d4958;
+  }
+
+  .theme-dracula {
+    transition: all 0.3s ease;
+    --bg-primary: #282a36;
+    --bg-secondary: #343746;
+    --bg-tertiary: #424450;
+    --accent-primary: #ff79c6;
+    --accent-secondary: #bd93f9;
+    --border-primary: #44475a;
+    --border-secondary: #6272a4;
+    --button-bg: #ff79c6;
+    --button-hover: #ff92d0;
+    --input-bg: #343746;
+    --selection: #44475a;
+    --hover: #343746;
+    --active: #424450;
+  }
+
+  .theme-github-dark {
+    transition: all 0.3s ease;
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #21262d;
+    --accent-primary: #58a6ff;
+    --accent-secondary: #1f6feb;
+    --border-primary: #30363d;
+    --border-secondary: #484f58;
+    --button-bg: #238636;
+    --button-hover: #2ea043;
+    --input-bg: #0d1117;
+    --selection: #388bfd26;
+    --hover: #161b22;
+    --active: #1f6feb;
+  }
+
+  .theme-github-light {
+    transition: all 0.3s ease;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f6f8fa;
+    --bg-tertiary: #eaeef2;
+    --accent-primary: #0969da;
+    --accent-secondary: #1f883d;
+    --border-primary: #d0d7de;
+    --border-secondary: #d8dee4;
+    --button-bg: #2da44e;
+    --button-hover: #2c974b;
+    --input-bg: #f6f8fa;
+    --selection: #54aeff66;
+    --hover: #f3f4f6;
+    --active: #eaeef2;
+    --text-main: #24292f;
+    --text-secondary: rgba(36, 41, 47, 0.75);
+    --text-muted: rgba(36, 41, 47, 0.55);
+    --text-disabled: rgba(36, 41, 47, 0.4);
+  }
+
+  .theme-one-dark-pro {
+    transition: all 0.3s ease;
+    --bg-primary: #282c34;
+    --bg-secondary: #21252b;
+    --bg-tertiary: #3e4451;
+    --accent-primary: #61afef;
+    --accent-secondary: #56b6c2;
+    --border-primary: #3d434f;
+    --border-secondary: #5c6370;
+    --button-bg: #61afef;
+    --button-hover: #7bc1ff;
+    --input-bg: #21252b;
+    --selection: #3e4451;
+    --hover: #2c313a;
+    --active: #3e4451;
+  }
+
+  .theme-material-theme-darker {
+    transition: all 0.3s ease;
+    --bg-primary: #212121;
+    --bg-secondary: #303030;
+    --bg-tertiary: #424242;
+    --accent-primary: #80cbc4;
+    --accent-secondary: #ff9800;
+    --border-primary: #373737;
+    --border-secondary: #4a4a4a;
+    --button-bg: #80cbc4;
+    --button-hover: #a7ffeb;
+    --input-bg: #2d2d2d;
+    --selection: #37474f;
+    --hover: #2d2d2d;
+    --active: #424242;
+  }
+
+  .theme-night-owl {
+    transition: all 0.3s ease;
+    --bg-primary: #011627;
+    --bg-secondary: #0b2942;
+    --bg-tertiary: #1d3b53;
+    --accent-primary: #82aaff;
+    --accent-secondary: #c792ea;
+    --border-primary: #1d3b53;
+    --border-secondary: #265c83;
+    --button-bg: #7e57c2;
+    --button-hover: #9575cd;
+    --input-bg: #0b2942;
+    --selection: #1d3b53;
+    --hover: #0b2942;
+    --active: #1d3b53;
+  }
+
+  .theme-palenight {
+    transition: all 0.3s ease;
+    --bg-primary: #292d3e;
+    --bg-secondary: #1c1f2b;
+    --bg-tertiary: #434758;
+    --accent-primary: #82aaff;
+    --accent-secondary: #c792ea;
+    --border-primary: #434758;
+    --border-secondary: #4e5579;
+    --button-bg: #c792ea;
+    --button-hover: #d6aef2;
+    --input-bg: #1c1f2b;
+    --selection: #676e95;
+    --hover: #32364c;
+    --active: #434758;
+  }
+
+  .theme-synthwave-84 {
+    transition: all 0.3s ease;
+    --bg-primary: #262335;
+    --bg-secondary: #1b1926;
+    --bg-tertiary: #2d2a3e;
+    --accent-primary: #f92aad;
+    --accent-secondary: #ff7edb;
+    --border-primary: #3a354f;
+    --border-secondary: #4a4563;
+    --button-bg: #f92aad;
+    --button-hover: #ff5ac8;
+    --input-bg: #1b1926;
+    --selection: #f97e7233;
+    --hover: #2d2a3e;
+    --active: #3a354f;
+  }
+
+  .theme-tokyo-night {
+    transition: all 0.3s ease;
+    --bg-primary: #1a1b26;
+    --bg-secondary: #24283b;
+    --bg-tertiary: #2f334d;
+    --accent-primary: #7aa2f7;
+    --accent-secondary: #bb9af7;
+    --border-primary: #414868;
+    --border-secondary: #565f89;
+    --button-bg: #7aa2f7;
+    --button-hover: #89b4fa;
+    --input-bg: #24283b;
+    --selection: #364a82;
+    --hover: #292e42;
+    --active: #414868;
+  }
+
+  .theme-catppuccin-mocha {
+    transition: all 0.3s ease;
+    --bg-primary: #1e1e2e;
+    --bg-secondary: #181825;
+    --bg-tertiary: #313244;
+    --accent-primary: #89b4fa;
+    --accent-secondary: #cba6f7;
+    --border-primary: #45475a;
+    --border-secondary: #585b70;
+    --button-bg: #89b4fa;
+    --button-hover: #a6c8ff;
+    --input-bg: #181825;
+    --selection: #585b70;
+    --hover: #313244;
+    --active: #45475a;
+  }
+
+  .theme-ayu-dark {
+    transition: all 0.3s ease;
+    --bg-primary: #0a0e14;
+    --bg-secondary: #0f1419;
+    --bg-tertiary: #131721;
+    --accent-primary: #ffb454;
+    --accent-secondary: #39bae6;
+    --border-primary: #1c2129;
+    --border-secondary: #242b38;
+    --button-bg: #ff8f40;
+    --button-hover: #ffa454;
+    --input-bg: #0f1419;
+    --selection: #343f4c;
+    --hover: #1c2129;
+    --active: #242b38;
+  }
+
+  .theme-cobalt2 {
+    transition: all 0.3s ease;
+    --bg-primary: #193549;
+    --bg-secondary: #0d3a58;
+    --bg-tertiary: #1e4660;
+    --accent-primary: #ffc600;
+    --accent-secondary: #ff628c;
+    --border-primary: #234e6d;
+    --border-secondary: #2b5b7a;
+    --button-bg: #ffc600;
+    --button-hover: #ffd700;
+    --input-bg: #0d3a58;
+    --selection: #0050a4;
+    --hover: #1e4660;
+    --active: #234e6d;
+  }
+
+  .theme-gruvbox-dark {
+    transition: all 0.3s ease;
+    --bg-primary: #282828;
+    --bg-secondary: #3c3836;
+    --bg-tertiary: #504945;
+    --accent-primary: #fe8019;
+    --accent-secondary: #fabd2f;
+    --border-primary: #665c54;
+    --border-secondary: #7c6f64;
+    --button-bg: #fe8019;
+    --button-hover: #fe9a2e;
+    --input-bg: #3c3836;
+    --selection: #458588;
+    --hover: #3c3836;
+    --active: #504945;
+  }
+
+  .theme-horizon {
+    transition: all 0.3s ease;
+    --bg-primary: #1c1e26;
+    --bg-secondary: #232530;
+    --bg-tertiary: #2e303e;
+    --accent-primary: #e95678;
+    --accent-secondary: #25b0bc;
+    --border-primary: #2e303e;
+    --border-secondary: #3e4257;
+    --button-bg: #e95678;
+    --button-hover: #f16e8d;
+    --input-bg: #232530;
+    --selection: #e9436d33;
+    --hover: #232530;
+    --active: #2e303e;
+  }
+
+  .theme-nord {
+    transition: all 0.3s ease;
+    --bg-primary: #2e3440;
+    --bg-secondary: #3b4252;
+    --bg-tertiary: #434c5e;
+    --accent-primary: #88c0d0;
+    --accent-secondary: #81a1c1;
+    --border-primary: #4c566a;
+    --border-secondary: #5e677d;
+    --button-bg: #5e81ac;
+    --button-hover: #81a1c1;
+    --input-bg: #3b4252;
+    --selection: #4c566a;
+    --hover: #3b4252;
+    --active: #434c5e;
+  }
+
+  .theme-red {
+    transition: all 0.3s ease;
+    --bg-primary: #390000;
+    --bg-secondary: #4a0000;
+    --bg-tertiary: #5c0000;
+    --accent-primary: #ff3333;
+    --accent-secondary: #ff6666;
+    --border-primary: #660000;
+    --border-secondary: #800000;
+    --button-bg: #cc0000;
+    --button-hover: #ff0000;
+    --input-bg: #4a0000;
+    --selection: #990000;
+    --hover: #4a0000;
+    --active: #5c0000;
+  }
+
+  .theme-abyss {
+    transition: all 0.3s ease;
+    --bg-primary: #000c18;
+    --bg-secondary: #001523;
+    --bg-tertiary: #001e33;
+    --accent-primary: #0099ff;
+    --accent-secondary: #33bbff;
+    --border-primary: #003152;
+    --border-secondary: #004070;
+    --button-bg: #0066cc;
+    --button-hover: #0088ff;
+    --input-bg: #001523;
+    --selection: #004080;
+    --hover: #001523;
+    --active: #001e33;
+  }
+
+  .theme-quietlight {
+    transition: all 0.3s ease;
+    --bg-primary: #f5f5f5;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f0f0f0;
+    --accent-primary: #aa3731;
+    --accent-secondary: #4b6baf;
+    --border-primary: #e0e0e0;
+    --border-secondary: #d0d0d0;
+    --button-bg: #4b6baf;
+    --button-hover: #5c7bc0;
+    --input-bg: #ffffff;
+    --selection: #d7e5f0;
+    --hover: #f0f0f0;
+    --active: #e8e8e8;
+    --text-main: #333333;
+    --text-secondary: rgba(0, 0, 0, 0.75);
+    --text-muted: rgba(0, 0, 0, 0.55);
+    --text-disabled: rgba(0, 0, 0, 0.4);
+  }
+
+  .theme-kimbie-dark {
+    transition: all 0.3s ease;
+    --bg-primary: #221a0f;
+    --bg-secondary: #2c2418;
+    --bg-tertiary: #382d1e;
+    --accent-primary: #f39c12;
+    --accent-secondary: #d35400;
+    --border-primary: #453823;
+    --border-secondary: #56452a;
+    --button-bg: #f39c12;
+    --button-hover: #f7b731;
+    --input-bg: #2c2418;
+    --selection: #5d4c2c;
+    --hover: #2c2418;
+    --active: #382d1e;
+  }
+
+  .theme-solarized-light {
+    transition: all 0.3s ease;
+    --bg-primary: #fdf6e3;
+    --bg-secondary: #eee8d5;
+    --bg-tertiary: #ddd6c1;
+    --accent-primary: #2aa198;
+    --accent-secondary: #268bd2;
+    --border-primary: #93a1a1;
+    --border-secondary: #839496;
+    --button-bg: #2aa198;
+    --button-hover: #33c5bb;
+    --input-bg: #eee8d5;
+    --selection: #2aa19833;
+    --hover: #eee8d5;
+    --active: #ddd6c1;
+    --text-main: #586e75;
+    --text-secondary: rgba(88, 110, 117, 0.75);
+    --text-muted: rgba(88, 110, 117, 0.55);
+    --text-disabled: rgba(88, 110, 117, 0.4);
+  }
+
+  // Convenience: apply theme variables when body has the theme class
+  body[class*="theme-"] {
+    transition: all 0.3s ease;
+    background-color: var(--bg-primary);
+    color: var(--text-main);
+  }
+}

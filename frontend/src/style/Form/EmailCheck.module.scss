@@ -1,0 +1,112 @@
+
+.container {
+  width: 450px;
+  height: 500px;
+  background: #1f1d2e;
+  border-radius: 12px;
+  display: flex;
+  padding-top: 50px;
+  align-items: center;
+  flex-direction: column;
+  gap: 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(102, 126, 234, 0.25);
+  backdrop-filter: blur(10px);
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 0;
+    color: #ffffff;
+    text-align: center;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    margin: 0;
+    padding: 0 20px;
+    line-height: 1.5;
+  }
+
+  form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+
+    .codeInputs {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      width: 75%;
+
+      .codeInput {
+        width: 50px;
+        height: 60px;
+        background: rgba(102, 126, 234, 0.08);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 8px;
+        color: white;
+        font-size: 1.5rem;
+        text-align: center;
+        box-sizing: border-box;
+
+        &:focus {
+          outline: none;
+          border-color: rgba(102, 126, 234, 0.4);
+          background: rgba(102, 126, 234, 0.12);
+          box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+      }
+    }
+  }
+
+  .verifyButton {
+    width: 75%;
+    height: 52px;
+    background: rgba(102, 126, 234, 0.15);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 8px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .resendSection {
+    text-align: center;
+    margin-top: 20px;
+
+    p {
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+
+    .resendButton {
+      background: transparent;
+      border: 1px solid rgba(102, 126, 234, 0.25);
+      color: rgba(255, 255, 255, 0.8);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+
+      &:hover {
+        background: rgba(102, 126, 234, 0.08);
+        border-color: rgba(102, 126, 234, 0.3);
+      }
+    }
+  }
+}

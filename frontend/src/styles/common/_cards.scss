@@ -1,0 +1,80 @@
+// Стили для карточек
+@use './variables' as v;
+
+// Базовый миксин для карточки
+@mixin card-base {
+  background-color: v.$card-bg;
+  border: 1px solid v.$card-border;
+  border-radius: v.$border-radius-lg;
+  padding: 20px;
+  box-shadow: v.$card-shadow;
+  transition: v.$transition-smooth;
+
+  &:hover {
+    box-shadow: v.$shadow-hover;
+    transform: translateY(-2px);
+  }
+}
+
+// Миксин для карточки без ховера
+@mixin card-static {
+  @include card-base;
+  &:hover {
+    box-shadow: v.$card-shadow;
+    transform: none;
+  }
+}
+
+// Миксин для стеклянной карточки (glass morphism)
+@mixin card-glass {
+  background: rgba(102, 126, 234, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: v.$border-radius-lg;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+// Миксин для заголовка карточки
+@mixin card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid v.$card-border;
+
+  h2, h3, h4 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+  }
+}
+
+// Миксин для контента карточки
+@mixin card-content {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+}
+
+// Классы для использования
+.card {
+  @include card-base;
+}
+
+.card-static {
+  @include card-static;
+}
+
+.card-glass {
+  @include card-glass;
+}
+
+.card-header {
+  @include card-header;
+}
+
+.card-content {
+  @include card-content;
+}

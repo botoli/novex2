@@ -1,0 +1,110 @@
+// Миксины и стили для кнопок
+@use './variables' as v;
+
+// Базовый миксин для кнопки
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: v.$border-radius-md;
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: v.$transition-default;
+  user-select: none;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid v.$button-primary-border;
+    outline-offset: 2px;
+  }
+}
+
+// Миксин для primary кнопки
+@mixin button-primary {
+  @include button-base;
+  background-color: v.$button-primary-bg;
+  border-color: v.$button-primary-border;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background-color: v.$button-primary-hover-bg;
+    border-color: v.$button-primary-hover-border;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+}
+
+// Миксин для secondary кнопки
+@mixin button-secondary {
+  @include button-base;
+  background-color: v.$button-secondary-bg;
+  border-color: v.$button-secondary-border;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background-color: v.$button-secondary-hover-bg;
+    border-color: v.$button-secondary-hover-border;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+}
+
+// Миксин для ghost кнопки (прозрачная)
+@mixin button-ghost {
+  @include button-base;
+  background-color: transparent;
+  border-color: transparent;
+  color: inherit;
+
+  &:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// Миксин для маленькой кнопки
+@mixin button-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+// Миксин для большой кнопки
+@mixin button-lg {
+  padding: 14px 28px;
+  font-size: 16px;
+}
+
+// Классы для использования в модулях (если нужно)
+.button-primary {
+  @include button-primary;
+}
+
+.button-secondary {
+  @include button-secondary;
+}
+
+.button-ghost {
+  @include button-ghost;
+}
+
+.button-sm {
+  @include button-sm;
+}
+
+.button-lg {
+  @include button-lg;
+}

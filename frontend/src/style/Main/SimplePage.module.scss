@@ -1,0 +1,475 @@
+@use "./variables.module" as *;
+
+// Дополнительные переменные для карточек настроек
+$bg-card-hover: color-mix(in srgb, $bg-card, $primary-color 5%);
+$border-hover: color-mix(in srgb, $border-light, $primary-color 20%);
+$shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
+
+.page {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: $text-main;
+  height: 100vh;
+  overflow-y: auto;
+
+  @media (max-width: $breakpoint-md) {
+    padding: 16px;
+  }
+}
+
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filtersRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  @media (max-width: $breakpoint-xs) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.pageTitle {
+  font-size: $font-size-3xl;
+  font-weight: 600;
+  margin: 0;
+  color: $text-main;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.pageSubtitle {
+  font-size: $font-size-md;
+  color: $text-secondary;
+  margin: 0;
+}
+
+// Контейнер вкладок
+.tabsContainer {
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid $border-light;
+  padding-bottom: 8px;
+
+  @media (max-width: $breakpoint-md) {
+    gap: 6px;
+    padding-bottom: 6px;
+  }
+
+  @media (max-width: $breakpoint-xs) {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+  }
+}
+
+.tab {
+  padding: 8px 16px;
+  border-radius: $border-radius-lg;
+  background: transparent;
+  border: 1px solid transparent;
+  color: $text-secondary;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  @media (max-width: $breakpoint-md) {
+    padding: 6px 12px;
+    font-size: $font-size-xs;
+  }
+}
+
+.tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: $text-main;
+}
+
+.tabActive {
+  background: $primary-color;
+  color: white;
+  border-color: $primary-color;
+}
+
+.tabActive:hover {
+  background: $primary-color;
+  color: white;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 8px;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+  }
+
+  @media (max-width: $breakpoint-xs) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.settingsList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 8px;
+}
+
+.settingsGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.groupTitle {
+  font-size: $font-size-xl;
+  font-weight: 600;
+  margin: 0;
+  color: $text-main;
+  padding-bottom: 8px;
+  border-bottom: 1px solid $border-light;
+}
+
+.groupContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  background: $bg-card;
+  border: 1px solid $border-light;
+  border-radius: $border-radius-lg;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.2s ease;
+  min-height: 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  border-color: $border-hover;
+  box-shadow: $shadow-card-hover;
+  background: $bg-card-hover;
+  transform: translateY(-2px);
+}
+
+.settingItem {
+  background: $bg-card;
+  border: 1px solid $border-light;
+  border-radius: $border-radius-lg;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: all 0.2s ease;
+  min-height: auto;
+}
+
+.settingItem:hover {
+  border-color: $border-hover;
+  background: $bg-card-hover;
+  transform: translateY(-2px);
+  box-shadow: $shadow-card-hover;
+}
+
+.settingItemContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settingItemTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  margin: 0;
+  color: $text-main;
+}
+
+.settingItemDescription {
+  margin: 0;
+  font-size: $font-size-xs;
+  color: $text-secondary;
+  line-height: 1.3;
+}
+
+.settingItemMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+// Переключатель (toggle) - компактный и стилизованный под тему
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.toggleInput {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggleSlider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid $border-light;
+  border-radius: 22px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggleSlider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: $text-secondary;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.toggleInput:checked + .toggleSlider {
+  background-color: $primary-color;
+  border-color: $primary-color;
+}
+
+.toggleInput:checked + .toggleSlider:before {
+  transform: translateX(22px);
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.toggleInput:focus + .toggleSlider {
+  box-shadow: 0 0 0 2px rgba($primary-color, 0.4);
+}
+
+.toggleInput:disabled + .toggleSlider {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+// Иконка внутри карточки
+.cardIcon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  filter: brightness(0.9);
+}
+
+.settingItemIcon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  filter: brightness(0.9);
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: $font-size-md;
+  font-weight: 600;
+  margin: 0;
+  color: $text-main;
+}
+
+.cardText {
+  margin: 0;
+  font-size: $font-size-xs;
+  color: $text-secondary;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: $border-radius-md;
+  font-size: $font-size-xs;
+  font-weight: 600;
+  border: 1px solid $border-light;
+  color: $text-secondary;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.badgeSuccess {
+  color: #05df72;
+  border-color: rgba(5, 223, 114, 0.35);
+  background: rgba(5, 223, 114, 0.08);
+}
+
+.badgeWarning {
+  color: #f5a524;
+  border-color: rgba(245, 165, 36, 0.35);
+  background: rgba(245, 165, 36, 0.08);
+}
+
+.badgeInfo {
+  color: $primary-color;
+  border-color: color-mix(in srgb, $primary-color, transparent 50%);
+  background: color-mix(in srgb, $primary-color, transparent 90%);
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid $border-light;
+}
+
+// Стили для select
+.select {
+  padding: 8px 12px;
+  border: 1px solid $border-light;
+  border-radius: $border-radius-md;
+  background: $bg-card;
+  color: $text-main;
+  font-size: $font-size-sm;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.select:hover {
+  border-color: $border-hover;
+}
+
+.select:focus {
+  outline: none;
+  border-color: $primary-color;
+  box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+}
+
+// Стили для input
+.input {
+  padding: 8px 12px;
+  border: 1px solid $border-light;
+  border-radius: $border-radius-md;
+  background: $bg-card;
+  color: $text-main;
+  font-size: $font-size-sm;
+  transition: all 0.2s ease;
+  min-width: 200px;
+}
+
+.input:hover {
+  border-color: $border-hover;
+}
+
+.input:focus {
+  outline: none;
+  border-color: $primary-color;
+  box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+}
+
+.input::placeholder {
+  color: $text-secondary;
+}
+
+// Подсказка для карточки
+.cardHint {
+  margin: 0;
+  font-size: $font-size-xs;
+  color: $text-secondary;
+  font-style: italic;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+// Кнопка действия в карточке
+.actionButton {
+  padding: 6px 12px;
+  border: 1px solid $primary-color;
+  border-radius: $border-radius-md;
+  background: transparent;
+  color: $primary-color;
+  font-size: $font-size-xs;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.actionButton:hover {
+  background: $primary-color;
+  color: white;
+}
+
+// Текущее значение для селекта
+.currentValue {
+  font-size: $font-size-xs;
+  color: $text-secondary;
+  margin-left: 8px;
+  font-style: italic;
+}
+
+// Статус переключателя
+.toggleStatus {
+  font-size: $font-size-xs;
+  color: $text-secondary;
+  margin-left: 8px;
+  font-weight: 500;
+}
+
+// Дополнительный контейнер для мета-информации
+.settingItemExtra {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}

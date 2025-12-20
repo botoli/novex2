@@ -1,0 +1,34 @@
+// Общие переменные для компонентов
+// Импорт основных переменных из src/style/Main/_variables.module.scss
+@use '../../style/Main/_variables.module' as vars;
+
+// Переменные кнопок
+$button-primary-bg: vars.$button-primary-bg;
+$button-primary-border: vars.$button-primary-border;
+$button-primary-hover-bg: vars.$button-primary-hover-bg;
+$button-primary-hover-border: vars.$button-primary-hover-border;
+
+$button-secondary-bg: vars.$button-secondary-bg;
+$button-secondary-border: vars.$button-secondary-border;
+$button-secondary-hover-bg: vars.$button-secondary-hover-bg;
+$button-secondary-hover-border: vars.$button-secondary-hover-border;
+
+// Переменные форм
+$input-bg: vars.$input-bg;
+$input-border: vars.$input-border;
+$input-focus-bg: vars.$input-focus-bg;
+
+// Переменные карточек
+$card-bg: vars.$bg-card;
+$card-border: vars.$border-color;
+$card-shadow: vars.$shadow-card;
+
+// Радиусы
+$border-radius-sm: vars.$border-radius-sm;
+$border-radius-md: vars.$border-radius-md;
+$border-radius-lg: vars.$border-radius-lg;
+$border-radius-xl: vars.$border-radius-xl;
+
+// Транзиции
+$transition-default: vars.$transition-default;
+$transition-smooth: vars.$transition-smooth;

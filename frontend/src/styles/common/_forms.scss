@@ -1,0 +1,117 @@
+// Стили для форм и инпутов
+@use './variables' as v;
+
+// Базовый миксин для инпута
+@mixin input-base {
+  width: 100%;
+  padding: 10px 14px;
+  background-color: v.$input-bg;
+  border: 1px solid v.$input-border;
+  border-radius: v.$border-radius-md;
+  color: white;
+  font-size: 14px;
+  transition: v.$transition-default;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  &:focus {
+    outline: none;
+    background-color: v.$input-focus-bg;
+    border-color: v.$button-primary-border;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Миксин для текстовой области
+@mixin textarea-base {
+  @include input-base;
+  min-height: 80px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+// Миксин для селекта
+@mixin select-base {
+  @include input-base;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+// Миксин для чекбокса и радио
+@mixin checkbox-base {
+  width: 18px;
+  height: 18px;
+  border: 1px solid v.$input-border;
+  border-radius: v.$border-radius-sm;
+  background-color: v.$input-bg;
+  cursor: pointer;
+  transition: v.$transition-default;
+  appearance: none;
+  position: relative;
+
+  &:checked {
+    background-color: v.$button-primary-bg;
+    border-color: v.$button-primary-border;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      background-color: white;
+      border-radius: 2px;
+    }
+  }
+
+  &:focus {
+    outline: 2px solid v.$button-primary-border;
+    outline-offset: 1px;
+  }
+}
+
+// Миксин для группы формы
+@mixin form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+  }
+}
+
+// Классы для использования
+.input {
+  @include input-base;
+}
+
+.textarea {
+  @include textarea-base;
+}
+
+.select {
+  @include select-base;
+}
+
+.checkbox {
+  @include checkbox-base;
+}
+
+.form-group {
+  @include form-group;
+}
