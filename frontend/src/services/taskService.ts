@@ -28,6 +28,7 @@ export interface User {
 }
 
 export interface GetTasksParams {
+  [key: string]: string | number | boolean | undefined;
   project_id?: number;
   status?: string;
   assigned_to?: number;

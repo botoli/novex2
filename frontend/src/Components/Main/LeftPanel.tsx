@@ -5,7 +5,10 @@ import { useSelector } from "react-redux";
 import "../../App.scss";
 import { selectUser } from "../../store/user.js";
 import { ProjectService, formatDate } from "../../assets/MockData/index.js";
-import { themes as themesMap, themeNames } from "../../assets/LeftPanel/themes";
+import {
+  themes as themesMap,
+  themeNames,
+} from "../../assets/LeftPanel/themes.js";
 
 interface Project {
   id: number;
@@ -69,10 +72,10 @@ function LeftPanel({
     if (!theme) return [];
     // Возьмем основные цвета для предпросмотра
     const colors = [
-      theme['bg-primary'],
-      theme['accent-primary'],
-      theme['accent-secondary'],
-      theme['border-primary'],
+      theme["bg-primary"],
+      theme["accent-primary"],
+      theme["accent-secondary"],
+      theme["border-primary"],
     ].filter(Boolean);
     return colors.slice(0, 4); // максимум 4 цвета
   };
@@ -326,7 +329,9 @@ function LeftPanel({
 
   return (
     <>
-      <div className={`${style.main} ${isPanelCollapsed ? style.collapsed : ""}`}>
+      <div
+        className={`${style.main} ${isPanelCollapsed ? style.collapsed : ""}`}
+      >
         <div className={style.header}>
           <div className={style.naming}>
             <div className={style.svgbox}>
@@ -394,7 +399,9 @@ function LeftPanel({
               strokeWidth="2"
               className={isPanelCollapsed ? style.collapsedIcon : ""}
             >
-              <path d={isPanelCollapsed ? "M9 18l6-6-6-6" : "M15 18l-6-6 6-6"} />
+              <path
+                d={isPanelCollapsed ? "M9 18l6-6-6-6" : "M15 18l-6-6 6-6"}
+              />
             </svg>
           </button>
         </div>

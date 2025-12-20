@@ -13,7 +13,7 @@ import {
   getPriorityColor,
   formatDeadlineDate,
 } from "../../assets/MockData/index.js";
-import Dashboard from "./Dashboard";
+import Dashboard from "./Dashboard.js";
 import style from "../../style/Main/ProjectDetailPage.module.scss";
 
 interface Project {

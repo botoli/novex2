@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8000/api";
+const API_BASE_URL = "http://100.77.65.33/api";
 
 interface ApiResponse<T = any> {
   success: boolean;

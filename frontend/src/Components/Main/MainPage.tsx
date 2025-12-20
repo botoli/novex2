@@ -2,21 +2,21 @@
 import React, { useState, Suspense, lazy } from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../store/user.js";
-import LeftPanel from "./LeftPanel";
-import Hero from "./Hero";
+import LeftPanel from "./LeftPanel.js";
+import Hero from "./Hero.js";
 import { ProjectService } from "../../assets/MockData/index.js";
 import style from "../../style/Main/MainPage.module.scss";
 
 // Ленивая загрузка страниц
-const Dashboard = lazy(() => import("./Dashboard"));
-const TasksPage = lazy(() => import("./TasksPage"));
-const SettingsPage = lazy(() => import("./SettingsPage"));
-const ProjectsPage = lazy(() => import("./ProjectsPage"));
-const ProjectDetailPage = lazy(() => import("./ProjectDetailPage"));
-const TeamChat = lazy(() => import("./TeamChat"));
-const Schedule = lazy(() => import("./Schedule"));
-const QuickNote = lazy(() => import("./QuickNote"));
-const AIAssistantPage = lazy(() => import("./AIAssistantPage"));
+const Dashboard = lazy(() => import("./Dashboard.js"));
+const TasksPage = lazy(() => import("./TasksPage.js"));
+const SettingsPage = lazy(() => import("./SettingsPage.js"));
+const ProjectsPage = lazy(() => import("./ProjectsPage.js"));
+const ProjectDetailPage = lazy(() => import("./ProjectDetailPage.js"));
+const TeamChat = lazy(() => import("./TeamChat.js"));
+const Schedule = lazy(() => import("./Schedule.js"));
+const QuickNote = lazy(() => import("./QuickNote.js"));
+const AIAssistantPage = lazy(() => import("./AIAssistantPage.js"));
 
 type Page =
   | "main"
@@ -42,7 +42,7 @@ function MainPage() {
   const [projectRefreshKey, setProjectRefreshKey] = useState(0);
 
   const refreshProjects = () => {
-    setProjectRefreshKey(prev => prev + 1);
+    setProjectRefreshKey((prev) => prev + 1);
   };
 
   const handleProjectClick = async (projectId: number) => {
@@ -154,7 +154,12 @@ function MainPage() {
             />
           );
         }
-        return <ProjectsPage onProjectClick={handleProjectClick} projectRefreshKey={projectRefreshKey} />;
+        return (
+          <ProjectsPage
+            onProjectClick={handleProjectClick}
+            projectRefreshKey={projectRefreshKey}
+          />
+        );
       case "team-chat":
         if (selectedProjectId) {
           return (
@@ -224,7 +229,9 @@ function MainPage() {
         />
       </div>
       <div className={style.contentContainer}>
-        <Suspense fallback={<div className={style.loadingFallback}>Загрузка...</div>}>
+        <Suspense
+          fallback={<div className={style.loadingFallback}>Загрузка...</div>}
+        >
           {renderContent()}
         </Suspense>
       </div>
