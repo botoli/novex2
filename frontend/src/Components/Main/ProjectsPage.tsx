@@ -8,6 +8,7 @@ import {
   getStatusColor,
   getStatusText,
 } from "../../assets/MockData/index.js";
+import DeleteConfirmationModal from "../Common/DeleteConfirmationModal.js";
 
 interface Project {
   id: number;
@@ -51,11 +52,13 @@ const PRIORITY_LABELS: Record<string, string> = {
 interface ProjectsPageProps {
   onProjectClick?: (projectId: number) => void;
   projectRefreshKey?: number;
+  onProjectDeleted?: () => void;
 }
 
 function ProjectsPage({
   onProjectClick,
   projectRefreshKey = 0,
+  onProjectDeleted,
 }: ProjectsPageProps) {
   const user = useSelector(selectUser);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -68,6 +71,9 @@ function ProjectsPage({
   const [newProjectDescription, setNewProjectDescription] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [createError, setCreateError] = useState("");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<number | null>(null);
+  const [projectToDeleteTitle, setProjectToDeleteTitle] = useState("");
 
   useEffect(() => {
     if (user?.id) {
@@ -135,59 +141,76 @@ function ProjectsPage({
   const handleEditProject = (projectId: number) => {
     console.log("Редактирование проекта", projectId);
     // TODO: открыть модальное окно редактирования или перейти на страницу редактирования
-    alert(`Редактирование проекта ${projectId} (заглушка)`);
+    console.log(`Редактирование проекта ${projectId} (заглушка)`);
   };
 
-  const handleDeleteProject = async (projectId: number) => {
+  const handleDeleteProject = (projectId: number, projectTitle: string) => {
     console.log("handleDeleteProject вызван для проекта", projectId);
-    
-    // Временное решение для отладки: всегда удаляем без подтверждения
-    // TODO: вернуть confirm после отладки
-    const shouldDelete = true; // confirm("Вы уверены, что хотите удалить проект? Это действие нельзя отменить.");
-    
-    if (!shouldDelete) {
-      console.log("Удаление отменено пользователем");
+    setProjectToDelete(projectId);
+    setProjectToDeleteTitle(projectTitle);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!projectToDelete || !user?.id) {
+      console.error("Нет проекта для удаления или пользователь не авторизован");
+      setIsDeleteModalOpen(false);
       return;
     }
-    
+
+    console.log("Подтверждение удаления проекта", projectToDelete);
+
     try {
-      console.log("Удаление проекта", projectId);
-      if (!user?.id) {
-        alert("Ошибка: пользователь не авторизован");
-        return;
-      }
-      // Используем новый метод deleteProject
-      const result = await ProjectService.deleteProject(projectId, user.id);
+      console.log("Удаление проекта", projectToDelete);
+      const result = await ProjectService.deleteProject(
+        projectToDelete,
+        user.id
+      );
       console.log("Результат удаления:", result);
       if (result.success) {
-        alert(`Проект ${projectId} успешно удален`);
+        console.log(`Проект "${projectToDeleteTitle}" успешно удален`);
         // Обновить список проектов
         fetchProjects();
+        // Уведомить родительский компонент об удалении проекта
+        if (onProjectDeleted) {
+          onProjectDeleted();
+        }
       } else {
-        alert(
+        console.log(
           `Ошибка удаления проекта: ${result.message || "Неизвестная ошибка"}`
         );
       }
     } catch (error) {
       console.error("Ошибка удаления проекта:", error);
-      alert(
+      console.log(
         `Не удалось удалить проект: ${
           error instanceof Error ? error.message : "Неизвестная ошибка"
         }`
       );
+    } finally {
+      setIsDeleteModalOpen(false);
+      setProjectToDelete(null);
+      setProjectToDeleteTitle("");
     }
   };
 
+  const handleCancelDelete = () => {
+    console.log("Удаление проекта отменено пользователем");
+    setIsDeleteModalOpen(false);
+    setProjectToDelete(null);
+    setProjectToDeleteTitle("");
+  };
+
   const handleViewMembers = (projectId: number) => {
-    alert(`Просмотр участников проекта ${projectId} (заглушка)`);
+    console.log(`Просмотр участников проекта ${projectId} (заглушка)`);
   };
 
   const handleViewTasks = (projectId: number) => {
-    alert(`Просмотр задач проекта ${projectId} (заглушка)`);
+    console.log(`Просмотр задач проекта ${projectId} (заглушка)`);
   };
 
   const handleToggleView = () => {
-    alert("Переключение вида (сетка/список) - в разработке");
+    console.log("Переключение вида (сетка/список) - в разработке");
   };
 
   const handleCreateNewProject = () => {
@@ -516,7 +539,6 @@ function ProjectsPage({
                                   project.priority}
                               </span>
                             )}
-                    
                           </div>
                         </div>
                         {project.owner_name && (
@@ -629,7 +651,7 @@ function ProjectsPage({
                           className={style.projectActionButton}
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeleteProject(project.id);
+                            handleDeleteProject(project.id, project.title);
                           }}
                           title="Удалить проект"
                         >
@@ -784,7 +806,10 @@ function ProjectsPage({
             <div className={style.modal} onClick={(e) => e.stopPropagation()}>
               <div className={style.modalHeader}>
                 <h3>Создать новый проект</h3>
-                <button onClick={handleCloseCreateModal} className={style.closeButton}>
+                <button
+                  onClick={handleCloseCreateModal}
+                  className={style.closeButton}
+                >
                   <svg
                     width="18"
                     height="18"
@@ -798,8 +823,13 @@ function ProjectsPage({
                 </button>
               </div>
 
-              <form onSubmit={handleCreateProjectSubmit} className={style.modalForm}>
-                {createError && <div className={style.formError}>{createError}</div>}
+              <form
+                onSubmit={handleCreateProjectSubmit}
+                className={style.modalForm}
+              >
+                {createError && (
+                  <div className={style.formError}>{createError}</div>
+                )}
 
                 <div className={style.formGroup}>
                   <label>Название проекта *</label>
@@ -865,6 +895,15 @@ function ProjectsPage({
             </div>
           </div>
         )}
+
+        {/* Модальное окно подтверждения удаления проекта */}
+        <DeleteConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={handleCancelDelete}
+          onConfirm={handleConfirmDelete}
+          type="project"
+          title={projectToDeleteTitle}
+        />
       </div>
     </div>
   );

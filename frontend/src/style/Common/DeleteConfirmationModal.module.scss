@@ -1,0 +1,199 @@
+@use "../Main/variables.module" as *;
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modalContent {
+  background: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-xl;
+  padding: 24px;
+  max-width: 480px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: $shadow-card;
+  position: relative;
+  z-index: 2001;
+  animation: slideUp 0.3s ease-out;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(102, 126, 234, 0.08);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.25);
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.35);
+    }
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding: 20px;
+    width: calc(100% - 32px);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $border-light;
+}
+
+.modalIcon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 100, 103, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    color: $accent-red;
+  }
+}
+
+.modalTitle {
+  font-size: $font-size-xl;
+  font-weight: 600;
+  margin: 0;
+  color: $text-main;
+  flex: 1;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: $border-radius-md;
+  color: $text-secondary;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: $transition-default;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.modalBody {
+  margin-bottom: 24px;
+}
+
+.modalMessage {
+  margin: 0;
+  font-size: $font-size-md;
+  line-height: 1.6;
+  color: $text-secondary;
+}
+
+.modalFooter {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column-reverse;
+  }
+}
+
+.cancelButton,
+.confirmButton {
+  padding: 12px 24px;
+  border-radius: $border-radius-lg;
+  font-size: $font-size-md;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  border: 1px solid;
+  transition: $transition-default;
+  min-width: 120px;
+
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+.cancelButton {
+  background: transparent;
+  border-color: $border-color;
+  color: $text-secondary;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: $text-main;
+  }
+}
+
+.confirmButton {
+  background: $accent-red;
+  border-color: rgba(255, 100, 103, 0.3);
+  color: white;
+
+  &:hover {
+    background: color-mix(in srgb, $accent-red, black 10%);
+    border-color: rgba(255, 100, 103, 0.5);
+  }
+
+  &:active {
+    background: color-mix(in srgb, $accent-red, black 20%);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

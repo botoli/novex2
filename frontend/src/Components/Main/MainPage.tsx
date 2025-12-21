@@ -1,13 +1,14 @@
 // MainPage.tsx
-import React, { useState, Suspense, lazy } from "react";
+import React, { useState, Suspense, lazy, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../store/user.js";
+import { useParams, useNavigate, Outlet, useLocation } from "react-router-dom";
 import LeftPanel from "./LeftPanel.js";
 import Hero from "./Hero.js";
 import { ProjectService } from "../../assets/MockData/index.js";
 import style from "../../style/Main/MainPage.module.scss";
 
-// Ленивая загрузка страниц
+// Ленивая загрузка страниц (для обратной совместимости)
 const Dashboard = lazy(() => import("./Dashboard.js"));
 const TasksPage = lazy(() => import("./TasksPage.js"));
 const SettingsPage = lazy(() => import("./SettingsPage.js"));
@@ -32,14 +33,63 @@ type Page =
 
 function MainPage() {
   const user = useSelector(selectUser);
-  const [currentPage, setCurrentPage] = useState<Page>("main");
-  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
-    null
-  );
-  const [selectedProjectTitle, setSelectedProjectTitle] = useState<
-    string | null
-  >(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params = useParams();
+  
+  // Состояния для обратной совместимости
+  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
+  const [selectedProjectTitle, setSelectedProjectTitle] = useState<string | null>(null);
   const [projectRefreshKey, setProjectRefreshKey] = useState(0);
+
+  // Определяем текущую страницу на основе URL
+  const getCurrentPageFromPath = (): Page => {
+    const path = location.pathname;
+    if (path.includes("/projects/") && params.id) {
+      if (path.includes("/team-chat")) return "team-chat";
+      if (path.includes("/schedule")) return "schedule";
+      if (path.includes("/quick-note")) return "quick-note";
+      return "project-detail";
+    }
+    if (path.endsWith("/projects") || path.includes("/projects")) return "projects";
+    if (path.endsWith("/tasks")) return "tasks";
+    if (path.endsWith("/dashboard")) return "dashboard";
+    if (path.endsWith("/settings")) return "settings";
+    if (path.endsWith("/ai-assistant")) return "ai";
+    if (path.endsWith("/team-chat")) return "team-chat";
+    if (path.endsWith("/schedule")) return "schedule";
+    if (path.endsWith("/quick-note")) return "quick-note";
+    return "main"; // индексный маршрут
+  };
+
+  const currentPage = getCurrentPageFromPath();
+
+  // При изменении параметра ID проекта обновляем состояние
+  useEffect(() => {
+    if (params.id && !isNaN(Number(params.id))) {
+      const projectId = Number(params.id);
+      if (projectId !== selectedProjectId) {
+        setSelectedProjectId(projectId);
+        // Загружаем заголовок проекта
+        const loadProjectTitle = async () => {
+          try {
+            const project = await ProjectService.getProjectById(projectId, user?.id);
+            setSelectedProjectTitle(project.tittle || project.title);
+          } catch (error) {
+            console.error("Ошибка загрузки проекта:", error);
+          }
+        };
+        loadProjectTitle();
+      }
+    } else if (currentPage !== "project-detail" && 
+               currentPage !== "team-chat" && 
+               currentPage !== "schedule" && 
+               currentPage !== "quick-note") {
+      // Сбрасываем выбранный проект, если мы не на страницах проекта
+      setSelectedProjectId(null);
+      setSelectedProjectTitle(null);
+    }
+  }, [params.id, currentPage, user?.id]);
 
   const refreshProjects = () => {
     setProjectRefreshKey((prev) => prev + 1);
@@ -50,49 +100,44 @@ function MainPage() {
       const project = await ProjectService.getProjectById(projectId, user?.id);
       setSelectedProjectId(projectId);
       setSelectedProjectTitle(project.tittle);
-      setCurrentPage("project-detail");
+      navigate(`/projects/${projectId}`);
     } catch (error) {
       console.error("Ошибка загрузки проекта:", error);
       setSelectedProjectId(projectId);
-      setCurrentPage("project-detail");
+      navigate(`/projects/${projectId}`);
     }
   };
 
   const handlePageChange = (page: string) => {
-    const validPages: Page[] = [
-      "main",
-      "projects",
-      "project-detail",
-      "team-chat",
-      "schedule",
-      "quick-note",
-      "tasks",
-      "dashboard",
-      "settings",
-      "ai",
-    ];
-    if (validPages.includes(page as Page)) {
-      setCurrentPage(page as Page);
-      if (
-        page !== "project-detail" &&
-        page !== "team-chat" &&
-        page !== "schedule" &&
-        page !== "quick-note"
-      ) {
-        setSelectedProjectId(null);
-        setSelectedProjectTitle(null);
-      }
+    const pageToPath: Record<string, string> = {
+      "main": "/",
+      "projects": "/projects",
+      "tasks": "/tasks",
+      "dashboard": "/dashboard",
+      "settings": "/settings",
+      "ai": "/ai-assistant",
+      "team-chat": "/team-chat",
+      "schedule": "/schedule",
+      "quick-note": "/quick-note",
+    };
+    const path = pageToPath[page];
+    if (path) {
+      navigate(path);
+    } else if (page === "project-detail" && selectedProjectId) {
+      navigate(`/projects/${selectedProjectId}`);
     }
   };
 
   const handleBackToProjects = () => {
-    setCurrentPage("projects");
+    navigate("/projects");
     setSelectedProjectId(null);
     setSelectedProjectTitle(null);
   };
 
   const handleBackToProjectDetail = () => {
-    setCurrentPage("project-detail");
+    if (selectedProjectId) {
+      navigate(`/projects/${selectedProjectId}`);
+    }
   };
 
   const handleNavigateToTeamChat = async (projectId: number) => {
@@ -100,11 +145,11 @@ function MainPage() {
       const project = await ProjectService.getProjectById(projectId, user?.id);
       setSelectedProjectId(projectId);
       setSelectedProjectTitle(project.tittle);
-      setCurrentPage("team-chat");
+      navigate(`/projects/${projectId}/team-chat`);
     } catch (error) {
       console.error("Ошибка загрузки проекта:", error);
       setSelectedProjectId(projectId);
-      setCurrentPage("team-chat");
+      navigate(`/projects/${projectId}/team-chat`);
     }
   };
 
@@ -113,11 +158,11 @@ function MainPage() {
       const project = await ProjectService.getProjectById(projectId, user?.id);
       setSelectedProjectId(projectId);
       setSelectedProjectTitle(project.title);
-      setCurrentPage("schedule");
+      navigate(`/projects/${projectId}/schedule`);
     } catch (error) {
       console.error("Ошибка загрузки проекта:", error);
       setSelectedProjectId(projectId);
-      setCurrentPage("schedule");
+      navigate(`/projects/${projectId}/schedule`);
     }
   };
 
@@ -126,18 +171,19 @@ function MainPage() {
       const project = await ProjectService.getProjectById(projectId, user?.id);
       setSelectedProjectId(projectId);
       setSelectedProjectTitle(project.tittle);
-      setCurrentPage("quick-note");
+      navigate(`/projects/${projectId}/quick-note`);
     } catch (error) {
       console.error("Ошибка загрузки проекта:", error);
       setSelectedProjectId(projectId);
-      setCurrentPage("quick-note");
+      navigate(`/projects/${projectId}/quick-note`);
     }
   };
 
   const handleNavigateToAI = () => {
-    setCurrentPage("ai");
+    navigate("/ai-assistant");
   };
 
+  // Рендер контента для обратной совместимости (если Outlet не используется)
   const renderContent = () => {
     switch (currentPage) {
       case "project-detail":
@@ -158,6 +204,7 @@ function MainPage() {
           <ProjectsPage
             onProjectClick={handleProjectClick}
             projectRefreshKey={projectRefreshKey}
+            onProjectDeleted={refreshProjects}
           />
         );
       case "team-chat":
@@ -170,7 +217,13 @@ function MainPage() {
             />
           );
         }
-        return <ProjectsPage onProjectClick={handleProjectClick} />;
+        return (
+          <ProjectsPage
+            onProjectClick={handleProjectClick}
+            projectRefreshKey={projectRefreshKey}
+            onProjectDeleted={refreshProjects}
+          />
+        );
       case "schedule":
         if (selectedProjectId) {
           return (
@@ -181,7 +234,13 @@ function MainPage() {
             />
           );
         }
-        return <ProjectsPage onProjectClick={handleProjectClick} />;
+        return (
+          <ProjectsPage
+            onProjectClick={handleProjectClick}
+            projectRefreshKey={projectRefreshKey}
+            onProjectDeleted={refreshProjects}
+          />
+        );
       case "quick-note":
         if (selectedProjectId) {
           return (
@@ -192,9 +251,21 @@ function MainPage() {
             />
           );
         }
-        return <ProjectsPage onProjectClick={handleProjectClick} />;
+        return (
+          <ProjectsPage
+            onProjectClick={handleProjectClick}
+            projectRefreshKey={projectRefreshKey}
+            onProjectDeleted={refreshProjects}
+          />
+        );
       case "projects":
-        return <ProjectsPage onProjectClick={handleProjectClick} />;
+        return (
+          <ProjectsPage
+            onProjectClick={handleProjectClick}
+            projectRefreshKey={projectRefreshKey}
+            onProjectDeleted={refreshProjects}
+          />
+        );
       case "tasks":
         return <TasksPage />;
       case "dashboard":
@@ -208,7 +279,7 @@ function MainPage() {
         return (
           <div className={style.contentColumn}>
             <Hero
-              onNavigateToProjects={() => setCurrentPage("projects")}
+              onNavigateToProjects={() => navigate("/projects")}
               onProjectClick={handleProjectClick}
               projectRefreshKey={projectRefreshKey}
             />
@@ -216,6 +287,18 @@ function MainPage() {
         );
     }
   };
+
+  // Определяем, используется ли Outlet (проверяем, есть ли вложенные маршруты)
+  const isOutletUsed = location.pathname !== "/" && 
+    !location.pathname.endsWith("/main") && 
+    !location.pathname.endsWith("/projects") &&
+    !location.pathname.endsWith("/tasks") &&
+    !location.pathname.endsWith("/dashboard") &&
+    !location.pathname.endsWith("/settings") &&
+    !location.pathname.endsWith("/ai-assistant") &&
+    !location.pathname.endsWith("/team-chat") &&
+    !location.pathname.endsWith("/schedule") &&
+    !location.pathname.endsWith("/quick-note");
 
   return (
     <div className={style.mainContainer}>
@@ -232,7 +315,7 @@ function MainPage() {
         <Suspense
           fallback={<div className={style.loadingFallback}>Загрузка...</div>}
         >
-          {renderContent()}
+          {isOutletUsed ? <Outlet /> : renderContent()}
         </Suspense>
       </div>
     </div>

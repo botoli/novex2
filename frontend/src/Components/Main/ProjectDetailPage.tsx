@@ -14,6 +14,7 @@ import {
   formatDeadlineDate,
 } from "../../assets/MockData/index.js";
 import Dashboard from "./Dashboard.js";
+import DeleteConfirmationModal from "../Common/DeleteConfirmationModal.js";
 import style from "../../style/Main/ProjectDetailPage.module.scss";
 
 interface Project {
@@ -92,6 +93,7 @@ function ProjectDetailPage({
   const [projectMembers, setProjectMembers] = useState<any[]>([]);
   const [activityLogs, setActivityLogs] = useState<any[]>([]);
   const [taskRefreshKey, setTaskRefreshKey] = useState(0);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const aiSuggestions = [
     "Обзор дорожной карты Q4",
@@ -265,7 +267,7 @@ function ProjectDetailPage({
     } catch (error) {
       console.error("Ошибка создания задачи:", error);
       // Здесь можно показать ошибку пользователю
-      alert(
+      console.log(
         `Ошибка создания задачи: ${
           error instanceof Error ? error.message : "Неизвестная ошибка"
         }`
@@ -386,34 +388,31 @@ function ProjectDetailPage({
   const handleEditProject = (projectId: number) => {
     console.log("Редактирование проекта", projectId);
     // TODO: открыть модальное окно редактирования или перейти на страницу редактирования
-    alert(`Редактирование проекта ${projectId} (заглушка)`);
+    console.log(`Редактирование проекта ${projectId} (заглушка)`);
   };
 
-  const handleDeleteProject = async (projectId: number) => {
+  const handleDeleteProject = (projectId: number) => {
     console.log(
       "handleDeleteProject вызван в ProjectDetailPage для проекта",
       projectId
     );
+    setIsDeleteModalOpen(true);
+  };
 
-    // Временное решение для отладки: всегда удаляем без подтверждения
-    // TODO: вернуть confirm после отладки
-    const shouldDelete = true; // confirm("Вы уверены, что хотите удалить проект? Это действие нельзя отменить.");
-
-    if (!shouldDelete) {
-      console.log("Удаление отменено пользователем");
-      return;
-    }
+  const handleConfirmDelete = async () => {
+    console.log("Подтверждение удаления проекта", projectId);
+    setIsDeleteModalOpen(false);
 
     try {
       console.log("Удаление проекта", projectId);
       if (!user?.id) {
-        alert("Ошибка: пользователь не авторизован");
+        console.log("Ошибка: пользователь не авторизован");
         return;
       }
       const result = await ProjectService.deleteProject(projectId, user.id);
       console.log("Результат удаления:", result);
       if (result.success) {
-        alert(`Проект ${projectId} успешно удален`);
+        console.log(`Проект ${projectId} успешно удален`);
         // Вызываем callback для обновления данных в других компонентах
         if (onProjectDeleted) {
           onProjectDeleted();
@@ -423,13 +422,13 @@ function ProjectDetailPage({
           onBack();
         }
       } else {
-        alert(
+        console.log(
           `Ошибка удаления проекта: ${result.message || "Неизвестная ошибка"}`
         );
       }
     } catch (error) {
       console.error("Ошибка удаления проекта:", error);
-      alert(
+      console.log(
         `Не удалось удалить проект: ${
           error instanceof Error ? error.message : "Неизвестная ошибка"
         }`
@@ -437,9 +436,14 @@ function ProjectDetailPage({
     }
   };
 
+  const handleCancelDelete = () => {
+    console.log("Удаление проекта отменено пользователем");
+    setIsDeleteModalOpen(false);
+  };
+
   const handleAddGithubRepo = () => {
     // TODO: открыть модальное окно для добавления репозитория
-    alert("Функция добавления GitHub репозитория в разработке");
+    console.log("Функция добавления GitHub репозитория в разработке");
   };
 
   if (isLoading) {
@@ -1066,6 +1070,15 @@ function ProjectDetailPage({
             </div>
           </div>
         )}
+
+        {/* Модальное окно подтверждения удаления проекта */}
+        <DeleteConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={handleCancelDelete}
+          onConfirm={handleConfirmDelete}
+          type="project"
+          title={project?.title || ""}
+        />
 
         {/* Разделы Обзор и Задачи */}
         <div className={style.sectionsContainer}>
