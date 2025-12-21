@@ -8,10 +8,14 @@
   overflow: hidden;
   background-color: $bg-dark;
 
-  @media (max-width: $breakpoint-xl) {
+  @include respond-to(xl) {
     flex-direction: column;
     height: auto;
     min-height: 100vh;
+  }
+
+  @include respond-to(md) {
+    height: 100vh; // На мобильных сохраняем полную высоту
   }
 }
 
@@ -23,28 +27,56 @@
   background-color: $bg-panel;
   border-right: 1px solid $border-light;
   z-index: $z-sidebar;
+  transition: width $animation-duration-normal $animation-timing-ease;
 
   &::-webkit-scrollbar {
     width: 0;
   }
 
-  @media (max-width: $breakpoint-xl) {
+  @include respond-to(xl) {
     width: 240px;
     min-width: 240px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: $z-modal - 10;
+    transform: translateX(-100%);
+    transition: transform $animation-duration-normal $animation-timing-ease;
+
+    &.mobileOpen {
+      transform: translateX(0);
+      box-shadow: $shadow-sidebar;
+    }
   }
 
-  @media (max-width: $breakpoint-lg) {
+  @include respond-to(lg) {
     width: 200px;
     min-width: 200px;
   }
 
-  @media (max-width: $breakpoint-md) {
+  @include respond-to(md) {
     width: 100%;
     min-width: 100%;
     height: auto;
+    max-height: none;
     border-right: none;
     border-bottom: 1px solid $border-light;
     flex: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: $z-modal;
+    transform: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  @include touch-device {
+    // Улучшения для touch устройств
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
   }
 }
 
@@ -55,9 +87,18 @@
   min-width: 0;
   background-color: $bg-content;
   position: relative;
+  overflow: hidden;
 
-  @media (max-width: $breakpoint-xl) {
+  @include respond-to(xl) {
     margin-top: 0;
+    margin-left: 0;
+  }
+
+  @include respond-to(md) {
+    padding-top: 120px; // Больший отступ для фиксированного header с навигацией
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -69,6 +110,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
+  padding: 20px 24px;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -83,8 +125,124 @@
     border-radius: 4px;
   }
 
-  @media (max-width: $breakpoint-md) {
-    padding: 0 8px;
+  @include respond-to(md) {
+    padding: 16px;
+    padding-bottom: 80px; // Отступ для мобильной навигации
+  }
+
+  @include respond-to(xs) {
+    padding: 12px;
+    padding-bottom: 70px;
+  }
+
+  @include touch-device {
+    // Улучшенный скролл для touch устройств
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+}
+
+// Мобильный заголовок
+.mobileHeader {
+  display: none;
+  
+  @include respond-to(md) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: $bg-panel;
+    border-bottom: 1px solid $border-light;
+    padding: 0 16px;
+    z-index: $z-header;
+  }
+
+  .mobileMenuButton {
+    background: transparent;
+    border: 1px solid $border-light;
+    border-radius: $border-radius-md;
+    padding: 8px;
+    color: $text-secondary;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.08);
+      color: $text-main;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .mobileTitle {
+    font-size: $font-size-lg;
+    font-weight: 600;
+    color: $text-main;
+    margin: 0;
+  }
+}
+
+// Мобильная навигация
+.mobileNavigation {
+  display: none;
+  
+  @include respond-to(md) {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: $bg-panel;
+    border-top: 1px solid $border-light;
+    z-index: $z-header;
+    padding: 0 16px;
+  }
+
+  .navItems {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+
+    .navItem {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      background: transparent;
+      border: none;
+      color: $text-secondary;
+      cursor: pointer;
+      border-radius: $border-radius-md;
+      transition: all 0.2s ease;
+
+      &:hover,
+      &.active {
+        color: $primary-color;
+        background: rgba(102, 126, 234, 0.08);
+      }
+
+      .navIcon {
+        width: 20px;
+        height: 20px;
+      }
+
+      .navLabel {
+        font-size: $font-size-xs;
+        font-weight: 500;
+      }
+    }
   }
 }
 
@@ -95,4 +253,34 @@
   height: 100%;
   color: $text-secondary;
   font-size: 16px;
+
+  @include respond-to(md) {
+    padding: 40px 20px;
+    text-align: center;
+  }
+}
+
+// Оверлей для мобильного меню
+.mobileOverlay {
+  display: none;
+  
+  @include respond-to(xl) {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: $z-modal - 20;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity $animation-duration-normal $animation-timing-ease,
+                visibility $animation-duration-normal $animation-timing-ease;
+
+    &.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
 }

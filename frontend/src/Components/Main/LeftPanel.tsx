@@ -62,6 +62,7 @@ function LeftPanel({
   const [isProjectsListCollapsed, setIsProjectsListCollapsed] = useState(false);
   const [isAIPanelCollapsed, setIsAIPanelCollapsed] = useState(true); // По умолчанию свернуто
   const [isPanelCollapsed, setIsPanelCollapsed] = useState(false); // Состояние свертывания всей панели
+  const [isMobileExpanded, setIsMobileExpanded] = useState(false); // Состояние расширения на мобильных
 
   // Список доступных тем (берём из src/assets/LeftPanel/themes.ts)
   const themes = [...themeNames];
@@ -221,6 +222,11 @@ function LeftPanel({
   const handleCategoryClick = (index: number, categoryName: string) => {
     setActiveCategory(index);
 
+    // Закрываем мобильное меню при выборе категории
+    if (isMobileExpanded) {
+      setIsMobileExpanded(false);
+    }
+
     if (onPageChange) {
       const nextPage = categoryToPage[categoryName] || "main";
       onPageChange(nextPage);
@@ -252,6 +258,10 @@ function LeftPanel({
 
   const togglePanelCollapsed = () => {
     setIsPanelCollapsed(!isPanelCollapsed);
+  };
+
+  const toggleMobileExpanded = () => {
+    setIsMobileExpanded(!isMobileExpanded);
   };
 
   const toggleTheme = () => {
@@ -330,7 +340,9 @@ function LeftPanel({
   return (
     <>
       <div
-        className={`${style.main} ${isPanelCollapsed ? style.collapsed : ""}`}
+        className={`${style.main} ${isPanelCollapsed ? style.collapsed : ""} ${
+          style.mobileHeader
+        } ${isMobileExpanded ? style.mobileExpanded : ""}`}
       >
         <div className={style.header}>
           <div className={style.naming}>
@@ -368,6 +380,26 @@ function LeftPanel({
             <div className={style.namingtxt}>
               <h1 className={style.namingh1}>Novex</h1>
             </div>
+            
+            {/* Кнопка закрытия для расширенного мобильного меню */}
+            {isMobileExpanded && (
+              <button
+                className={style.mobileCloseButton}
+                onClick={toggleMobileExpanded}
+                title="Закрыть меню"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
           <div className={style.searchcont}>
             <svg
@@ -387,8 +419,14 @@ function LeftPanel({
           </div>
           <button
             className={style.collapseToggleButton}
-            onClick={togglePanelCollapsed}
-            title={isPanelCollapsed ? "Развернуть панель" : "Свернуть панель"}
+            onClick={isMobileExpanded ? toggleMobileExpanded : togglePanelCollapsed}
+            title={
+              isMobileExpanded
+                ? "Закрыть меню"
+                : isPanelCollapsed
+                ? "Развернуть панель"
+                : "Свернуть панель"
+            }
           >
             <svg
               width="16"
@@ -400,7 +438,13 @@ function LeftPanel({
               className={isPanelCollapsed ? style.collapsedIcon : ""}
             >
               <path
-                d={isPanelCollapsed ? "M9 18l6-6-6-6" : "M15 18l-6-6 6-6"}
+                d={
+                  isMobileExpanded
+                    ? "M6 18L18 6M6 6l12 12"
+                    : isPanelCollapsed
+                    ? "M9 18l6-6-6-6"
+                    : "M15 18l-6-6 6-6"
+                }
               />
             </svg>
           </button>

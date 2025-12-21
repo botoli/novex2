@@ -195,7 +195,7 @@
 }
 
 /* ========== МЕДИА-ЗАПРОСЫ ========== */
-@media (max-width: $breakpoint-xxl) {
+@include respond-to(xxl) {
   .projectDetailPage,
   .content,
   .dashboard,
@@ -205,35 +205,315 @@
 
   .dashboardRow {
     max-width: 100%;
+    gap: 16px;
   }
 
   .panel {
     max-width: 100%;
+    padding: 20px;
+  }
+
+  .quickMetricsRow {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: $breakpoint-md) {
+@include respond-to(md) {
   body {
-    overflow-x: hidden; // Глобальное скрытие горизонтального скролла
+    overflow-x: hidden;
   }
 
   .projectDetailPage {
     width: 100vw;
+    padding-top: 60px; // Для мобильного заголовка
   }
 
   .content {
-    padding: 16px;
+    padding: 12px;
     width: 100vw;
   }
 
   .dashboardContent {
-    padding: 16px;
+    padding: 12px;
     width: 100vw;
+  }
+
+  .dashboardRow {
+    gap: 12px;
+    margin-bottom: 16px;
   }
 
   .panel {
     padding: 16px;
     width: 100%;
+    border-radius: 12px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .panelHeader {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    
+    .titleContainer {
+      h2 {
+        font-size: $font-size-md;
+      }
+      
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+
+  .tabsContainer {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    
+    .tab {
+      padding: 8px 12px;
+      font-size: $font-size-xs;
+    }
+  }
+
+  .filtersContainer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .priorityFilters {
+    width: 100%;
+    justify-content: space-between;
+    
+    .filterButton {
+      flex: 1;
+      text-align: center;
+      padding: 8px 4px;
+      font-size: $font-size-xs;
+    }
+  }
+
+  .sortButton {
+    width: 100%;
+    padding: 10px 16px;
+  }
+
+  .tasksList {
+    gap: 10px;
+  }
+
+  .taskItem {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .taskHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .taskStatus {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .taskTitle {
+    font-size: $font-size-sm;
+    margin-bottom: 10px;
+  }
+
+  .taskFooter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .taskAssignee {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .assigneeAvatar {
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
+  }
+
+  .taskActions {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+
+  .taskActionButton {
+    width: 24px;
+    height: 24px;
+    
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  .quickMetricsRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .quickMetricCard {
+    padding: 12px;
+  }
+
+  .metricLabel {
+    font-size: 10px;
+    margin-bottom: 8px;
+  }
+
+  .metricValue {
+    font-size: $font-size-lg;
+  }
+
+  .metricValueRow {
+    gap: 6px;
+  }
+}
+
+@include respond-to(xs) {
+  .content,
+  .dashboardContent {
+    padding: 8px;
+  }
+
+  .dashboardRow {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .panel {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .quickMetricsRow {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .priorityFilters {
+    flex-wrap: wrap;
+    
+    .filterButton {
+      flex: 0 0 calc(50% - 4px);
+      margin-bottom: 8px;
+    }
+  }
+
+  .tasksList {
+    gap: 8px;
+  }
+
+  .taskItem {
+    padding: 10px;
+  }
+
+  .taskTitle {
+    font-size: $font-size-sm;
+    line-height: 1.4;
+  }
+
+  .metricValue {
+    font-size: $font-size-md;
+  }
+}
+
+// Touch device improvements
+@include touch-device {
+  .dashboardContent {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .filterButton,
+  .sortButton,
+  .tab,
+  .taskActionButton {
+    cursor: pointer;
+    
+    &:active {
+      transform: scale(0.98);
+      transition: transform 0.1s ease;
+    }
+  }
+
+  .tasksList {
+    .taskItem {
+      &:active {
+        background: rgba(102, 126, 234, 0.1);
+        transform: translateY(-1px);
+        transition: all 0.1s ease;
+      }
+    }
+  }
+
+  // Улучшенный скролл для табов
+  .tabsContainer {
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba(102, 126, 234, 0.3);
+      border-radius: 2px;
+    }
+  }
+}
+
+// Landscape orientation for mobile
+@include landscape {
+  @include respond-between($breakpoint-xs, $breakpoint-md) {
+    .quickMetricsRow {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .priorityFilters {
+      .filterButton {
+        flex: 0 0 calc(33.333% - 6px);
+      }
+    }
+  }
+}
+
+// Высокие экраны
+@include respond-to(md) {
+  @media (min-height: 800px) {
+    .dashboardContent {
+      padding-bottom: 100px; // Больше места для контента
+    }
+    
+    .panel {
+      min-height: 200px;
+    }
+  }
+}
+
+// Поддержка темной/светлой темы на мобильных
+@include respond-to(md) {
+  .panel {
+    background: $bg-card;
+    border-color: $border-color;
+    
+    @include touch-device {
+      // Легкий эффект при нажатии
+      &:active {
+        background: color-mix(in srgb, $bg-card, $primary-color 5%);
+      }
+    }
   }
 }
 

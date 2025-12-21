@@ -1348,3 +1348,187 @@ $shadow-card-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
     }
   }
 }
+
+/* ========== ДОПОЛНИТЕЛЬНЫЕ УЛУЧШЕНИЯ ДЛЯ АДАПТИВНОСТИ ========== */
+
+// Touch device improvements
+@include touch-device {
+  .projectCard {
+    cursor: pointer;
+    
+    &:active {
+      transform: scale(0.99);
+      transition: transform 0.1s ease;
+      background-color: color-mix(in srgb, $bg-card-hover, $primary-color 10%);
+    }
+  }
+
+  .filterBtn,
+  .newProjectBtn,
+  .viewToggle,
+  .projectAction,
+  .quickAction,
+  .secondaryAction,
+  .closeButton,
+  .cancelButton,
+  .submitButton {
+    cursor: pointer;
+    
+    &:active {
+      transform: scale(0.98);
+      transition: transform 0.1s ease;
+    }
+  }
+
+  .searchInput {
+    font-size: 16px; // Предотвращает масштабирование на iOS
+  }
+
+  // Улучшенный скролл для модальных окон
+  .modalForm {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+// Landscape orientation improvements
+@include landscape {
+  @include respond-between($breakpoint-xs, $breakpoint-md) {
+    .projectsGrid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .headerStats {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    .projectMetrics {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }
+}
+
+// Высокие экраны
+@include respond-to(md) {
+  @media (min-height: 800px) {
+    .content {
+      padding-bottom: 100px;
+    }
+    
+    .projectCard {
+      min-height: 300px;
+    }
+  }
+}
+
+// Очень маленькие экраны (менее 360px)
+@media (max-width: 360px) {
+  .content {
+    padding: 12px 8px;
+  }
+  
+  .searchFilters {
+    padding: 12px;
+  }
+  
+  .projectCard {
+    padding: 12px;
+    min-height: 220px;
+    
+    .cardHeader {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    
+    .projectMetrics {
+      grid-template-columns: 1fr;
+    }
+    
+    .actionButtons {
+      flex-wrap: wrap;
+      
+      .quickAction {
+        flex: 1;
+        min-width: calc(50% - 4px);
+        justify-content: center;
+      }
+      
+      .projectAction {
+        width: 100%;
+        margin-top: 8px;
+      }
+    }
+  }
+}
+
+// Поддержка темной/светлой темы на мобильных
+@include respond-to(md) {
+  .projectCard {
+    background: $bg-card;
+    border-color: $border-color;
+    
+    @include touch-device {
+      &:active {
+        background: color-mix(in srgb, $bg-card, $primary-color 8%);
+      }
+    }
+  }
+  
+  .searchFilters {
+    background: $bg-card;
+    border-color: $border-color;
+  }
+}
+
+// Анимация появления карточек
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.projectsGrid {
+  .projectCard {
+    animation: fadeInUp 0.4s ease backwards;
+    
+    @for $i from 1 through 12 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.05}s;
+      }
+    }
+  }
+}
+
+// Улучшенный фокус для доступности
+.filterBtn,
+.newProjectBtn,
+.projectAction,
+.quickAction,
+.secondaryAction {
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
+.searchInput:focus-visible {
+  outline: 2px solid $primary-color;
+  outline-offset: 2px;
+}
+
+// Скрытие скроллбара на мобильных (опционально)
+@include respond-to(md) {
+  .modalForm::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .modalForm::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.3);
+    border-radius: 2px;
+  }
+}

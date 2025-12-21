@@ -87,14 +87,73 @@ $font-size-2xl: 18px;
 $font-size-3xl: 24px;
 $font-size-4xl: 36px;
 
-// Breakpoints для адаптивного дизайна
-$breakpoint-xs: 480px;
-$breakpoint-sm: 640px;
-$breakpoint-md: 768px;
-$breakpoint-lg: 992px;
-$breakpoint-xl: 1024px;
-$breakpoint-xxl: 1200px;
-$breakpoint-xxxl: 1400px;
+// Breakpoints для адаптивного дизайна (Mobile First подход)
+$breakpoint-xs: 480px;      // Мобильные телефоны (маленькие)
+$breakpoint-sm: 640px;      // Мобильные телефоны (большие)
+$breakpoint-md: 768px;      // Планшеты (портретная ориентация)
+$breakpoint-lg: 992px;      // Планшеты (альбомная ориентация) / маленькие ноутбуки
+$breakpoint-xl: 1024px;     // Ноутбуки
+$breakpoint-xxl: 1200px;    // Десктопы
+$breakpoint-xxxl: 1400px;   // Большие мониторы
+
+// Предварительно вычисленные значения для медиа-запросов
+$breakpoint-xs-max: $breakpoint-xs - 1px;
+$breakpoint-sm-max: $breakpoint-sm - 1px;
+$breakpoint-md-max: $breakpoint-md - 1px;
+$breakpoint-lg-max: $breakpoint-lg - 1px;
+$breakpoint-xl-max: $breakpoint-xl - 1px;
+$breakpoint-xxl-max: $breakpoint-xxl - 1px;
+$breakpoint-xxxl-max: $breakpoint-xxxl - 1px;
+
+// Миксины для медиа-запросов (Mobile First)
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: #{$breakpoint-xs-max}) { @content; }
+  } @else if $breakpoint == sm {
+    @media (max-width: #{$breakpoint-sm-max}) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: #{$breakpoint-md-max}) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: #{$breakpoint-lg-max}) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: #{$breakpoint-xl-max}) { @content; }
+  } @else if $breakpoint == xxl {
+    @media (max-width: #{$breakpoint-xxl-max}) { @content; }
+  } @else if $breakpoint == xxxl {
+    @media (max-width: #{$breakpoint-xxxl-max}) { @content; }
+  } @else {
+    @media (max-width: $breakpoint) { @content; }
+  }
+}
+
+// Миксины для диапазонов (min-width и max-width)
+@mixin respond-between($min, $max) {
+  @media (min-width: $min) and (max-width: #{$max - 1px}) { @content; }
+}
+
+// Миксины для ориентации
+@mixin portrait {
+  @media (orientation: portrait) { @content; }
+}
+
+@mixin landscape {
+  @media (orientation: landscape) { @content; }
+}
+
+// Миксины для ретина-дисплеев
+@mixin retina {
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { @content; }
+}
+
+// Миксины для touch устройств
+@mixin touch-device {
+  @media (hover: none) and (pointer: coarse) { @content; }
+}
+
+// Миксины для десктопов с мышью
+@mixin mouse-device {
+  @media (hover: hover) and (pointer: fine) { @content; }
+}
 
 // Новые переменные для анимаций
 $animation-duration-fast: 0.2s;
