@@ -14,6 +14,9 @@ class Cors
             'https://server-thinkpad-x220.tail44896d.ts.net',
             'http://localhost:3000',
             'http://localhost:5173',
+            'http://localhost:5174',
+            'http://127.0.0.1:5173',
+            'http://127.0.0.1:5174',
         ];
         
         $origin = $request->header('Origin');
@@ -28,6 +31,9 @@ class Cors
         // Add CORS headers
         if (in_array($origin, $allowedOrigins)) {
             $response->headers->set('Access-Control-Allow-Origin', $origin);
+        } else {
+            // Для отладки: логируем Origin
+            \Log::info('CORS: Origin not allowed', ['origin' => $origin]);
         }
         
         $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
