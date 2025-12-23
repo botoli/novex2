@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import styles from "../../style/Main/Dashboard.module.scss";
 import { taskService } from "../../services/taskService.ts";
 import type { Task as ApiTask } from "../../services/taskService.ts";
+import DeleteConfirmationModal from "../Common/DeleteConfirmationModal.js";
 
 interface Task {
   id: number;
@@ -26,6 +27,9 @@ const Dashboard: React.FC<DashboardProps> = ({ projectId, refreshKey }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
+  const [taskToDeleteTitle, setTaskToDeleteTitle] = useState("");
 
   // Функция загрузки задач с бэкенда
   const fetchTasks = async () => {
@@ -124,30 +128,51 @@ const Dashboard: React.FC<DashboardProps> = ({ projectId, refreshKey }) => {
     alert(`Редактирование задачи ${taskId} (заглушка)`);
   };
 
-  const handleDeleteTask = async (taskId: number) => {
-    if (
-      !confirm(
-        "Вы уверены, что хотите удалить задачу? Это действие нельзя отменить."
-      )
-    ) {
+  const handleDeleteTask = (taskId: number, taskTitle: string) => {
+    console.log("Открытие модалки удаления задачи", taskId);
+    setTaskToDelete(taskId);
+    setTaskToDeleteTitle(taskTitle);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!taskToDelete) {
+      console.error("Нет задачи для удаления");
+      setIsDeleteModalOpen(false);
       return;
     }
+
+    console.log("Подтверждение удаления задачи", taskToDelete);
+
     try {
-      console.log("Удаление задачи", taskId);
+      console.log("Удаление задачи", taskToDelete);
       // Вызов API удаления задачи
-      await taskService.deleteTask(taskId);
+      await taskService.deleteTask(taskToDelete);
       // Оптимистичное обновление: удаляем задачу из локального состояния
-      setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+      setTasks((prevTasks) =>
+        prevTasks.filter((task) => task.id !== taskToDelete)
+      );
       // Перезагружаем задачи с сервера для синхронизации
       await fetchTasks();
       // Можно показать уведомление, но не обязательно
-      // alert(`Задача ${taskId} удалена`);
+      // alert(`Задача ${taskToDelete} удалена`);
     } catch (error) {
       console.error("Ошибка удаления задачи:", error);
       alert("Не удалось удалить задачу");
       // В случае ошибки перезагружаем задачи, чтобы восстановить состояние
       fetchTasks();
+    } finally {
+      setIsDeleteModalOpen(false);
+      setTaskToDelete(null);
+      setTaskToDeleteTitle("");
     }
+  };
+
+  const handleCancelDelete = () => {
+    console.log("Удаление задачи отменено пользователем");
+    setIsDeleteModalOpen(false);
+    setTaskToDelete(null);
+    setTaskToDeleteTitle("");
   };
 
   const getStatusColor = (status: string) => {
@@ -448,7 +473,7 @@ const Dashboard: React.FC<DashboardProps> = ({ projectId, refreshKey }) => {
                         className={styles.taskActionButton}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDeleteTask(task.id);
+                          handleDeleteTask(task.id, task.title);
                         }}
                         title="Удалить задачу"
                       >
@@ -492,6 +517,15 @@ const Dashboard: React.FC<DashboardProps> = ({ projectId, refreshKey }) => {
           )}
         </div>
       </div>
+
+      {/* Модальное окно подтверждения удаления задачи */}
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        type="task"
+        title={taskToDeleteTitle}
+      />
     </div>
   );
 };

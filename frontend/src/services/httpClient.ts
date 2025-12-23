@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8000/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -9,7 +9,7 @@ export interface ApiResponse<T = any> {
 
 export interface RequestOptions extends RequestInit {
   headers?: Record<string, string>;
-  params?: Record<string, string | number | boolean>;
+  params?: Record<string, string | number | boolean | undefined>;
   // Если true, не добавлять базовый URL (для внешних запросов)
   external?: boolean;
   // Если true, не парсить ответ как JSON (например, для blob)
@@ -17,7 +17,9 @@ export interface RequestOptions extends RequestInit {
 }
 
 export type Interceptor = (request: Request) => Request | Promise<Request>;
-export type ResponseInterceptor = (response: Response) => Response | Promise<Response>;
+export type ResponseInterceptor = (
+  response: Response
+) => Response | Promise<Response>;
 
 class HttpClient {
   private baseUrl: string;
@@ -40,7 +42,7 @@ class HttpClient {
 
   // Удалить интерцептор
   removeInterceptor(interceptor: Interceptor): void {
-    this.interceptors = this.interceptors.filter(i => i !== interceptor);
+    this.interceptors = this.interceptors.filter((i) => i !== interceptor);
   }
 
   // Применить все интерцепторы к запросу
@@ -53,7 +55,9 @@ class HttpClient {
   }
 
   // Применить интерцепторы ответа
-  private async applyResponseInterceptors(response: Response): Promise<Response> {
+  private async applyResponseInterceptors(
+    response: Response
+  ): Promise<Response> {
     let processedResponse = response;
     for (const interceptor of this.responseInterceptors) {
       processedResponse = await interceptor(processedResponse);
@@ -62,8 +66,13 @@ class HttpClient {
   }
 
   // Построить URL с параметрами
-  private buildUrl(endpoint: string, params?: Record<string, string | number | boolean>): string {
-    const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
+  private buildUrl(
+    endpoint: string,
+    params?: Record<string, string | number | boolean | undefined>
+  ): string {
+    const url = endpoint.startsWith("http")
+      ? endpoint
+      : `${this.baseUrl}${endpoint}`;
     if (!params) return url;
 
     const query = new URLSearchParams();
@@ -77,7 +86,10 @@ class HttpClient {
   }
 
   // Основной метод запроса
-  async request<T = any>(endpoint: string, options: RequestOptions = {}): Promise<T> {
+  async request<T = any>(
+    endpoint: string,
+    options: RequestOptions = {}
+  ): Promise<T> {
     const {
       params,
       external = false,
@@ -91,14 +103,14 @@ class HttpClient {
 
     // Подготовить заголовки
     const defaultHeaders: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
+      "Content-Type": "application/json",
+      Accept: "application/json",
     };
 
     // Добавить токен авторизации, если есть
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
-      defaultHeaders['Authorization'] = `Bearer ${token}`;
+      defaultHeaders["Authorization"] = `Bearer ${token}`;
     }
 
     const finalHeaders = { ...defaultHeaders, ...headers };
@@ -118,7 +130,11 @@ class HttpClient {
       response = await fetch(request);
     } catch (error) {
       // Сетевая ошибка
-      throw new Error(`Network error: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Network error: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
     }
 
     // Применить интерцепторы ответа
@@ -135,7 +151,11 @@ class HttpClient {
       data = await response.json();
     } catch (error) {
       // Если ответ не JSON, выбросить ошибку
-      throw new Error(`Invalid JSON response: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Invalid JSON response: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
     }
 
     // Проверка статуса ответа
@@ -151,9 +171,9 @@ class HttpClient {
     }
 
     // Проверка формата ответа (если есть поле success)
-    if (data && typeof data === 'object' && 'success' in data) {
+    if (data && typeof data === "object" && "success" in data) {
       if (!data.success) {
-        const error = new Error(data.message || 'Request failed');
+        const error = new Error(data.message || "Request failed");
         (error as any).data = data;
         throw error;
       }
@@ -166,36 +186,54 @@ class HttpClient {
   }
 
   // Методы-помощники
-  get<T = any>(endpoint: string, options?: Omit<RequestOptions, 'method'>): Promise<T> {
-    return this.request<T>(endpoint, { ...options, method: 'GET' });
+  get<T = any>(
+    endpoint: string,
+    options?: Omit<RequestOptions, "method">
+  ): Promise<T> {
+    return this.request<T>(endpoint, { ...options, method: "GET" });
   }
 
-  post<T = any>(endpoint: string, body?: any, options?: Omit<RequestOptions, 'method' | 'body'>): Promise<T> {
+  post<T = any>(
+    endpoint: string,
+    body?: any,
+    options?: Omit<RequestOptions, "method" | "body">
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
-      method: 'POST',
+      method: "POST",
       body: body ? JSON.stringify(body) : undefined,
     });
   }
 
-  put<T = any>(endpoint: string, body?: any, options?: Omit<RequestOptions, 'method' | 'body'>): Promise<T> {
+  put<T = any>(
+    endpoint: string,
+    body?: any,
+    options?: Omit<RequestOptions, "method" | "body">
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
-      method: 'PUT',
+      method: "PUT",
       body: body ? JSON.stringify(body) : undefined,
     });
   }
 
-  patch<T = any>(endpoint: string, body?: any, options?: Omit<RequestOptions, 'method' | 'body'>): Promise<T> {
+  patch<T = any>(
+    endpoint: string,
+    body?: any,
+    options?: Omit<RequestOptions, "method" | "body">
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
-      method: 'PATCH',
+      method: "PATCH",
       body: body ? JSON.stringify(body) : undefined,
     });
   }
 
-  delete<T = any>(endpoint: string, options?: Omit<RequestOptions, 'method'>): Promise<T> {
-    return this.request<T>(endpoint, { ...options, method: 'DELETE' });
+  delete<T = any>(
+    endpoint: string,
+    options?: Omit<RequestOptions, "method">
+  ): Promise<T> {
+    return this.request<T>(endpoint, { ...options, method: "DELETE" });
   }
 }
 
@@ -211,7 +249,9 @@ httpClient.addInterceptor(async (request) => {
 // Пример интерцептора для обработки ошибок сети
 httpClient.addResponseInterceptor(async (response) => {
   if (!response.ok) {
-    console.warn(`[HTTP] Response status ${response.status} for ${response.url}`);
+    console.warn(
+      `[HTTP] Response status ${response.status} for ${response.url}`
+    );
   }
   return response;
 });

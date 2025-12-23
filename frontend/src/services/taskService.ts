@@ -1,4 +1,4 @@
-import { httpClient } from './httpClient';
+import { httpClient } from "./httpClient";
 
 export interface Task {
   id: number;
@@ -28,6 +28,7 @@ export interface User {
 }
 
 export interface GetTasksParams {
+  [key: string]: string | number | boolean | undefined;
   project_id?: number;
   status?: string;
   assigned_to?: number;
@@ -40,9 +41,9 @@ export interface GetTasksParams {
 class TaskService {
   // Получить список задач с фильтрами
   async getTasks(params?: GetTasksParams): Promise<Task[]> {
-    const result = await httpClient.get<any>('/tasks', { params });
+    const result = await httpClient.get<any>("/tasks", { params });
     // Обработка пагинированного ответа (если result содержит поле data с массивом)
-    if (result && typeof result === 'object' && Array.isArray(result.data)) {
+    if (result && typeof result === "object" && Array.isArray(result.data)) {
       return result.data as Task[];
     }
     // Если ответ уже массив, возвращаем его
@@ -50,7 +51,7 @@ class TaskService {
       return result as Task[];
     }
     // Иначе возвращаем пустой массив
-    console.warn('Непредвиденный формат ответа от /tasks:', result);
+    console.warn("Непредвиденный формат ответа от /tasks:", result);
     return [];
   }
 
@@ -71,7 +72,7 @@ class TaskService {
     tags?: string[];
     created_by: number;
   }): Promise<Task> {
-    return httpClient.post<Task>('/tasks', taskData);
+    return httpClient.post<Task>("/tasks", taskData);
   }
 
   // Обновить задачу
@@ -96,7 +97,9 @@ class TaskService {
 
   // Назначить задачу пользователю
   async assignTask(id: number, userId: number): Promise<Task> {
-    return httpClient.patch<Task>(`/tasks/${id}/assign`, { assigned_to: userId });
+    return httpClient.patch<Task>(`/tasks/${id}/assign`, {
+      assigned_to: userId,
+    });
   }
 
   // Получить задачи по проекту

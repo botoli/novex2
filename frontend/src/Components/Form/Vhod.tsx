@@ -3,6 +3,8 @@ import style from "../../style/Form/Vhod.module.scss";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../../store/user";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 interface FormData {
   email: string;
   password: string;
@@ -44,20 +46,17 @@ function Vhod({ onSuccess, onError, onNavigateToRegistration }: LoginProps) {
     setErrors({});
 
     try {
-      const loginResponse = await fetch(
-        "http://localhost:8000/api/users/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
-        }
-      );
+      const loginResponse = await fetch(`${API_BASE_URL}/users/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
 
       if (!loginResponse.ok) {
         throw new Error("Ошибка при входе");
