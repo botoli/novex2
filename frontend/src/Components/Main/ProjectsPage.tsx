@@ -8,7 +8,6 @@ import {
   getStatusColor,
   getStatusText,
 } from "../../assets/MockData/index.js";
-import DeleteConfirmationModal from "../Common/DeleteConfirmationModal.js";
 
 interface Project {
   id: number;
@@ -52,13 +51,11 @@ const PRIORITY_LABELS: Record<string, string> = {
 interface ProjectsPageProps {
   onProjectClick?: (projectId: number) => void;
   projectRefreshKey?: number;
-  onProjectDeleted?: () => void;
 }
 
 function ProjectsPage({
   onProjectClick,
   projectRefreshKey = 0,
-  onProjectDeleted,
 }: ProjectsPageProps) {
   const user = useSelector(selectUser);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -71,9 +68,6 @@ function ProjectsPage({
   const [newProjectDescription, setNewProjectDescription] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [createError, setCreateError] = useState("");
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState<number | null>(null);
-  const [projectToDeleteTitle, setProjectToDeleteTitle] = useState("");
 
   useEffect(() => {
     if (user?.id) {
@@ -110,14 +104,14 @@ function ProjectsPage({
         (project) =>
           project.title.toLowerCase().includes(query) ||
           project.description?.toLowerCase().includes(query) ||
-          project.status?.toLowerCase().includes(query)
+          project.status?.toLowerCase().includes(query),
       );
     }
 
     // Фильтрация по статусу
     if (activeFilter !== "all") {
       filtered = filtered.filter(
-        (project) => project.status?.toLowerCase() === activeFilter
+        (project) => project.status?.toLowerCase() === activeFilter,
       );
     }
 
@@ -141,76 +135,59 @@ function ProjectsPage({
   const handleEditProject = (projectId: number) => {
     console.log("Редактирование проекта", projectId);
     // TODO: открыть модальное окно редактирования или перейти на страницу редактирования
-    console.log(`Редактирование проекта ${projectId} (заглушка)`);
+    alert(`Редактирование проекта ${projectId} (заглушка)`);
   };
 
-  const handleDeleteProject = (projectId: number, projectTitle: string) => {
+  const handleDeleteProject = async (projectId: number) => {
     console.log("handleDeleteProject вызван для проекта", projectId);
-    setProjectToDelete(projectId);
-    setProjectToDeleteTitle(projectTitle);
-    setIsDeleteModalOpen(true);
-  };
 
-  const handleConfirmDelete = async () => {
-    if (!projectToDelete || !user?.id) {
-      console.error("Нет проекта для удаления или пользователь не авторизован");
-      setIsDeleteModalOpen(false);
+    // Временное решение для отладки: всегда удаляем без подтверждения
+    // TODO: вернуть confirm после отладки
+    const shouldDelete = true; // confirm("Вы уверены, что хотите удалить проект? Это действие нельзя отменить.");
+
+    if (!shouldDelete) {
+      console.log("Удаление отменено пользователем");
       return;
     }
 
-    console.log("Подтверждение удаления проекта", projectToDelete);
-
     try {
-      console.log("Удаление проекта", projectToDelete);
-      const result = await ProjectService.deleteProject(
-        projectToDelete,
-        user.id
-      );
+      console.log("Удаление проекта", projectId);
+      if (!user?.id) {
+        alert("Ошибка: пользователь не авторизован");
+        return;
+      }
+      // Используем новый метод deleteProject
+      const result = await ProjectService.deleteProject(projectId, user.id);
       console.log("Результат удаления:", result);
       if (result.success) {
-        console.log(`Проект "${projectToDeleteTitle}" успешно удален`);
+        alert(`Проект ${projectId} успешно удален`);
         // Обновить список проектов
         fetchProjects();
-        // Уведомить родительский компонент об удалении проекта
-        if (onProjectDeleted) {
-          onProjectDeleted();
-        }
       } else {
-        console.log(
-          `Ошибка удаления проекта: ${result.message || "Неизвестная ошибка"}`
+        alert(
+          `Ошибка удаления проекта: ${result.message || "Неизвестная ошибка"}`,
         );
       }
     } catch (error) {
       console.error("Ошибка удаления проекта:", error);
-      console.log(
+      alert(
         `Не удалось удалить проект: ${
           error instanceof Error ? error.message : "Неизвестная ошибка"
-        }`
+        }`,
       );
-    } finally {
-      setIsDeleteModalOpen(false);
-      setProjectToDelete(null);
-      setProjectToDeleteTitle("");
     }
   };
 
-  const handleCancelDelete = () => {
-    console.log("Удаление проекта отменено пользователем");
-    setIsDeleteModalOpen(false);
-    setProjectToDelete(null);
-    setProjectToDeleteTitle("");
-  };
-
   const handleViewMembers = (projectId: number) => {
-    console.log(`Просмотр участников проекта ${projectId} (заглушка)`);
+    alert(`Просмотр участников проекта ${projectId} (заглушка)`);
   };
 
   const handleViewTasks = (projectId: number) => {
-    console.log(`Просмотр задач проекта ${projectId} (заглушка)`);
+    alert(`Просмотр задач проекта ${projectId} (заглушка)`);
   };
 
   const handleToggleView = () => {
-    console.log("Переключение вида (сетка/список) - в разработке");
+    alert("Переключение вида (сетка/список) - в разработке");
   };
 
   const handleCreateNewProject = () => {
@@ -284,7 +261,7 @@ function ProjectsPage({
     const date = new Date(deadline);
     const today = new Date();
     const diffDays = Math.ceil(
-      (date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+      (date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
     );
 
     if (diffDays < 0) return { text: "Просрочено", color: "#FF6467" };
@@ -458,8 +435,8 @@ function ProjectsPage({
                       ? `${Math.round(
                           projects.reduce(
                             (acc, p) => acc + (p.progress || 0),
-                            0
-                          ) / projects.length
+                            0,
+                          ) / projects.length,
                         )}%`
                       : "0%"}
                   </span>
@@ -495,8 +472,8 @@ function ProjectsPage({
                   {searchQuery
                     ? "Попробуйте изменить поисковый запрос"
                     : activeFilter !== "all"
-                    ? "Измените фильтр статуса"
-                    : "Создайте свой первый проект, чтобы начать работу"}
+                      ? "Измените фильтр статуса"
+                      : "Создайте свой первый проект, чтобы начать работу"}
                 </p>
               </div>
             ) : (
@@ -518,7 +495,7 @@ function ProjectsPage({
                               className={style.statusBadge}
                               style={{
                                 backgroundColor: `${getStatusColor(
-                                  project.status
+                                  project.status,
                                 )}20`,
                                 color: getStatusColor(project.status),
                               }}
@@ -651,7 +628,7 @@ function ProjectsPage({
                           className={style.projectActionButton}
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeleteProject(project.id, project.title);
+                            handleDeleteProject(project.id);
                           }}
                           title="Удалить проект"
                         >
@@ -895,15 +872,6 @@ function ProjectsPage({
             </div>
           </div>
         )}
-
-        {/* Модальное окно подтверждения удаления проекта */}
-        <DeleteConfirmationModal
-          isOpen={isDeleteModalOpen}
-          onClose={handleCancelDelete}
-          onConfirm={handleConfirmDelete}
-          type="project"
-          title={projectToDeleteTitle}
-        />
       </div>
     </div>
   );
