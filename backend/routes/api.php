@@ -7,6 +7,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskAttachmentController;
 use App\Http\Controllers\GitHubProjectController;
+use App\Http\Controllers\SubscriptionController;
 Route::get("/user", function (Request $request) {
     return $request->user();
 })->middleware("auth:sanctum");
@@ -135,3 +136,13 @@ Route::prefix("github-projects")->group(function () {
     Route::post("/{id}/restore", [GitHubProjectController::class, "restore"]);
     Route::get("/github/repo", [GitHubProjectController::class, "getRepoFromGitHub"]);
 });
+Route::prefix("subscriptions")->group(function () {
+    Route::post("/", [SubscriptionController::class, "create"]);
+    Route::get("/", [SubscriptionController::class, "getAll"]);
+    Route::get("/default", [SubscriptionController::class, "getDefault"]);
+    Route::get("/{id}", [SubscriptionController::class, "get"]);
+    Route::put("/{id}", [SubscriptionController::class, "update"]);
+    Route::delete("/{id}", [SubscriptionController::class, "delete"]);
+    Route::get("/{id}/users", [SubscriptionController::class, "getUsers"]);
+});
+и
