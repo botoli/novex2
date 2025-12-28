@@ -134,6 +134,7 @@ Route::prefix("github-projects")->group(function () {
     Route::get("/my/{userId}", [GitHubProjectController::class, "myProjects"]);
     Route::post("/{id}/archive", [GitHubProjectController::class, "archive"]);
     Route::post("/{id}/restore", [GitHubProjectController::class, "restore"]);
+    Route::get("/github/repo", [GitHubProjectController::class, "getRepoFromGitHub"]);
 });
 Route::prefix("subscriptions")->group(function () {
     Route::post("/", [SubscriptionController::class, "create"]);
