@@ -144,4 +144,3 @@ Route::prefix("subscriptions")->group(function () {
     Route::delete("/{id}", [SubscriptionController::class, "delete"]);
     Route::get("/{id}/users", [SubscriptionController::class, "getUsers"]);
 });
-и
