@@ -3,22 +3,22 @@ export type AiMessage = {
   content: string;
 };
 
-const OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
-const DEFAULT_MODEL = "google/gemini-2.0-flash-001"; // или «-001»
+const DEEPSEEK_ENDPOINT = "https://api.deepseek.com/v1/chat/completions";
+const DEFAULT_MODEL = "deepseek-chat"; // или "deepseek-coder" для программирования
 
-// Твой ключ для личного использования
+// Ключ DeepSeek API предоставленный пользователем
 const FALLBACK_KEY =
-  "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";
+  "sk-16eab81679b141ebad344ed96a4a02ff";
 
 const getApiKey = () =>
-  (globalThis as any)?.process?.env?.OPENROUTER_API_KEY ||
-  (import.meta as any)?.env?.VITE_OPENROUTER_API_KEY ||
+  (globalThis as any)?.process?.env?.DEEPSEEK_API_KEY ||
+  (import.meta as any)?.env?.VITE_DEEPSEEK_API_KEY ||
   FALLBACK_KEY;
 
 function getModel() {
   return (
-    (globalThis as any)?.process?.env?.OPENROUTER_MODEL ||
-    (import.meta as any)?.env?.VITE_OPENROUTER_MODEL ||
+    (globalThis as any)?.process?.env?.DEEPSEEK_MODEL ||
+    (import.meta as any)?.env?.VITE_DEEPSEEK_MODEL ||
     DEFAULT_MODEL
   );
 }
@@ -27,9 +27,9 @@ export async function sendChatCompletion(
   messages: AiMessage[]
 ): Promise<string> {
   const apiKey = getApiKey();
-  if (!apiKey) throw new Error("API ключ OpenRouter не задан");
+  if (!apiKey) throw new Error("API ключ DeepSeek не задан");
 
-  const response = await fetch(OPENROUTER_ENDPOINT, {
+  const response = await fetch(DEEPSEEK_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -43,7 +43,7 @@ export async function sendChatCompletion(
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(`OpenRouter error ${response.status}: ${text}`);
+    throw new Error(`DeepSeek error ${response.status}: ${text}`);
   }
 
   const data = await response.json();

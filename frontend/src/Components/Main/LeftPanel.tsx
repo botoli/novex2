@@ -53,7 +53,7 @@ function LeftPanel({
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tittle, setTittle] = useState("");
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -100,6 +100,7 @@ function LeftPanel({
     "Панель управления": "dashboard",
     Настройки: "settings",
     AI: "ai",
+    Тема: "settings", // Тема ведет в настройки
   };
 
   const pageToCategory: Record<string, string> = {
@@ -176,19 +177,18 @@ function LeftPanel({
   const handleNewProject = () => {
     setIsModalOpen(true);
     setError("");
-    fetchUserProjects();
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setTittle("");
+    setTitle("");
     setDescription("");
     setError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!tittle.trim()) {
+    if (!title.trim()) {
       setError("Пожалуйста, введите название проекта");
       return;
     }
@@ -198,7 +198,7 @@ function LeftPanel({
 
     try {
       const newProject = await ProjectService.createProject({
-        tittle: tittle.trim(),
+        tittle: title.trim(),
         description: description.trim(),
         owner_id: user?.id || 1,
       });
@@ -311,9 +311,6 @@ function LeftPanel({
     setIsDarkMode(!!selectedTheme && selectedTheme.includes("dark"));
   }, [selectedTheme]);
 
-  const [, updateState] = React.useState<any>();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
-
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
       if (
@@ -380,7 +377,7 @@ function LeftPanel({
             <div className={style.namingtxt}>
               <h1 className={style.namingh1}>Novex</h1>
             </div>
-            
+
             {/* Кнопка закрытия для расширенного мобильного меню */}
             {isMobileExpanded && (
               <button
@@ -419,7 +416,9 @@ function LeftPanel({
           </div>
           <button
             className={style.collapseToggleButton}
-            onClick={isMobileExpanded ? toggleMobileExpanded : togglePanelCollapsed}
+            onClick={
+              isMobileExpanded ? toggleMobileExpanded : togglePanelCollapsed
+            }
             title={
               isMobileExpanded
                 ? "Закрыть меню"
@@ -474,36 +473,15 @@ function LeftPanel({
                     >
                       <path d={element.icon} />
                     </svg>
-                    <p>{element.name}</p>
-                    <button
-                      className={style.addProjectBtn}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleNewProject();
-                      }}
-                      title="Создать новый проект"
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                      >
-                        <path d="M12 5v14M5 12h14" />
-                      </svg>
-                    </button>
-                  </div>
 
-                  <div className={style.projectsListSection}>
+                    <p>{element.name}</p>
                     <div
                       className={style.projectsListTitle}
-                      onClick={() =>
-                        setIsProjectsListCollapsed(!isProjectsListCollapsed)
-                      }
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsProjectsListCollapsed(!isProjectsListCollapsed);
+                      }}
                     >
-                      <span>Последние проекты</span>
                       <svg
                         width="14"
                         height="14"
@@ -518,7 +496,9 @@ function LeftPanel({
                         <path d="M6 9l6 6 6-6" />
                       </svg>
                     </div>
+                  </div>
 
+                  <div className={style.projectsListSection}>
                     {!isProjectsListCollapsed && (
                       <>
                         {projectsLoading ? (
@@ -813,9 +793,9 @@ function LeftPanel({
                 <label>Название проекта *</label>
                 <input
                   type="text"
-                  value={tittle}
+                  value={title}
                   onChange={(e) => {
-                    setTittle(e.target.value);
+                    setTitle(e.target.value);
                     setError("");
                   }}
                   placeholder="Введите название проекта"
@@ -847,7 +827,7 @@ function LeftPanel({
                 </button>
                 <button
                   type="submit"
-                  disabled={!tittle.trim() || isLoading}
+                  disabled={!title.trim() || isLoading}
                   className={style.submitButton}
                 >
                   {isLoading ? (

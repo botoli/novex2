@@ -68,31 +68,13 @@
   position: relative;
   overflow: hidden;
 
-  &:hover {
-    background: color-mix(in srgb, $primary-purple, black 15%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-  }
+ 
 
   &:active {
-    transform: translateY(0);
     box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
   }
 
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.6s;
-  }
-
-  &:hover::after {
-    left: 100%;
-  }
+  
 
   svg {
     width: 16px;
@@ -118,31 +100,8 @@
   position: relative;
   overflow: hidden;
 
-  &:hover {
-    background: linear-gradient(135deg, color-mix(in srgb, $primary-purple, black 10%), color-mix(in srgb, $accent-blue, black 10%));
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.5);
-  }
 
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.7s;
-  }
-
-  &:hover::before {
-    left: 100%;
-  }
+ 
 
   svg {
     width: 18px;
@@ -247,7 +206,6 @@
   &:hover {
     border-color: $primary-purple;
     box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
-    transform: translateY(-2px);
   }
 }
 
@@ -328,7 +286,6 @@
 
   &:hover {
     background: rgba(102, 126, 234, 0.2);
-    transform: scale(1.05);
   }
 
   svg {
@@ -353,7 +310,6 @@
   &:hover:not(:disabled) {
     background: rgba(102, 126, 234, 0.2);
     color: $primary-purple;
-    transform: scale(1.05);
   }
 
   &:disabled {
@@ -392,25 +348,14 @@
   &:hover {
     background: linear-gradient(135deg, rgba(244, 67, 54, 0.25), rgba(244, 67, 54, 0.35));
     border-color: rgba(244, 67, 54, 0.5);
-    transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
   }
 
   &:active {
-    transform: scale(1);
     box-shadow: 0 2px 6px rgba(244, 67, 54, 0.2);
   }
 
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.6s;
-  }
+  
 
   &:hover::after {
     left: 100%;
@@ -718,10 +663,8 @@
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }

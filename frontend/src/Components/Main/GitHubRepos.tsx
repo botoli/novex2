@@ -160,7 +160,9 @@ const GitHubRepos: React.FC<GitHubReposProps> = ({ projectId }) => {
       // Получаем данные о репозитории через наш backend API
       console.log(`Fetching from GitHub API via backend: ${owner}/${repo}`);
       const githubResponse = await fetch(
-        `${API_BASE_URL}/github-projects/github/repo?owner=${encodeURIComponent(owner)}&repo=${encodeURIComponent(repo)}`,
+        `${API_BASE_URL}/github-projects/github/repo?owner=${encodeURIComponent(
+          owner
+        )}&repo=${encodeURIComponent(repo)}`,
         {
           headers: {
             Accept: "application/json",
@@ -170,10 +172,11 @@ const GitHubRepos: React.FC<GitHubReposProps> = ({ projectId }) => {
 
       if (!githubResponse.ok) {
         const errorData = await githubResponse.json().catch(() => ({}));
-        const errorMessage = errorData.message || `GitHub API error: ${githubResponse.status}`;
-        const solution = errorData.solution || '';
-        const details = errorData.details || '';
-        
+        const errorMessage =
+          errorData.message || `GitHub API error: ${githubResponse.status}`;
+        const solution = errorData.solution || "";
+        const details = errorData.details || "";
+
         if (githubResponse.status === 404) {
           throw new Error(`Репозиторий не найден: ${owner}/${repo}. Проверьте:
           1. Существует ли репозиторий
@@ -184,30 +187,33 @@ const GitHubRepos: React.FC<GitHubReposProps> = ({ projectId }) => {
           1. Превышен лимит запросов к GitHub API (60 запросов в час для неавторизованных запросов)
           2. Репозиторий является приватным и требует авторизации
           3. Проблемы с сетевым доступом`;
-          
+
           if (solution) {
             errorMsg += `\n\nРешение: ${solution}`;
           }
           if (details) {
             errorMsg += `\n\nДетали: ${details}`;
           }
-          
+
           errorMsg += `\n\nКак исправить:
           1. Добавьте GitHub токен в файл backend/.env как GITHUB_API_TOKEN
           2. Или подождите час для сброса лимита
           3. Или используйте ручной ввод данных репозитория`;
-          
+
           throw new Error(errorMsg);
         }
         throw new Error(errorMessage);
       }
 
       const githubResponseData = await githubResponse.json();
-      
+
       if (!githubResponseData.success) {
-        throw new Error(githubResponseData.message || "Ошибка при получении данных репозитория");
+        throw new Error(
+          githubResponseData.message ||
+            "Ошибка при получении данных репозитория"
+        );
       }
-      
+
       const repoData = githubResponseData.data;
 
       // Создаем проект в нашей системе
@@ -278,6 +284,43 @@ const GitHubRepos: React.FC<GitHubReposProps> = ({ projectId }) => {
       }
 
       if (!response.ok) {
+        // Обработка ошибки 422 - репозиторий уже существует
+        if (response.status === 422 && responseData.errors) {
+          const errors = responseData.errors;
+          let errorMessage = "Репозиторий уже существует в системе.\n";
+
+          // Проверяем github_id (может быть массивом строк)
+          if (errors.github_id) {
+            const githubIdError = Array.isArray(errors.github_id)
+              ? errors.github_id[0]
+              : errors.github_id;
+            if (githubIdError && githubIdError.includes("already been taken")) {
+              errorMessage +=
+                "• GitHub ID уже используется другим репозиторием\n";
+            }
+          }
+
+          // Проверяем full_name (может быть массивом строк)
+          if (errors.full_name) {
+            const fullNameError = Array.isArray(errors.full_name)
+              ? errors.full_name[0]
+              : errors.full_name;
+            if (fullNameError && fullNameError.includes("already been taken")) {
+              errorMessage += "• Полное имя репозитория уже используется\n";
+            }
+          }
+
+          errorMessage += "\nВозможные решения:\n";
+          errorMessage +=
+            "1. Проверьте, не добавлен ли уже этот репозиторий в ваш список\n";
+          errorMessage +=
+            "2. Если репозиторий уже добавлен, используйте синхронизацию\n";
+          errorMessage +=
+            "3. Или удалите существующий репозиторий перед добавлением";
+
+          throw new Error(errorMessage);
+        }
+
         throw new Error(
           responseData.message || `HTTP error! status: ${response.status}`
         );
@@ -327,25 +370,60 @@ const GitHubRepos: React.FC<GitHubReposProps> = ({ projectId }) => {
           method: "DELETE",
           headers: {
             Accept: "application/json",
+            "Content-Type": "application/json",
           },
         }
       );
 
+      // Проверяем статус ответа
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          // Если не JSON, используем текст ошибки
+          if (errorText) {
+            errorMessage = errorText;
+          }
+        }
+        throw new Error(errorMessage);
       }
 
-      const data = await response.json();
+      // Пытаемся получить JSON ответ
+      let data;
+      const responseText = await response.text();
+      if (responseText) {
+        try {
+          data = JSON.parse(responseText);
+        } catch (parseError) {
+          // Если ответ не JSON, но статус OK, считаем успешным
+          console.warn("Response is not JSON, but status is OK");
+          data = { success: true };
+        }
+      } else {
+        // Пустой ответ, но статус OK - считаем успешным
+        data = { success: true };
+      }
 
-      if (data.success) {
-        setRepos(repos.filter((repo) => repo.id !== repoId));
-        alert("Репозиторий удален");
+      // Обновляем список репозиториев
+      if (data.success !== false) {
+        // Удаляем из локального состояния
+        setRepos((prevRepos) => prevRepos.filter((repo) => repo.id !== repoId));
+        // Перезагружаем список с сервера для уверенности
+        await fetchRepos();
+        alert("Репозиторий успешно удален");
       } else {
         alert(data.message || "Ошибка при удалении репозитория");
       }
     } catch (err) {
       console.error("Error removing repo:", err);
-      alert("Ошибка при удалении репозитория");
+      alert(
+        err instanceof Error
+          ? err.message
+          : "Ошибка при удалении репозитория"
+      );
     } finally {
       closeDeleteModal();
     }

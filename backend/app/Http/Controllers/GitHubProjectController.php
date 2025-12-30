@@ -120,9 +120,11 @@ class GitHubProjectController
 
     public function store(Request $request): JsonResponse
     {
+        // Проверяем уникальность только среди неудаленных записей
+        // SoftDeletes автоматически исключает мягко удаленные записи из запросов
         $validator = Validator::make($request->all(), [
-            "github_id" => "required|string|unique:github_projects,github_id",
-            "full_name" => "required|string|unique:github_projects,full_name",
+            "github_id" => "required|string|unique:github_projects,github_id,NULL,id,deleted_at,NULL",
+            "full_name" => "required|string|unique:github_projects,full_name,NULL,id,deleted_at,NULL",
             "name" => "required|string",
             "owner_login" => "required|string",
         ]);
@@ -299,7 +301,8 @@ class GitHubProjectController
 
     public function destroy($id): JsonResponse
     {
-        $project = Github_project::find($id);
+        // Ищем проект, включая мягко удаленные
+        $project = Github_project::withTrashed()->find($id);
         if (!$project) {
             return response()->json(
                 [
@@ -310,7 +313,8 @@ class GitHubProjectController
             );
         }
 
-        $project->delete();
+        // Полностью удаляем из БД (forceDelete), чтобы можно было добавить снова
+        $project->forceDelete();
 
         return response()->json([
             "success" => true,

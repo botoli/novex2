@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../store/user.js";
 import styles from "../../style/Main/SimplePage.module.scss";
 
 type SettingGroup =
@@ -214,6 +216,46 @@ const settings: SettingCard[] = [
     checkboxState: true,
     icon: "variant=4.svg",
     group: "notifications",
+  },
+
+  // Группа: Интеграции (integrations)
+  {
+    id: 34,
+    title: "GitHub интеграция",
+    description: "Привяжите ваш GitHub аккаунт для синхронизации репозиториев.",
+    icon: "variant=4.svg",
+    type: "category",
+    group: "integrations",
+  },
+  {
+    id: 35,
+    title: "Привязать GitHub аккаунт",
+    description: "Подключите ваш GitHub аккаунт для автоматической синхронизации репозиториев.",
+    icon: "variant=4.svg",
+    type: "category",
+    group: "integrations",
+    actionLabel: "Привязать",
+    actionUrl: "#",
+  },
+  {
+    id: 36,
+    title: "Автоматическая синхронизация",
+    description: "Автоматически обновлять данные репозиториев с GitHub.",
+    hasToggle: true,
+    toggleState: true,
+    icon: "variant=18.svg",
+    type: "toggle",
+    group: "integrations",
+  },
+  {
+    id: 37,
+    title: "Уведомления о коммитах",
+    description: "Получать уведомления о новых коммитах в привязанных репозиториях.",
+    hasToggle: true,
+    toggleState: false,
+    icon: "variant=4.svg",
+    type: "toggle",
+    group: "integrations",
   },
 
   // Группа: Конфиденциальность и данные (privacy)
@@ -507,7 +549,10 @@ const groupOrder: SettingGroup[] = [
 ];
 
 const SettingsPage: React.FC = () => {
+  const user = useSelector(selectUser);
   const [activeGroup, setActiveGroup] = useState<SettingGroup>("account");
+  const [githubLinked, setGithubLinked] = useState(false);
+  const [githubReposCount, setGithubReposCount] = useState(0);
   const [toggleStates, setToggleStates] = useState<Record<number, boolean>>(
     () => {
       const initial: Record<number, boolean> = {};
@@ -576,6 +621,47 @@ const SettingsPage: React.FC = () => {
 
   const handleCheckboxChange = (id: number, checked: boolean) => {
     setCheckboxStates((prev) => ({ ...prev, [id]: checked }));
+  };
+
+  // Проверка статуса привязки GitHub
+  useEffect(() => {
+    const checkGitHubStatus = async () => {
+      if (!user?.id) return;
+
+      try {
+        const API_BASE_URL =
+          import.meta.env.VITE_API_URL || "http://localhost:8000";
+        const response = await fetch(
+          `${API_BASE_URL}/api/github-projects/user/${user.id}/projects`,
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const repos = data.data?.data || data.data || data.projects || [];
+          setGithubReposCount(repos.length);
+          setGithubLinked(repos.length > 0);
+        }
+      } catch (error) {
+        console.error("Error checking GitHub status:", error);
+      }
+    };
+
+    checkGitHubStatus();
+  }, [user?.id]);
+
+  // Обработка привязки GitHub
+  const handleGitHubLink = () => {
+    // Перенаправляем на страницу проектов, где можно добавить репозитории
+    // В реальном приложении здесь может быть OAuth авторизация
+    alert(
+      "Для привязки GitHub аккаунта добавьте репозитории на странице проектов. GitHub репозитории автоматически привязываются к вашему профилю при добавлении."
+    );
   };
 
   // Группировка настроек по группам
@@ -649,13 +735,36 @@ const SettingsPage: React.FC = () => {
                         <button
                           className={styles.actionButton}
                           onClick={() => {
-                            if (setting.actionUrl) {
+                            if (setting.id === 35) {
+                              // Кнопка привязки GitHub
+                              handleGitHubLink();
+                            } else if (setting.actionUrl) {
                               window.location.href = setting.actionUrl;
                             }
                           }}
                         >
-                          {setting.actionLabel}
+                          {setting.id === 35 && githubLinked
+                            ? "Управлять"
+                            : setting.actionLabel}
                         </button>
+                      )}
+                      {setting.id === 34 && (
+                        <span
+                          className={
+                            githubLinked
+                              ? getBadgeClass("success")
+                              : getBadgeClass("info")
+                          }
+                        >
+                          {githubLinked
+                            ? `Привязано (${githubReposCount} репозиториев)`
+                            : "Не привязано"}
+                        </span>
+                      )}
+                      {setting.id === 35 && githubLinked && (
+                        <span className={getBadgeClass("success")}>
+                          Активно
+                        </span>
                       )}
                     </div>
                   </div>

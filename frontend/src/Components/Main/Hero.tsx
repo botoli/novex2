@@ -50,12 +50,14 @@ const Hero: React.FC<HeroProps> = ({
 }) => {
   const [heroProjects, setHeroProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [stats, setStats] = useState({
     totalProjects: 0,
     activeProjects: 0,
     completedProjects: 0,
     todayTasks: 0,
   });
+  const [viewMode, setViewMode] = useState<"list" | "grid2" | "grid3">("list");
 
   const user = useSelector(selectUser);
 
@@ -86,25 +88,173 @@ const Hero: React.FC<HeroProps> = ({
     }
   };
 
+  // Загрузка статистики задач для проекта
+  const fetchProjectTasks = async (projectId: number) => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/projects/${projectId}/statistics`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        return {
+          total_tasks: 0,
+          in_progress_tasks: 0,
+          pending_tasks: 0,
+          high_priority: 0,
+        };
+      }
+
+      return data.task_statistics || {
+        total_tasks: 0,
+        in_progress_tasks: 0,
+        pending_tasks: 0,
+        high_priority: 0,
+      };
+    } catch (error) {
+      console.error("Ошибка загрузки задач проекта:", error);
+      return {
+        total_tasks: 0,
+        in_progress_tasks: 0,
+        pending_tasks: 0,
+        high_priority: 0,
+      };
+    }
+  };
+
+  // Загрузка последней активности
+  const fetchRecentActivity = async (userId: number) => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/projects/activity/recent?user_id=${userId}&limit=3`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        return [];
+      }
+
+      return data.activities || [];
+    } catch (error) {
+      console.error("Ошибка загрузки активности:", error);
+      return [];
+    }
+  };
+
+  // Загрузка GitHub репозиториев пользователя
+  const fetchUserGitHubRepos = async (userId: number) => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/github-projects/user/${userId}/projects`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        return [];
+      }
+
+      // Обрабатываем как пагинированный ответ, так и обычный массив
+      return data.data?.data || data.data || [];
+    } catch (error) {
+      console.error("Ошибка загрузки репозиториев:", error);
+      return [];
+    }
+  };
+
   // Загрузка данных для Hero
   const loadHeroData = async () => {
     if (user?.id) {
       try {
         setIsLoading(true);
 
-        // Загружаем проекты пользователя
-        const projects = await fetchUserProjects(user.id);
-        setHeroProjects(projects);
+        // Загружаем проекты пользователя и GitHub репозитории параллельно
+        const [projects, githubRepos] = await Promise.all([
+          fetchUserProjects(user.id),
+          fetchUserGitHubRepos(user.id),
+        ]);
+
+        // Загружаем статистику задач для каждого проекта
+        const projectsWithStats = await Promise.all(
+          projects.map(async (project) => {
+            const taskStats = await fetchProjectTasks(project.id);
+            
+            // Ищем связанный репозиторий (пока по user_id, можно улучшить если будет связь project_id)
+            const relatedRepo = githubRepos.find(
+              (repo: any) => repo.user_id === project.owner_id || repo.user_id === user.id
+            );
+
+            // Форматируем дату последнего коммита
+            let lastCommitFormatted = null;
+            if (relatedRepo?.github_pushed_at) {
+              const commitDate = new Date(relatedRepo.github_pushed_at);
+              const now = new Date();
+              const diffInDays = Math.floor(
+                (now.getTime() - commitDate.getTime()) / (1000 * 60 * 60 * 24)
+              );
+              
+              if (diffInDays === 0) {
+                lastCommitFormatted = "Сегодня";
+              } else if (diffInDays === 1) {
+                lastCommitFormatted = "Вчера";
+              } else if (diffInDays < 7) {
+                lastCommitFormatted = `${diffInDays} дней назад`;
+              } else {
+                lastCommitFormatted = commitDate.toLocaleDateString("ru-RU", {
+                  day: "numeric",
+                  month: "short",
+                });
+              }
+            }
+
+            return {
+              ...project,
+              status: project.status || "active",
+              members: project.users?.length || 0,
+              activeTasks: taskStats.in_progress_tasks || 0,
+              tasks: taskStats.total_tasks || 0,
+              urgentTasks: taskStats.high_priority || 0,
+              repository: relatedRepo?.html_url || null,
+              branches: relatedRepo?.default_branch ? 1 : 0, // Пока нет API для подсчета веток
+              lastCommit: lastCommitFormatted,
+            };
+          })
+        );
+
+        setHeroProjects(projectsWithStats);
 
         // Рассчитываем статистику
-        const totalProjects = projects.length;
-        const activeProjects = projects.filter(
+        const totalProjects = projectsWithStats.length;
+        const activeProjects = projectsWithStats.filter(
           (p) => p.status === "active"
         ).length;
-        const completedProjects = projects.filter(
+        const completedProjects = projectsWithStats.filter(
           (p) => p.status === "completed"
         ).length;
-        const todayTasks = projects.reduce(
+        const todayTasks = projectsWithStats.reduce(
           (sum, p) => sum + (p.activeTasks || 0),
           0
         );
@@ -115,6 +265,10 @@ const Hero: React.FC<HeroProps> = ({
           completedProjects,
           todayTasks,
         });
+
+        // Загружаем последнюю активность
+        const activity = await fetchRecentActivity(user.id);
+        setRecentActivity(activity);
       } catch (error) {
         console.error("Ошибка загрузки данных:", error);
       } finally {
@@ -359,45 +513,190 @@ const Hero: React.FC<HeroProps> = ({
         </button>
       </div>
 
-      {/* Hero Section - smaller */}
-      <div className={style.heroSection}>
-        <div className={style.heroContent}>
-          <h1 className={style.heroTitle}>Обзор проектов</h1>
-          <p className={style.heroSubtitle}>
-            {stats.activeProjects} активный проект · {stats.todayTasks} задач
-            сегодня
-          </p>
-        </div>
-      </div>
-
-      {/* Quick Actions Section */}
-      <div className={style.quickActionsSection}>
-        <h2 className={style.sectionTitle}>Быстрые действия</h2>
-        <div className={style.quickActionsGrid}>
-          {quickActions.map((action) => (
-            <button
-              key={action.id}
-              className={style.quickActionCard}
-              onClick={action.onClick}
-              style={{ "--action-color": action.color } as React.CSSProperties}
-            >
-              <div className={style.quickActionIcon}>{action.icon}</div>
-              <span className={style.quickActionTitle}>{action.title}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Active Projects Section */}
       <div className={style.projectsSection}>
         <div className={style.sectionHeader}>
           <h2 className={style.sectionTitle}>Активные проекты</h2>
-          <button
-            className={style.viewAllButton}
-            onClick={onNavigateToProjects}
-          >
-            Смотреть все →
-          </button>
+          <div className={style.viewControls}>
+            <div className={style.viewModeButtons}>
+              <button
+                className={`${style.viewModeButton} ${
+                  viewMode === "list" ? style.active : ""
+                }`}
+                onClick={() => setViewMode("list")}
+                title="Список"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+              <button
+                className={`${style.viewModeButton} ${
+                  viewMode === "grid2" ? style.active : ""
+                }`}
+                onClick={() => setViewMode("grid2")}
+                title="Сетка 2 колонки"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="3"
+                    y="3"
+                    width="9"
+                    height="9"
+                    rx="1"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <rect
+                    x="12"
+                    y="3"
+                    width="9"
+                    height="9"
+                    rx="1"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <rect
+                    x="3"
+                    y="12"
+                    width="9"
+                    height="9"
+                    rx="1"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <rect
+                    x="12"
+                    y="12"
+                    width="9"
+                    height="9"
+                    rx="1"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                </svg>
+              </button>
+              <button
+                className={`${style.viewModeButton} ${
+                  viewMode === "grid3" ? style.active : ""
+                }`}
+                onClick={() => setViewMode("grid3")}
+                title="Сетка 3 колонки"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="2"
+                    y="2"
+                    width="6"
+                    height="6"
+                    rx="1"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <rect
+                    x="9"
+                    y="2"
+                    width="6"
+                    height="6"
+                    rx="1"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <rect
+                    x="16"
+                    y="2"
+                    width="6"
+                    height="6"
+                    rx="1"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <rect
+                    x="2"
+                    y="9"
+                    width="6"
+                    height="6"
+                    rx="1"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <rect
+                    x="9"
+                    y="9"
+                    width="6"
+                    height="6"
+                    rx="1"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <rect
+                    x="16"
+                    y="9"
+                    width="6"
+                    height="6"
+                    rx="1"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <rect
+                    x="2"
+                    y="16"
+                    width="6"
+                    height="6"
+                    rx="1"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <rect
+                    x="9"
+                    y="16"
+                    width="6"
+                    height="6"
+                    rx="1"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <rect
+                    x="16"
+                    y="16"
+                    width="6"
+                    height="6"
+                    rx="1"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                </svg>
+              </button>
+            </div>
+            <button
+              className={style.viewAllButton}
+              onClick={onNavigateToProjects}
+            >
+              Смотреть все →
+            </button>
+          </div>
+        </div>
+
+        {/* Quick Actions внутри секции активных проектов */}
+        <div className={style.compactQuickActionsGrid}>
+          {quickActions.map((action) => (
+            <button
+              key={action.id}
+              className={style.compactQuickActionCard}
+              onClick={action.onClick}
+              style={
+                { "--action-color": action.color } as React.CSSProperties
+              }
+            >
+              <div className={style.compactQuickActionIcon}>{action.icon}</div>
+              <span className={style.compactQuickActionTitle}>{action.title}</span>
+            </button>
+          ))}
         </div>
 
         {isLoading ? (
@@ -406,12 +705,19 @@ const Hero: React.FC<HeroProps> = ({
             <p>Загрузка проектов...</p>
           </div>
         ) : heroProjects.length > 0 ? (
-          <div className={style.projectsList}>
+          <div
+            className={`${style.projectsList} ${
+              viewMode === "grid2"
+                ? style.projectsGrid2
+                : viewMode === "grid3"
+                ? style.projectsGrid3
+                : ""
+            }`}
+          >
             {heroProjects.slice(0, 5).map((project) => (
               <div
                 key={project.id}
                 className={style.projectRow}
-                onClick={() => handleProjectClick(project.id)}
               >
                 <div className={style.projectInfo}>
                   <div className={style.projectMain}>
@@ -456,85 +762,164 @@ const Hero: React.FC<HeroProps> = ({
                       )}
                     </div>
                   </div>
-                  <div className={style.projectDetails}>
-                    <div className={style.projectDetail}>
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                        />
-                        <circle
-                          cx="9"
-                          cy="7"
-                          r="4"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                        <path
-                          d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                      </svg>
-                      <span>
-                        {project.users?.length || project.members || 0}{" "}
-                        участников
-                      </span>
+                  {/* Детальная информация о проекте - компактная сетка */}
+                  <div className={style.projectDetailGrid}>
+                    {/* Команда */}
+                    <div className={style.projectDetailCard}>
+                      <div className={style.projectDetailCardHeader}>
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <path
+                            d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                          <circle
+                            cx="9"
+                            cy="7"
+                            r="4"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <path
+                            d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                        </svg>
+                        Команда
+                      </div>
+                      <div className={style.projectDetailCardValue}>
+                        {project.users?.length || project.members || 0}
+                      </div>
+                      <div className={style.teamAvatars}>
+                        {project.users?.slice(0, 3).map((user, idx) => (
+                          <div
+                            key={user.id}
+                            className={style.teamAvatar}
+                            style={{ zIndex: 10 - idx }}
+                          >
+                            {user.name?.charAt(0) || "U"}
+                          </div>
+                        ))}
+                        {project.users && project.users.length > 3 && (
+                          <span className={style.teamMore}>
+                            +{project.users.length - 3}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className={style.projectDetail}>
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          d="M9 11L12 14L22 4"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                      <span>
-                        {project.activeTasks || project.tasks || 0} задач
-                      </span>
+
+                    {/* GitHub репозиторий */}
+                    <div className={style.projectDetailCard}>
+                      <div className={style.projectDetailCardHeader}>
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <path
+                            d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        Репозиторий
+                      </div>
+                      <div className={style.projectDetailCardValue}>
+                        {project.repository ? "GitHub" : "Нет"}
+                      </div>
+                      <div className={style.projectDetailCardSub}>
+                        {project.repository ? "Ссылка" : "Не подключен"}
+                      </div>
                     </div>
-                    <div className={style.projectDetail}>
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <circle
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                        <path
-                          d="M12 6v6l4 2"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                      <span>
+
+                    {/* Ветки */}
+                    <div className={style.projectDetailCard}>
+                      <div className={style.projectDetailCardHeader}>
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <path
+                            d="M6 3v12M18 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 9a9 9 0 0 1-9 9"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        Ветки
+                      </div>
+                      <div className={style.projectDetailCardValue}>
+                        {project.branches || 0}
+                      </div>
+                      <div className={style.projectDetailCardSub}>активные</div>
+                    </div>
+
+                    {/* Последний коммит */}
+                    <div className={style.projectDetailCard}>
+                      <div className={style.projectDetailCardHeader}>
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <path
+                            d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        Коммит
+                      </div>
+                      <div className={style.projectDetailCardValue}>
+                        {project.lastCommit ? project.lastCommit : "Нет"}
+                      </div>
+                      <div className={style.projectDetailCardSub}>
+                        {project.lastCommit ? "последний" : "нет данных"}
+                      </div>
+                    </div>
+
+                    {/* Обновлен */}
+                    <div className={style.projectDetailCard}>
+                      <div className={style.projectDetailCardHeader}>
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <path
+                            d="M12 6v6l4 2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        Обновлен
+                      </div>
+                      <div className={style.projectDetailCardValue}>
                         {project.updated_at
                           ? new Date(project.updated_at).toLocaleDateString(
                               "ru-RU",
@@ -544,72 +929,73 @@ const Hero: React.FC<HeroProps> = ({
                               }
                             )
                           : "Недавно"}
-                      </span>
+                      </div>
+                      <div className={style.projectDetailCardSub}>
+                        последнее
+                      </div>
                     </div>
-                    {/* Ветки */}
-                    <div className={style.projectDetail}>
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          d="M6 3v12M18 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 9a9 9 0 0 1-9 9"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span>Ветки: {project.branches || 3}</span>
-                    </div>
-                    {/* Последний коммит */}
-                    <div className={style.projectDetail}>
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span>
-                        Коммит: {project.lastCommit || "2 дня назад"}
-                      </span>
-                    </div>
+
                     {/* Горящие задачи */}
-                    <div className={style.projectDetail}>
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          d="M17.657 18.657A8 8 0 0 1 6.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0 1 20 13a7.975 7.975 0 0 1-2.343 5.657z"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M9.879 16.121A3 3 0 1 0 12.12 13.88 3 3 0 0 0 9.88 16.12z"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span>
-                        Горящие: {project.urgentTasks || 0}
-                      </span>
+                    <div className={style.projectDetailCard}>
+                      <div className={style.projectDetailCardHeader}>
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <path
+                            d="M17.657 18.657A8 8 0 0 1 6.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0 1 20 13a7.975 7.975 0 0 1-2.343 5.657z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M9.879 16.121A3 3 0 1 0 12.12 13.88 3 3 0 0 0 9.88 16.12z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        Горящие
+                      </div>
+                      <div className={style.projectDetailCardValue}>
+                        {project.urgentTasks || 0}
+                      </div>
+                      <div className={style.projectDetailCardSub}>задачи</div>
+                    </div>
+
+                    {/* Активные задачи */}
+                    <div className={style.projectDetailCard}>
+                      <div className={style.projectDetailCardHeader}>
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <path
+                            d="M9 11L12 14L22 4"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        Задачи
+                      </div>
+                      <div className={style.projectDetailCardValue}>
+                        {project.activeTasks || project.tasks || 0}
+                      </div>
+                      <div className={style.projectDetailCardSub}>всего</div>
                     </div>
                   </div>
                 </div>
@@ -705,68 +1091,110 @@ const Hero: React.FC<HeroProps> = ({
               </svg>
             </div>
             <div className={style.recentActivity}>
-              <div className={style.activityItem}>
-                <div className={style.activityIcon}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M12 5V19M5 12H19"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
+              {recentActivity.length > 0 ? (
+                recentActivity.map((activity, index) => {
+                  const getActivityIcon = () => {
+                    switch (activity.type) {
+                      case "task_created":
+                        return (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path
+                              d="M12 5V19M5 12H19"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                        );
+                      case "task_completed":
+                        return (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path
+                              d="M9 11L12 14L22 4"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        );
+                      case "member_added":
+                        return (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path
+                              d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                            />
+                            <circle
+                              cx="9"
+                              cy="7"
+                              r="4"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            />
+                          </svg>
+                        );
+                      default:
+                        return (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            />
+                          </svg>
+                        );
+                    }
+                  };
+
+                  const formatTimeAgo = (dateString: string) => {
+                    const date = new Date(dateString);
+                    const now = new Date();
+                    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+                    if (diffInSeconds < 60) {
+                      return "только что";
+                    } else if (diffInSeconds < 3600) {
+                      const minutes = Math.floor(diffInSeconds / 60);
+                      return `${minutes} ${minutes === 1 ? "минуту" : minutes < 5 ? "минуты" : "минут"} назад`;
+                    } else if (diffInSeconds < 86400) {
+                      const hours = Math.floor(diffInSeconds / 3600);
+                      return `${hours} ${hours === 1 ? "час" : hours < 5 ? "часа" : "часов"} назад`;
+                    } else {
+                      const days = Math.floor(diffInSeconds / 86400);
+                      return `${days} ${days === 1 ? "день" : days < 5 ? "дня" : "дней"} назад`;
+                    }
+                  };
+
+                  return (
+                    <div key={index} className={style.activityItem}>
+                      <div className={style.activityIcon}>
+                        {getActivityIcon()}
+                      </div>
+                      <div className={style.activityContent}>
+                        <p className={style.activityText}>
+                          {activity.message}
+                        </p>
+                        <span className={style.activityTime}>
+                          {formatTimeAgo(activity.created_at)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className={style.activityItem}>
+                  <div className={style.activityContent}>
+                    <p className={style.activityText}>
+                      Нет недавней активности
+                    </p>
+                  </div>
                 </div>
-                <div className={style.activityContent}>
-                  <p className={style.activityText}>
-                    Новая задача создана в проекте "Дизайн системы"
-                  </p>
-                  <span className={style.activityTime}>10 минут назад</span>
-                </div>
-              </div>
-              <div className={style.activityItem}>
-                <div className={style.activityIcon}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M9 11L12 14L22 4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
-                <div className={style.activityContent}>
-                  <p className={style.activityText}>
-                    Задача "Обновить документацию" выполнена
-                  </p>
-                  <span className={style.activityTime}>1 час назад</span>
-                </div>
-              </div>
-              <div className={style.activityItem}>
-                <div className={style.activityIcon}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                    <circle
-                      cx="9"
-                      cy="7"
-                      r="4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
-                  </svg>
-                </div>
-                <div className={style.activityContent}>
-                  <p className={style.activityText}>
-                    Новый участник присоединился к команде
-                  </p>
-                  <span className={style.activityTime}>2 часа назад</span>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
