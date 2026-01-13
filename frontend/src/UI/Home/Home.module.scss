@@ -1,0 +1,897 @@
+@use '../Styles/Variables.scss';
+
+.homeContainer {
+  min-height: 100vh;
+  background-color: $dracula-background;
+  color: $dracula-foreground;
+  padding-left: 250px; // Отступ для сайдбара
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 30px;
+  background-color: $dracula-current-line;
+  border-bottom: 1px solid $dracula-selection;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  .searchBar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    max-width: 500px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $dracula-comment;
+      flex-shrink: 0;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px 15px;
+      background-color: $dracula-background;
+      border: 1px solid $dracula-selection;
+      border-radius: 6px;
+      color: $dracula-foreground;
+      font-size: 14px;
+      font-family: inherit;
+
+      &::placeholder {
+        color: $dracula-comment;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $dracula-purple;
+        box-shadow: 0 0 0 3px $dracula-purple-rgba-01;
+      }
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: $dracula-purple;
+      color: $dracula-background;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+
+  // Стили для кнопок уведомлений и аккаунта
+  .avatar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  // Кнопка уведомлений
+  > div:nth-of-type(2) {
+    button {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background-color: $dracula-background;
+      border: 1px solid $dracula-selection;
+      color: $dracula-foreground;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: $dracula-selection;
+        border-color: $dracula-purple;
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+        display: block;
+      }
+
+      // Индикатор новых уведомлений
+      &::after {
+        content: '';
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 8px;
+        height: 8px;
+        background-color: $dracula-red;
+        border-radius: 50%;
+        border: 2px solid $dracula-background;
+        display: none; // Показывать только если есть уведомления
+      }
+
+      &.hasNotifications::after {
+        display: block;
+      }
+    }
+  }
+
+  // Стили для блока аккаунта
+  .account {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    background-color: $dracula-background;
+    border: 1px solid $dracula-selection;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: $dracula-selection;
+      border-color: $dracula-purple;
+      box-shadow: 0 2px 8px $dracula-purple-rgba-015;
+    }
+
+    .accountInfo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .accountAvatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, $dracula-purple 0%, $dracula-pink 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 2px solid $dracula-purple-rgba-03;
+      transition: all 0.3s ease;
+
+      svg {
+        width: 22px;
+        height: 22px;
+        color: $dracula-background;
+      }
+    }
+
+    .accountDetails {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+
+      .accountName {
+        color: $dracula-foreground;
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .accountRole {
+        color: $dracula-comment;
+        font-size: 13px;
+        font-weight: 500;
+        margin: 0;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+.dashboard {
+  padding: 30px;
+
+  > h1 {
+    color: $dracula-foreground;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+  }
+}
+
+// Company Overview заголовок (если понадобится)
+.companyOverview {
+  color: $dracula-foreground;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid $dracula-selection;
+}
+
+// Company Overview - 4 карточки метрик
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+
+  @media (max-width: 1400px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.metricCard {
+  background-color: $dracula-current-line;
+  border: 1px solid $dracula-selection;
+  border-radius: 8px;
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px $dracula-shadow-dark;
+  }
+
+  .cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 8px;
+
+    h1 {
+      color: $dracula-foreground;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      color: $dracula-purple;
+    }
+
+    button {
+      background: none;
+      border: none;
+      color: $dracula-comment;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+
+      &:hover {
+        color: $dracula-purple;
+        background-color: $dracula-purple-rgba-01;
+      }
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
+  .cardContent {
+    color: $dracula-foreground;
+    font-size: 14px;
+    line-height: 1.6;
+
+    // Стили для текстовых метрик
+    p {
+      margin: 8px 0;
+      color: $dracula-foreground;
+    }
+
+    // Стили для чисел/статистики
+    strong {
+      color: $dracula-purple;
+      font-size: 20px;
+      font-weight: 700;
+    }
+  }
+
+  .progressBar {
+    height: 10px;
+    background-color: $dracula-background;
+    border-radius: 5px;
+    margin-top: 15px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid $dracula-selection;
+
+    &::after {
+      content: '';
+      display: block;
+      height: 100%;
+      width: 65%;
+      background: linear-gradient(90deg, $dracula-green 0%, $dracula-cyan 100%);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+  }
+}
+
+// Projects Focus Grid - адаптивная сетка
+.tasksSection {
+  margin-bottom: 40px;
+
+  .sectionTitle {
+    color: $dracula-foreground;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+  }
+}
+
+.gridProjects {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px 0;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.taskCard {
+  background-color: $dracula-current-line;
+  border: 1px solid $dracula-selection;
+  border-radius: 8px;
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px $dracula-shadow-dark;
+  }
+
+  .taskHeader {
+    margin-bottom: 20px;
+
+    .taskInfo {
+      position: relative;
+
+      h1 {
+        color: $dracula-foreground;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 10px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        position: relative;
+
+        // Кнопка статуса в заголовке задачи
+        button {
+          background: none;
+          border: none;
+          color: $dracula-comment;
+          cursor: pointer;
+          padding: 4px;
+          border-radius: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
+          width: 24px;
+          height: 24px;
+          flex-shrink: 0;
+          margin-left: auto;
+
+          &:hover {
+            color: $dracula-purple;
+            background-color: $dracula-purple-rgba-01;
+          }
+
+          svg {
+            width: 16px;
+            height: 16px;
+            display: block;
+          }
+        }
+      }
+
+      p {
+        color: $dracula-comment;
+        font-size: 14px;
+        margin: 5px 0;
+
+        // Стили для индикатора риска
+        &::before {
+          content: '●';
+          display: inline-block;
+          margin-right: 6px;
+          font-size: 12px;
+          color: $dracula-yellow; // По умолчанию желтый для Medium Risk
+        }
+      }
+
+      .progressContainer {
+        margin-top: 15px;
+
+        .progressText {
+          color: $dracula-foreground;
+          font-size: 14px;
+          margin-bottom: 8px;
+        }
+
+        .taskProgressBar {
+          height: 10px;
+          background-color: $dracula-background;
+          border-radius: 5px;
+          overflow: hidden;
+          position: relative;
+          border: 1px solid $dracula-selection;
+
+          &::after {
+            content: '';
+            display: block;
+            height: 100%;
+            width: 65%;
+            background: linear-gradient(90deg, $dracula-green 0%, $dracula-cyan 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+          }
+        }
+      }
+    }
+  }
+
+  .taskFooter {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .taskMetrics {
+    .metricButtons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+
+      button {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        &.btnActive {
+          background-color: $dracula-green;
+          color: $dracula-background;
+        }
+
+        &.btnPaused {
+          background-color: $dracula-yellow;
+          color: $dracula-background;
+        }
+
+        &.btnOverdue {
+          background-color: $dracula-red;
+          color: $dracula-foreground;
+        }
+      }
+    }
+  }
+
+  .githubInfo {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 14px;
+
+    span {
+      color: $dracula-comment;
+
+      &:first-child {
+        color: $dracula-foreground;
+        font-weight: 600;
+      }
+    }
+
+    .githubCommits {
+      color: $dracula-cyan;
+      padding: 4px 8px;
+      background-color: $dracula-cyan-rgba-01;
+      border-radius: 4px;
+    }
+  }
+
+  .actionButtons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    .btnSecondary {
+      padding: 8px 16px;
+      background-color: $dracula-purple;
+      color: $dracula-background;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      &:hover {
+        opacity: 0.9;
+        box-shadow: 0 2px 8px $dracula-purple-rgba-03;
+      }
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+}
+
+// Bottom Section Layout
+.bottomSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 40px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// My Work Section
+.myactivetaskSection {
+  background-color: $dracula-current-line;
+  border: 1px solid $dracula-selection;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  .sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    .sectionTitle {
+      color: $dracula-foreground;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .Overdue {
+      color: $dracula-red;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .btnSecondary {
+      padding: 8px 16px;
+      background-color: $dracula-purple;
+      color: $dracula-background;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+
+      &:hover {
+        opacity: 0.9;
+        box-shadow: 0 2px 8px $dracula-purple-rgba-03;
+      }
+    }
+  }
+
+  .mytaskscard {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
+
+    > div {
+      background-color: $dracula-background;
+      border: 1px solid $dracula-selection;
+      border-radius: 6px;
+      padding: 15px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        box-shadow: 0 4px 8px $dracula-shadow-medium;
+      }
+
+      .cardstatus {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        background-color: $dracula-yellow; // По умолчанию желтый для Medium Risk
+        color: $dracula-background;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .taskName {
+        color: $dracula-foreground;
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 8px 0;
+      }
+
+      .taskCreatedAt,
+      .taskDedline {
+        color: $dracula-comment;
+        font-size: 14px;
+        margin: 4px 0;
+      }
+    }
+  }
+}
+
+// Right Column
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// My Stats Section
+.mystatsSection {
+  background-color: $dracula-current-line;
+  border: 1px solid $dracula-selection;
+  border-radius: 8px;
+  padding: 20px;
+
+  .sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    .sectionTitle {
+      color: $dracula-foreground;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .btnSecondary {
+      padding: 8px 16px;
+      background-color: $dracula-purple;
+      color: $dracula-background;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+
+      &:hover {
+        opacity: 0.9;
+        box-shadow: 0 2px 8px $dracula-purple-rgba-03;
+      }
+    }
+  }
+
+  .mystatscard {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    .taskscomplited {
+      color: $dracula-foreground;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 15px;
+      background-color: $dracula-background;
+      border-radius: 6px;
+      border: 1px solid $dracula-selection;
+    }
+
+    .tasksoverdue {
+      color: $dracula-comment;
+      font-size: 14px;
+      margin: 0;
+      padding: 15px;
+      background-color: $dracula-background;
+      border-radius: 6px;
+      border: 1px solid $dracula-selection;
+    }
+  }
+}
+
+// AI Section
+.AiSection {
+  background-color: $dracula-current-line;
+  border: 1px solid $dracula-selection;
+  border-radius: 8px;
+  padding: 20px;
+  flex: 1;
+
+  .sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+
+    svg {
+      width: 24px;
+      height: 24px;
+      color: $dracula-purple;
+      flex-shrink: 0;
+    }
+
+    .sectionTitle {
+      color: $dracula-foreground;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
+
+  > div {
+    margin-bottom: 12px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .AiCard {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px;
+    background-color: $dracula-background;
+    border: 1px solid $dracula-selection;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $dracula-purple;
+      box-shadow: 0 2px 8px $dracula-purple-rgba-02;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $dracula-purple;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .aiName {
+      color: $dracula-purple;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 4px 0;
+    }
+
+    p {
+      color: $dracula-foreground;
+      font-size: 14px;
+      margin: 0;
+      line-height: 1.5;
+
+      &:not(.aiName) {
+        color: $dracula-comment;
+      }
+    }
+  }
+}
+
+// Адаптивность для мобильных устройств
+@media (max-width: 768px) {
+  .homeContainer {
+    padding-left: 0;
+  }
+
+  .pageHeader {
+    padding: 15px;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    .searchBar {
+      max-width: 100%;
+      width: 100%;
+      order: 1;
+    }
+
+    .avatar {
+      order: 2;
+      width: 100%;
+      justify-content: flex-end;
+    }
+
+    .account {
+      .accountDetails {
+        .accountName {
+          font-size: 14px;
+        }
+
+        .accountRole {
+          font-size: 12px;
+        }
+      }
+
+      .accountAvatar {
+        width: 36px;
+        height: 36px;
+
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
+
+  .dashboard {
+    padding: 20px 15px;
+  }
+}

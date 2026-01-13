@@ -1,0 +1,15 @@
+export {
+  HomeIcon,
+  ProjectsIcon,
+  TasksIcon,
+  CodeIcon,
+  SettingsIcon,
+  AIIcon,
+  SearchIcon,
+  NotificationIcon,
+  AccountIcon,
+  TeamIcon,
+  StatusIcon,
+  LogoIcon,
+  ExclamationIcon,
+} from './Icon';

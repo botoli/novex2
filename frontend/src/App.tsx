@@ -4,15 +4,18 @@ import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Header from './UI/Header/Header';
 import Home from './UI/Home/Home';
+import './UI/Styles/app.scss';
+import { ThemeProvider } from './context/Theme.tsx';
 function App() {
   return (
-    <div className="App">
-      <Header />
-      <Home />
-      {/* <Routes>
-        <Route path="*" element={<NotFound404 />} />
-      </Routes> */}
-    </div>
+    <ThemeProvider>
+      <div className="App">
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </div>
+    </ThemeProvider>
   );
 }
 

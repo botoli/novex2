@@ -1,0 +1,243 @@
+@use '../Styles/Variables.scss';
+
+.allheader {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: $dracula-background;
+  border-right: 1px solid $dracula-selection;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  z-index: 1000;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.logo_Container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid $dracula-selection;
+
+  // Стили для логотипа (SVG будет добавлен пользователем)
+  svg {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+
+  h1 {
+    color: $dracula-foreground;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+}
+
+.Tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+
+  > a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+}
+
+// Неактивное состояние таба (без фона)
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  background-color: transparent;
+  color: $dracula-comment;
+  width: 100%;
+
+  &:hover {
+    background-color: $dracula-selection;
+    color: $dracula-foreground;
+  }
+
+  // Стили для иконок в неактивном состоянии
+  svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: currentColor;
+    display: block;
+    vertical-align: middle;
+    align-self: center;
+    transition: color 0.2s ease;
+  }
+
+  // Стили для текста в неактивном состоянии
+  h2 {
+    color: currentColor;
+    font-size: 15px;
+    font-weight: 400;
+    margin: 0;
+    text-transform: capitalize;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+    transition: color 0.2s ease;
+    line-height: 1;
+  }
+
+  // Стили для счетчика проектов в неактивном состоянии
+  .projectCount {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background-color: $dracula-purple-rgba-02;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+    color: $dracula-purple;
+    margin-left: auto;
+    transition: all 0.2s ease;
+  }
+}
+
+// Активное состояние таба (с фоном)
+
+// Стили для AI секции внизу (если будет добавлена)
+.aiSection {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid $dracula-selection;
+
+  button,
+  a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    width: 100%;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: $dracula-foreground;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+
+    &:hover {
+      background-color: $dracula-selection;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+  }
+}
+// Активное состояние таба (с фоном)
+.activeTab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  background-color: $dracula-purple;
+  color: $dracula-background;
+  width: 100%;
+
+  &:hover {
+    background-color: $dracula-purple;
+    opacity: 0.9;
+  }
+
+  // Стили для иконок в активном состоянии
+  svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: $dracula-background;
+    display: block;
+    vertical-align: middle;
+    align-self: center;
+    transition: color 0.2s ease;
+  }
+
+  // Стили для текста в активном состоянии
+  h2 {
+    color: $dracula-background;
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0;
+    text-transform: capitalize;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+    transition: color 0.2s ease;
+    line-height: 1;
+  }
+
+  // Стили для счетчика проектов в активном состоянии
+  .projectCount {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background-color: $dracula-white-rgba-02;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+    color: $dracula-background;
+    margin-left: auto;
+    transition: all 0.2s ease;
+  }
+}
+// Адаптивность для мобильных устройств
+@media (max-width: 768px) {
+  .allheader {
+    width: 100%;
+    height: auto;
+    position: relative;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 15px;
+    border-right: none;
+    border-bottom: 1px solid $dracula-selection;
+  }
+
+  .logo_Container {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .Tabs {
+    flex-direction: row;
+    gap: 4px;
+    flex: 0;
+  }
+}
