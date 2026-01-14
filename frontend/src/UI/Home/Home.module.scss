@@ -1,4 +1,4 @@
-@use '../Styles/Variables.scss';
+@import '../Styles/Variables.scss';
 
 .homeContainer {
   min-height: 100vh;
@@ -269,12 +269,21 @@
       gap: 8px;
       flex: 1;
     }
+    .svgdiv {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 45px;
+      height: 45px;
+      border-radius: 10px;
+      background-color: $dracula-shadow-medium;
 
-    svg {
-      width: 16px;
-      height: 16px;
-      flex-shrink: 0;
-      color: $dracula-purple;
+      svg {
+        width: 30px;
+        height: 30px;
+        flex-shrink: 0;
+        color: $dracula-purple;
+      }
     }
 
     button {
@@ -305,15 +314,41 @@
   }
 
   .cardContent {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     color: $dracula-foreground;
     font-size: 14px;
     line-height: 1.6;
+    svg {
+      width: 30px;
+      height: 30px;
+    }
+
+    .cardContentrow {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 5px;
+      p {
+        font-weight: 300;
+        color: $dracula-foreground;
+        font-size: 20px;
+      }
+    }
+    .cardInfo {
+      display: flex;
+      align-items: center;
+      flex-flow: row wrap;
+      gap: 5px;
+      p {
+        font-weight: 300;
+        color: $dracula-foreground;
+        font-size: 25px;
+      }
+    }
 
     // Стили для текстовых метрик
-    p {
-      margin: 8px 0;
-      color: $dracula-foreground;
-    }
 
     // Стили для чисел/статистики
     strong {
@@ -322,28 +357,48 @@
       font-weight: 700;
     }
   }
-
-  .progressBar {
-    height: 10px;
-    background-color: $dracula-background;
-    border-radius: 5px;
-    margin-top: 15px;
-    overflow: hidden;
-    position: relative;
-    border: 1px solid $dracula-selection;
-
-    &::after {
-      content: '';
-      display: block;
-      height: 100%;
-      width: 65%;
-      background: linear-gradient(90deg, $dracula-green 0%, $dracula-cyan 100%);
-      border-radius: 4px;
-      transition: width 0.3s ease;
+  .infoTasks {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    p {
+      color: $dracula-foreground;
+      font-size: 25px;
+      font-weight: 700;
     }
   }
 }
+.progressDiv {
+  width: 100%;
+  height: 10px;
+  background-color: $dracula-background;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid $dracula-selection;
 
+  .progressBar {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--dracula-purple) 0%, var(--dracula-cyan) 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+}
+.progressContainer {
+  height: 20px;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: row nowrap;
+  gap: 5px;
+  .progressText {
+    color: $dracula-foreground;
+    font-size: 25px;
+  }
+}
 // Projects Focus Grid - адаптивная сетка
 .tasksSection {
   margin-bottom: 40px;
@@ -428,50 +483,6 @@
           }
         }
       }
-
-      p {
-        color: $dracula-comment;
-        font-size: 14px;
-        margin: 5px 0;
-
-        // Стили для индикатора риска
-        &::before {
-          content: '●';
-          display: inline-block;
-          margin-right: 6px;
-          font-size: 12px;
-          color: $dracula-yellow; // По умолчанию желтый для Medium Risk
-        }
-      }
-
-      .progressContainer {
-        margin-top: 15px;
-
-        .progressText {
-          color: $dracula-foreground;
-          font-size: 14px;
-          margin-bottom: 8px;
-        }
-
-        .taskProgressBar {
-          height: 10px;
-          background-color: $dracula-background;
-          border-radius: 5px;
-          overflow: hidden;
-          position: relative;
-          border: 1px solid $dracula-selection;
-
-          &::after {
-            content: '';
-            display: block;
-            height: 100%;
-            width: 65%;
-            background: linear-gradient(90deg, $dracula-green 0%, $dracula-cyan 100%);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-          }
-        }
-      }
     }
   }
 
@@ -484,35 +495,62 @@
   .taskMetrics {
     .metricButtons {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
 
       button {
-        padding: 6px 12px;
+        width: 100%;
+        height: 40px;
+        padding: 6px 14px;
         border: none;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: opacity 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: $dracula-current-line;
+        color: $dracula-foreground;
+        font-size: 20px;
+        font-weight: 500;
+        cursor: default;
+        user-select: none;
 
-        &:hover {
-          opacity: 0.8;
+        .label {
+          opacity: 0.7;
         }
+
+        .value {
+          font-weight: 700;
+          letter-spacing: 0.3px;
+        }
+
+        /* ========================= */
+        /* ===== STATUS: ACTIVE ==== */
+        /* ========================= */
 
         &.btnActive {
-          background-color: $dracula-green;
-          color: $dracula-background;
+          background-color: $dracula-cyan;
+          .value {
+            color: $dracula-foreground;
+          }
         }
+
+        /* ========================= */
+        /* ===== STATUS: BLOCKED === */
+        /* ========================= */
 
         &.btnPaused {
-          background-color: $dracula-yellow;
-          color: $dracula-background;
+          background-color: $dracula-violet;
+          .value {
+            color: $dracula-foreground;
+          }
         }
 
+        /* ========================= */
+        /* ===== STATUS: OVERDUE === */
+        /* ========================= */
+
         &.btnOverdue {
-          background-color: $dracula-red;
-          color: $dracula-foreground;
+          background-color: $dracula-amber;
+          .value {
+            color: $dracula-foreground;
+          }
         }
       }
     }
@@ -550,7 +588,7 @@
     .btnSecondary {
       padding: 8px 16px;
       background-color: $dracula-purple;
-      color: $dracula-background;
+      color: $dracula-foreground;
       border: none;
       border-radius: 6px;
       font-size: 14px;
@@ -605,7 +643,11 @@
     margin-bottom: 20px;
     flex-wrap: wrap;
     gap: 15px;
-
+    .sort {
+      display: flex;
+      flex-flow: row wrap;
+      gap: 10px;
+    }
     .sectionTitle {
       color: $dracula-foreground;
       font-size: 24px;
@@ -623,7 +665,7 @@
     .btnSecondary {
       padding: 8px 16px;
       background-color: $dracula-purple;
-      color: $dracula-background;
+      color: $dracula-foreground;
       border: none;
       border-radius: 6px;
       font-size: 14px;
@@ -635,7 +677,7 @@
 
       &:hover {
         opacity: 0.9;
-        box-shadow: 0 2px 8px $dracula-purple-rgba-03;
+        background-color: $dracula-background;
       }
     }
   }
@@ -657,14 +699,36 @@
         box-shadow: 0 4px 8px $dracula-shadow-medium;
       }
 
-      .cardstatus {
+      .Lowcardstatus {
         display: inline-block;
         padding: 4px 8px;
         border-radius: 4px;
         font-size: 12px;
         font-weight: 600;
         margin-bottom: 10px;
-        background-color: $dracula-yellow; // По умолчанию желтый для Medium Risk
+        background-color: $dracula-green;
+        color: $dracula-background;
+      }
+
+      .Mediumcardstatus {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        background-color: $dracula-yellow;
+        color: $dracula-background;
+      }
+
+      .Hightcardstatus {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        background-color: $dracula-red;
         color: $dracula-background;
       }
 
@@ -672,18 +736,38 @@
         margin-bottom: 0;
       }
 
+      .taskInfo {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        width: 100%;
+      }
+
       .taskName {
         color: $dracula-foreground;
         font-size: 16px;
         font-weight: 600;
-        margin: 0 0 8px 0;
+        margin: 0;
+        flex: 1;
+      }
+
+      .datesContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        margin-left: 16px;
       }
 
       .taskCreatedAt,
       .taskDedline {
         color: $dracula-comment;
         font-size: 14px;
-        margin: 4px 0;
+        margin: 0;
+        white-space: nowrap;
+      }
+
+      .taskDedline {
+        margin-top: 4px;
       }
     }
   }

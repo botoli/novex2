@@ -12,4 +12,10 @@ export {
   StatusIcon,
   LogoIcon,
   ExclamationIcon,
+  MetricsIcon,
+  CICDHealthIcon,
+  GithubIcon,
+  ActiveIcon,
+  OverdueIcon,
+  BlockedIcon,
 } from './Icon';

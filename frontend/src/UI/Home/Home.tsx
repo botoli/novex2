@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './Home.module.scss';
 import { Tabs } from './Data';
 import { Link } from 'react-router-dom';
-import type { TaskInterface } from './Home.Interface';
+import type { TaskInterface, UserInterface } from './Home.Interface';
 import {
   SearchIcon,
   NotificationIcon,
@@ -11,30 +11,28 @@ import {
   TeamIcon,
   AIIcon,
   ExclamationIcon,
+  GithubIcon,
+  ProjectsIcon,
+  MetricsIcon,
+  CICDHealthIcon,
+  ActiveIcon,
+  OverdueIcon,
+  BlockedIcon,
 } from '../Icons';
+import { Projects } from '../Projects/Projects.Mockdata';
+import { Tasks } from '../../Tasks/Tasks.mockData';
 
 export default function Home() {
-  const [active, setActive] = useState(false);
-  const [mockTasks, setMockTasks] = useState<TaskInterface[]>([
-    {
-      id: 0,
-      name: 'Сделать рефакторинг',
-      active: false,
-      project: 'E-Commerce Platform',
-      risk: 'Medium Risk',
-      createdAt: '22 April ',
-      dedline: '21 days',
-    },
-    {
-      id: 1,
-      name: 'Сделать Форму заполнения',
-      active: false,
-      project: 'Mobile App',
-      risk: 'Low Risk',
-      createdAt: '12-02-2025',
-      dedline: '21 days',
-    },
+  const [mockUsers, setMockUsers] = useState<UserInterface[]>([
+    { userid: 0, name: 'botoli', online: false, role: 'Admin', avatar: false },
+    { userid: 1, name: 'bnix', online: true, role: 'Designer', avatar: false },
+    { userid: 1, name: 'bnix', online: true, role: 'junior ', avatar: false },
+    { userid: 2, name: 'test', online: true, role: 'Senior', avatar: false },
   ]);
+  const [mockTasks, setMockTasks] = useState<TaskInterface[]>(Tasks);
+  const [sortBy, setSortBy] = useState('Dedline');
+  const [sort, setSort] = useState([]);
+  const [isUp, setIsUp] = useState(true);
   const [mockAI, setMockAI] = useState([
     {
       id: 0,
@@ -47,6 +45,74 @@ export default function Home() {
       text: 'Разработать документацию',
     },
   ]);
+
+  const progress = (title: string) => {
+    return Math.floor(
+      (mockTasks.filter((task) => task.project === title && task.success).length /
+        mockTasks.filter((task) => task.project === title).length) *
+        100,
+    );
+  };
+
+  function sortUpTasks() {
+    if (sortBy === 'Dedline') {
+      setSort(
+        [...mockTasks].sort((a, b) => {
+          const A = parseInt(a.dedline);
+          const B = parseInt(b.dedline);
+          return A - B;
+        }),
+      );
+    } else if (sortBy === 'Risk') {
+      setSort(
+        [...mockTasks].sort((a, b) => {
+          const A = a.riskId;
+          const B = b.riskId;
+          return A - B;
+        }),
+      );
+    }
+  }
+  function sortDownTasks() {
+    if (sortBy === 'Dedline') {
+      setSort(
+        [...mockTasks].sort((a, b) => {
+          const A = parseInt(a.dedline);
+          const B = parseInt(b.dedline);
+          return B - A;
+        }),
+      );
+    } else if (sortBy === 'Risk') {
+      setSort(
+        [...mockTasks].sort((a, b) => {
+          const A = a.riskId;
+          const B = b.riskId;
+          return B - A;
+        }),
+      );
+    }
+  }
+  useEffect(() => {
+    isUp ? sortUpTasks() : sortDownTasks();
+  }, [mockTasks, sortBy, isUp]);
+
+  function SetStatistikActive(title: string) {
+    return Math.floor(
+      mockTasks.filter((task) => task.project === title && task.active === true).length,
+    );
+  }
+
+  function SetStatistikBlocked(title: string) {
+    return Math.floor(
+      mockTasks.filter((task) => task.project === title && task.blocked === true).length,
+    );
+  }
+  function SetStatistikOverdue(title: string) {
+    return Math.floor(
+      mockTasks.filter((task) => task.project === title && task.overdue === true).length,
+    );
+  }
+  const onlineCount = mockUsers.filter((user) => user.online).length;
   return (
     <div className={styles.homeContainer}>
       <section className={styles.pageHeader}>
@@ -62,17 +128,22 @@ export default function Home() {
               <NotificationIcon />
             </button>
           </div>
-          <div className={styles.account}>
-            <div className={styles.accountInfo}>
-              <div className={styles.accountAvatar}>
-                <AccountIcon />
-              </div>
-              <div className={styles.accountDetails}>
-                <p className={styles.accountName}>Botoli</p>
-                <p className={styles.accountRole}>Lead Developer</p>
-              </div>
-            </div>
-          </div>
+          {mockUsers.map(
+            (user) =>
+              user.role === 'Admin' && (
+                <div className={styles.account}>
+                  <div className={styles.accountInfo}>
+                    <div className={styles.accountAvatar}>
+                      <AccountIcon />
+                    </div>
+                    <div className={styles.accountDetails}>
+                      <p className={styles.accountName}>{user.name}</p>
+                      <p className={styles.accountRole}>{user.role}</p>
+                    </div>
+                  </div>
+                </div>
+              ),
+          )}
         </div>
       </section>
 
@@ -83,64 +154,111 @@ export default function Home() {
           {/* Company Projects Card */}
           <div className={styles.metricCard}>
             <div className={styles.cardHeader}>
+              <div className={styles.svgdiv}>
+                <ProjectsIcon width={40} height={40} />
+              </div>
               <h1>Company Projects</h1>
+              <h3 className={styles.cardInfo}>Total: {Projects.length}</h3>
             </div>
+
             <div className={styles.cardContent}>
-              {/* {CountOfActiveTasks} */}
-              {/* {CountOfPausedTasks} */}
-              {/* {CountOfRiskTasks} */}
-              <div className={styles.progressBar}></div>
+              <div className={styles.infoTasks}>
+                <p className={styles.cardInfo}>
+                  Active: {Projects.filter((project) => project.status === 'Active').length}
+                </p>
+                <p className={styles.cardInfo}>
+                  Paused: {Projects.filter((project) => project.status === 'Paused').length}
+                </p>
+                <p className={styles.cardInfo}>
+                  Risk: {Projects.filter((project) => project.status === 'Risk').length}
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Company Teams Card */}
           <div className={styles.metricCard}>
             <div className={styles.cardHeader}>
-              <TeamIcon width={16} height={16} />
+              <div className={styles.svgdiv}>
+                <TeamIcon width={40} height={40} />
+              </div>
               <h1>Company Teams</h1>
             </div>
-            <div className={styles.cardContent}>{/* {CountOfOnlineUsers} */}</div>
+            <div className={styles.cardContent}>
+              <div className={styles.cardContentrow}>
+                <p> Online:</p>
+                <p>{mockUsers.filter((user) => user.online).length}</p>
+              </div>
+              <div className={styles.avatars}>
+                {mockUsers.map((user) => user.online && <AccountIcon />)}
+              </div>
+            </div>
           </div>
 
           {/* Global Metrics Card */}
           <div className={styles.metricCard}>
             <div className={styles.cardHeader}>
+              <div className={styles.svgdiv}>
+                <MetricsIcon width={40} height={40} />
+              </div>
               <h1>Global Metrics</h1>
             </div>
             <div className={styles.cardContent}>
-              {/* {CountOfTasks} */}
-              {/* {CountOfOverdueTasks} */}
+              <div className={styles.cardInfo}>
+                <h1>{mockTasks.length}</h1>
+                <p className={styles.text}>Total tasks</p>
+              </div>
+              <div className={styles.cardInfo}>
+                <h1> {mockTasks.filter((task) => task.overdue === true).length}</h1>
+                <p className={styles.text}>Overdue tasks</p>
+              </div>
             </div>
           </div>
 
           {/* CI/CD Health Card */}
           <div className={styles.metricCard}>
             <div className={styles.cardHeader}>
+              <div className={styles.svgdiv}>
+                <CICDHealthIcon width={40} height={40} />
+              </div>
               <h1>CI/CD Health</h1>
             </div>
-            <div className={styles.cardContent}></div>
+            <div className={styles.cardContent}>
+              <h1></h1>
+              <h1></h1>
+            </div>
           </div>
         </div>
 
         {/* Projects Focus Section */}
         <div className={styles.tasksSection}>
           <h1 className={styles.sectionTitle}>Projects Focus</h1>
-
           <div className={styles.gridProjects}>
-            {mockTasks?.map((task) => (
-              <div key={task.id} className={styles.taskCard}>
+            {Projects?.map((project) => (
+              <div key={project.id} className={styles.taskCard}>
                 <div className={styles.taskHeader}>
                   <div className={styles.taskInfo}>
                     <h1>
-                      {task.project}
+                      {project.title}
                       <button>
                         <StatusIcon />
                       </button>
                     </h1>
-                    <p>risk: {task.risk}</p>
                     <div className={styles.progressContainer}>
-                      <p className={styles.progressText}>{/* 60% */}</p>
-                      <div className={styles.taskProgressBar}></div>
+                      <p className={styles.progressText}>{progress(project.title)}%</p>
+                      <div className={styles.progressDiv}>
+                        <div
+                          className={styles.progressBar}
+                          style={{ width: progress(project.title) + '%' }}></div>
+                      </div>
+                      <p>
+                        {Math.floor(
+                          Tasks.filter(
+                            (task) => task.project === project.title && task.success === true,
+                          ).length,
+                        )}
+                        /{Math.floor(Tasks.filter((task) => task.project === project.title).length)}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -148,19 +266,29 @@ export default function Home() {
                 <div className={styles.taskFooter}>
                   <div className={styles.taskMetrics}>
                     <div className={styles.metricButtons}>
-                      <button className={styles.btnActive}>
-                        Active:{/* {CountOfActiveTasks} */}
+                      <button className={`${styles.btnActive}`}>
+                        <ActiveIcon />
+                        <span className={styles.label}>Active</span>
+                        <span className={styles.value}>{SetStatistikActive(project.title)}</span>
                       </button>
-                      <button className={styles.btnPaused}>
-                        Blocked:{/* {CountOfBlockedTasks} */}
+
+                      <button className={`${styles.btnPaused}`}>
+                        <BlockedIcon />
+                        <span className={styles.label}>Blocked</span>
+
+                        <span className={styles.value}>{SetStatistikBlocked(project.title)}</span>
                       </button>
-                      <button className={styles.btnOverdue}>
-                        Overdue:{/* {CountOfOverdueTasks} */}
+
+                      <button className={`${styles.btnOverdue}`}>
+                        <OverdueIcon />
+                        <span className={styles.label}>Overdue</span>
+                        <span className={styles.value}>{SetStatistikOverdue(project.title)}</span>
                       </button>
                     </div>
                   </div>
 
                   <div className={styles.githubInfo}>
+                    <GithubIcon />
                     <span>github:</span>
                     <span className={styles.githubCommits}>commits:{/* {CountOfCommits} */}</span>
                     <span className={styles.githubCommits}>PR:{/* {PR} */}</span>
@@ -177,23 +305,49 @@ export default function Home() {
             ))}
           </div>
         </div>
+        {/* Active Tasks */}
         <div className={styles.bottomSection}>
           <div className={styles.myactivetaskSection}>
             <div className={styles.sectionHeader}>
               <h1 className={styles.sectionTitle}>My Active Tasks</h1>
-              <p className={styles.Overdue}>Overdue: {/* {CountOfOverdueTasks} */}</p>
+              <div className={styles.sort}>
+                <button
+                  className={styles.btnSecondary}
+                  onClick={() => {
+                    setSortBy('Risk');
+                  }}>
+                  Risk
+                </button>
+                <button className={styles.btnSecondary} onClick={() => setSortBy('Dedline')}>
+                  Dedline
+                </button>
+              </div>
+
+              {/* <p className={styles.Overdue}>Overdue: {SetStatistikOverdue(1)}</p> */}
               <button className={styles.btnSecondary}>View All</button>
             </div>
             <div className={styles.mytaskscard}>
-              {mockTasks?.map((task) => (
+              {sort?.map((task) => (
                 <div key={task.id}>
-                  <div className={styles.cardstatus}>
+                  <div
+                    className={
+                      task.risk === 'Low Risk'
+                        ? styles.Lowcardstatus
+                        : task.risk === 'Medium Risk'
+                        ? styles.Mediumcardstatus
+                        : task.risk === 'Low Hight'
+                        ? styles.Hightcardstatus
+                        : styles.Hightcardstatus
+                    }>
                     {task.risk}
-                    {/* {task status color} */}
                   </div>
-                  <p className={styles.taskName}>{task.name}</p>
-                  <p className={styles.taskCreatedAt}>{task.createdAt}</p>
-                  <p className={styles.taskDedline}>{task.dedline}</p>
+                  <div className={styles.taskInfo}>
+                    <p className={styles.taskName}>{task.name}</p>
+                    <div className={styles.datesContainer}>
+                      <p className={styles.taskCreatedAt}>{task.createdAt}</p>
+                      <p className={styles.taskDedline}>{task.dedline}</p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

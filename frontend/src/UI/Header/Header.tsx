@@ -11,7 +11,7 @@ import {
   CodeIcon,
   SettingsIcon,
   AIIcon,
-} from '../Icons';
+} from '../Icons/index.ts';
 import { useTheme } from '../../context/Theme.tsx';
 
 export default function Header() {
