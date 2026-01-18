@@ -394,7 +394,7 @@ export default function HomePage() {
           {/* CI/CD Health Card */}
           <div className={styles.metricCard}>
             <div className={styles.cardHeader}>
-              <div className={`${styles.svgdiv} ${styles.cicdIcon}`}>
+              <div className={`${styles.svgdiv} ${styles.healthIcon}`}>
                 <CICDHealthIcon width={32} height={32} />
               </div>
               <div className={styles.headerTitle}>
