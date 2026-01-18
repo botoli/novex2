@@ -5,9 +5,10 @@ import { SearchIcon } from '../UI/Icons';
 import { Tasks } from '../MockData/Tasks.mockData';
 import { ProjectsData } from '../MockData/Projects.Mockdata';
 import { mockUsers } from '../MockData/UsersMock';
+import type { TaskInterface } from '../interfaces/Interfaces';
 
 export default function TaskPage() {
-  const [tasks, setTasks] = useState(Tasks);
+  const [tasks, setTasks] = useState<TaskInterface[]>(Tasks);
   const [activeFilter, setActiveFilter] = useState<string>(() => {
     return localStorage.getItem('activeFilter') || 'All Tasks';
   });

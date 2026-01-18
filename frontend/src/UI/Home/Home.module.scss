@@ -1,4 +1,4 @@
-@import '../Styles/Variables.scss';
+@use '../Styles/Variables.scss' as *;
 
 .homeContainer {
   min-height: 100vh;

@@ -1,4 +1,4 @@
-@import '../Styles/Variables.scss';
+@use '../Styles/Variables.scss' as *;
 .ProjectContainer {
   min-height: 100vh;
   background-color: $dracula-background;
