@@ -84,7 +84,7 @@ export const Tasks: TaskInterface[] = [
     projectId: 1,
     priority: 'medium',
     createdAt: '2024-01-30T09:00:00Z',
-    deadline: '20 days',
+    deadline: '12 days',
     assigneeId: 0,
     tags: ['devops', 'ci-cd', 'automation'],
   },
@@ -95,7 +95,7 @@ export const Tasks: TaskInterface[] = [
     projectId: 3,
     priority: 'high',
     createdAt: '2024-02-01T14:30:00Z',
-    deadline: '20 days',
+    deadline: '451 days',
     assigneeId: 4,
     tags: ['mobile', 'responsive', 'frontend'],
   },
@@ -106,7 +106,7 @@ export const Tasks: TaskInterface[] = [
     projectId: 4,
     priority: 'low',
     createdAt: '2024-01-18T11:00:00Z',
-    deadline: '20 days',
+    deadline: '10 days',
     assigneeId: 5,
     tags: ['analytics', 'logs', 'monitoring'],
   },
@@ -117,7 +117,7 @@ export const Tasks: TaskInterface[] = [
     projectId: 5,
     priority: 'medium',
     createdAt: '2024-02-14T10:45:00Z',
-    deadline: '20 days',
+    deadline: '1 days',
     assigneeId: 1,
     tags: ['dependencies', 'security', 'maintenance'],
   },
@@ -128,7 +128,7 @@ export const Tasks: TaskInterface[] = [
     projectId: 6,
     priority: 'medium',
     createdAt: '2024-02-03T13:15:00Z',
-    deadline: '20 days',
+    deadline: '3 days',
     assigneeId: 2,
     tags: ['testing', 'unit-tests', 'quality'],
   },
@@ -139,7 +139,7 @@ export const Tasks: TaskInterface[] = [
     projectId: 2,
     priority: 'high',
     createdAt: '2024-01-22T15:30:00Z',
-    deadline: '20 days',
+    deadline: '2 days',
     assigneeId: 3,
     tags: ['design', 'dashboard', 'analytics'],
   },
@@ -150,7 +150,7 @@ export const Tasks: TaskInterface[] = [
     projectId: 3,
     priority: 'high',
     createdAt: '2024-01-28T09:45:00Z',
-    deadline: '20 days',
+    deadline: '4 days',
     assigneeId: 4,
     tags: ['migration', 'database', 'data'],
   },
@@ -219,6 +219,115 @@ export const Tasks: TaskInterface[] = [
     deadline: '20 days',
     assigneeId: 4,
     tags: ['backup', 'database', 'security'],
+  },
+  {
+    id: 21,
+    name: 'Fix checkout bug with error message',
+    status: 'blocked',
+    projectId: 7, // E-Commerce Platform
+    priority: 'high',
+    createdAt: '2024-04-20',
+    deadline: '2024-04-25',
+    assigneeId: 14, // John
+    tags: ['bug', 'fix'],
+  },
+  {
+    id: 22,
+    name: 'Design user profile page',
+    status: 'active',
+    projectId: 8, // Mobile App
+    priority: 'medium',
+    createdAt: '2024-04-18',
+    deadline: '2024-04-25',
+    assigneeId: 15, // Emma
+    tags: ['design', 'ui'],
+  },
+  {
+    id: 23,
+    name: 'Update dashboard analytics widget',
+    status: 'active',
+    projectId: 3, // Admin Dashboard
+    priority: 'high',
+    createdAt: '2024-04-15',
+    deadline: '2024-04-20',
+    assigneeId: 16, // Mark
+    tags: ['analytics', 'dashboard'],
+  },
+  {
+    id: 24,
+    name: 'Implement OAuth2 for API authentication',
+    status: 'active',
+    projectId: 8, // Mobile App
+    priority: 'high',
+    createdAt: '2024-04-19',
+    deadline: '2024-04-26',
+    assigneeId: 17, // Sarah
+    tags: ['auth', 'api'],
+  },
+  {
+    id: 25,
+    name: 'Refactor code for cart component',
+    status: 'completed',
+    projectId: 7, // E-Commerce Platform
+    priority: 'low',
+    createdAt: '2024-04-10',
+    deadline: '2024-04-19',
+    assigneeId: 14, // John
+    tags: ['refactor', 'component'],
+  },
+  {
+    id: 26,
+    name: 'Improve error logging',
+    status: 'blocked',
+    projectId: 3, // Admin Dashboard
+    priority: 'medium',
+    createdAt: '2024-04-12',
+    deadline: '2024-04-28',
+    assigneeId: 18, // Alex
+    tags: ['logging', 'error'],
+  },
+  {
+    id: 27,
+    name: 'Optimize SQL queries for user data',
+    status: 'active',
+    projectId: 3, // Admin Dashboard
+    priority: 'high',
+    createdAt: '2024-04-14',
+    deadline: '2024-04-27',
+    assigneeId: 15, // Emma
+    tags: ['sql', 'optimization'],
+  },
+  {
+    id: 28,
+    name: 'Setup CI/CD pipeline',
+    status: 'active',
+    projectId: 3, // Admin Dashboard
+    priority: 'high',
+    createdAt: '2024-04-16',
+    deadline: '2024-04-29',
+    assigneeId: 17, // Sarah
+    tags: ['ci-cd', 'devops'],
+  },
+  {
+    id: 29,
+    name: 'Write unit tests for mobile app',
+    status: 'active',
+    projectId: 8, // Mobile App
+    priority: 'medium',
+    createdAt: '2024-04-17',
+    deadline: '2024-04-23',
+    assigneeId: 16, // Mark
+    tags: ['testing', 'mobile'],
+  },
+  {
+    id: 30,
+    name: 'Plan version 2.0 roadmap',
+    status: 'blocked',
+    projectId: 7, // E-Commerce Platform
+    priority: 'high',
+    createdAt: '2024-04-13',
+    deadline: '2024-04-30',
+    tags: ['planning', 'roadmap'],
   },
 ];
 const qwe = [
