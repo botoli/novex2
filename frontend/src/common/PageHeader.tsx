@@ -1,21 +1,17 @@
 import { useState } from 'react';
-import { AccountIcon, LogoutIcon, NotificationIcon, SearchIcon, SettingsIcon } from '../Icons';
-import styles from './Projects.module.scss';
-import { ProjectsData } from './Projects.Mockdata';
-import { mockUsers } from '../../MockData/UsersMock';
-import AccountSettings from '../AccountSettings/AccountSettings';
-export default function Projects() {
+import { mockUsers } from '../MockData/UsersMock';
+import { AccountIcon, LogoutIcon, NotificationIcon, SearchIcon, SettingsIcon } from '../UI/Icons';
+import styles from './Page.Header.module.scss';
+import AccountSettings from '../UI/AccountSettings/AccountSettings';
+export default function PageHeader() {
   const [isopenProfile, setIsopenProfile] = useState(false);
   const [isOpenAccountSettings, setIsOpenAccountSettings] = useState(false);
 
   function OpenModalProfile() {
     isopenProfile === false ? setIsopenProfile(true) : setIsopenProfile(false);
   }
-  function openAccountSettings() {
-    setIsOpenAccountSettings(!isOpenAccountSettings);
-  }
   return (
-    <div className={styles.ProjectContainer}>
+    <div>
       <div className={styles.AccountSettingsModal}>
         {isOpenAccountSettings && (
           <AccountSettings onclose={() => setIsOpenAccountSettings(!isOpenAccountSettings)} />
@@ -51,7 +47,9 @@ export default function Projects() {
                   </div>
                   {isopenProfile && (
                     <div className={styles.modalProfile}>
-                      <div className={styles.btnProfile} onClick={openAccountSettings}>
+                      <div
+                        className={styles.btnProfile}
+                        onClick={() => setIsOpenAccountSettings(!isOpenAccountSettings)}>
                         <button className={styles.settings}>
                           <SettingsIcon />
                         </button>
@@ -68,39 +66,6 @@ export default function Projects() {
                 </div>
               ),
           )}
-        </div>
-      </section>
-      <section className={styles.dashboard}>
-        <h1>Projects</h1>
-        <div className={styles.filterall}>
-          <button className={styles.Allprojetcs}>
-            <p>All Projects</p>
-            <p className={styles.countProjects}>{ProjectsData.length}</p>
-          </button>
-          <button className={styles.ActiveProjetcs}>
-            <p>Active</p>
-            <p className={styles.countProjects}>
-              {ProjectsData.filter((project) => project.status === 'Active').length}
-            </p>
-          </button>
-          <button className={styles.PausedProjetcs}>
-            <p>Paused</p>
-            <p className={styles.countProjects}>
-              {ProjectsData.filter((project) => project.status === 'Paused').length}
-            </p>
-          </button>
-          <button className={styles.CompletedProjetcs}>
-            <p>At Risk</p>
-            <p className={styles.countProjects}>
-              {ProjectsData.filter((project) => project.status === 'Risk').length}
-            </p>
-          </button>
-          <button className={styles.CompletedProjetcs}>
-            <p>Completed</p>
-            <p className={styles.countProjects}>
-              {ProjectsData.filter((project) => project.status === 'Completed').length}
-            </p>
-          </button>
         </div>
       </section>
     </div>

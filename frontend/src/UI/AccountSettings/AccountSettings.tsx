@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './AccountSettings.module.scss';
-import type { UserInterface } from '../Home/Home.Interface';
+import type { UserInterface } from '../../interfaces/Interfaces';
 import { CloseIcon, LogoIcon, LogoutIcon } from '../Icons';
 export default function AccountSettings({ onclose }) {
   const [mockUsers, setMockUsers] = useState<UserInterface[]>([

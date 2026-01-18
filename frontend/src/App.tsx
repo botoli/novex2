@@ -3,10 +3,12 @@ import React, { useEffect } from 'react';
 
 import { Route, Routes } from 'react-router-dom';
 import Header from './UI/Header/Header';
-import Home from './UI/Home/Home';
+import Home from './UI/Home/HomePage.tsx';
 import './UI/Styles/app.scss';
 import { ThemeProvider } from './context/Theme.tsx';
-import Projects from './UI/Projects/Projects.tsx';
+
+import ProjectsPage from './UI/Projects/ProjectsPage.tsx';
+import TaskPage from './Tasks/TaskPage.tsx';
 function App() {
   return (
     <ThemeProvider>
@@ -14,7 +16,8 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/Projects" element={<Projects />} />
+          <Route path="/Tasks" element={<TaskPage />} />
+          <Route path="/Projects" element={<ProjectsPage />} />
         </Routes>
       </div>
     </ThemeProvider>

@@ -1,4 +1,4 @@
-import type { UserInterface } from '../UI/Home/Home.Interface';
+import type { UserInterface } from '../interfaces/Interfaces';
 
 export const mockUsers: UserInterface[] = [
   {

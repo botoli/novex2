@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './Header.module.scss';
 import { Tabs } from './tabs';
 import { Link } from 'react-router-dom';
-import { ProjectsData } from '../Projects/Projects.Mockdata';
+import { ProjectsData } from '../../MockData/Projects.Mockdata.ts';
 import {
   LogoIcon,
   HomeIcon,
@@ -18,8 +18,10 @@ import { useTheme } from '../../context/Theme.tsx';
 
 export default function Header() {
   const countOfProjects = ProjectsData.length;
-  const [tabs, setTabs] = useState(Tabs);
-  const [active, setActive] = useState();
+  const [tabs, setTabs] = useState(() => {
+    const storedTabs = localStorage.getItem('tabs');
+    return storedTabs ? JSON.parse(storedTabs) : Tabs;
+  });
   const { theme, changeTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -43,19 +45,21 @@ export default function Header() {
   };
 
   function toogleActive(name: string) {
-    setTabs((item) => item.map((prev) => ({ ...prev, active: prev.name === name })));
+    setTabs((prev) => prev.map((tab) => ({ ...tab, active: tab.name === name })));
     if (window.innerWidth <= 1024) {
       setIsMenuOpen(false);
     }
   }
+  useEffect(() => {
+    localStorage.setItem('tabs', JSON.stringify(tabs));
+  }, [tabs]);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
+  useEffect(() => {
+    const storedTabs = localStorage.getItem('tabs');
+    if (storedTabs) {
+      setTabs(JSON.parse(storedTabs));
+    }
+  }, []);
 
   useEffect(() => {
     // Закрываем меню при изменении размера окна
@@ -81,10 +85,13 @@ export default function Header() {
   return (
     <>
       {/* Overlay для мобильных */}
-      {isMenuOpen && <div className={styles.overlay} onClick={closeMenu} />}
+      {isMenuOpen && <div className={styles.overlay} onClick={() => setIsMenuOpen(false)} />}
 
       {/* Бургер-кнопка для мобильных */}
-      <button className={styles.burgerButton} onClick={toggleMenu} aria-label="Toggle menu">
+      <button
+        className={styles.burgerButton}
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        aria-label="Toggle menu">
         {isMenuOpen ? <CloseIcon width={24} height={24} /> : <MenuIcon width={24} height={24} />}
       </button>
 

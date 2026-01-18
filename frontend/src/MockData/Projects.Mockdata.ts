@@ -1,4 +1,4 @@
-import type { ProjectInterface } from './Projects.interface';
+import type { ProjectInterface } from '../interfaces/Interfaces';
 
 export const ProjectsData: ProjectInterface[] = [
   {
@@ -17,7 +17,7 @@ export const ProjectsData: ProjectInterface[] = [
     id: 2,
     title: 'API Integration',
     description: 'Подключить REST API для пользователей',
-    status: 'In Progress',
+    status: 'Active',
     priority: 'medium',
     due_date: '2024-12-05',
     project_id: 1,
@@ -53,7 +53,7 @@ export const ProjectsData: ProjectInterface[] = [
     id: 5,
     title: 'Bug Fixes',
     description: 'Исправить критические баги в проде',
-    status: 'Active',
+    status: 'At Risk',
     priority: 'high',
     due_date: '2024-11-02',
     project_id: 2,
@@ -65,7 +65,7 @@ export const ProjectsData: ProjectInterface[] = [
     id: 6,
     title: 'Dark Mode',
     description: 'Добавить темную тему интерфейса',
-    status: 'In Progress',
+    status: 'Paused',
     priority: 'low',
     due_date: '2025-01-10',
     project_id: 4,

@@ -1,0 +1,200 @@
+@use '../UI/Styles/Variables.scss' as *;
+.TaskContainer {
+  min-height: 100vh;
+  background-color: $dracula-background;
+  color: $dracula-foreground;
+  padding-left: 250px; // Отступ для сайдбара
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  box-sizing: border-box;
+  width: 100%;
+  position: relative;
+
+  @media (max-width: 1400px) {
+  }
+
+  @media (max-width: 1024px) {
+    padding-left: 0;
+  }
+}
+.headerTasks {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+// Стили для фильтрации проектов
+.filterall {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 480px) {
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+}
+
+.AllTasks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: $dracula-background;
+  border: 1px solid $dracula-selection;
+  border-radius: 8px;
+  color: $dracula-foreground;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-family: inherit;
+
+  @media (max-width: 768px) {
+    padding: 8px 12px;
+    font-size: 13px;
+    gap: 6px;
+    border-radius: 6px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 6px 10px;
+    font-size: 12px;
+    gap: 4px;
+    flex: 1 1 calc(50% - 3px);
+    justify-content: center;
+    min-width: 0;
+  }
+
+  &:hover {
+    border-color: $dracula-purple;
+    background-color: $dracula-purple-rgba-01;
+  }
+
+  &.active {
+    background-color: $dracula-purple;
+    border-color: $dracula-purple;
+    color: $dracula-background;
+
+    &:hover {
+      background-color: $dracula-indigo;
+      border-color: $dracula-indigo;
+    }
+  }
+
+  .countTasks {
+    color: $dracula-comment;
+    font-size: 12px;
+    font-weight: 400;
+    background-color: $dracula-current-line;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 24px;
+    text-align: center;
+
+    @media (max-width: 768px) {
+      font-size: 11px;
+      padding: 1px 5px;
+      min-width: 22px;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 10px;
+      padding: 1px 4px;
+      min-width: 20px;
+    }
+  }
+
+  &.active .countProjects {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: $dracula-background;
+  }
+}
+
+// Стили для кнопки добавления проекта
+.addTask {
+  margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 16px;
+    width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    margin-bottom: 14px;
+  }
+}
+
+.addbtn {
+  padding: 12px 24px;
+  background-color: $dracula-purple;
+  color: $dracula-background;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  @media (max-width: 768px) {
+    padding: 10px 20px;
+    font-size: 14px;
+    width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  &:hover {
+    background-color: $dracula-indigo;
+  }
+}
+.dashboard {
+  padding: 30px;
+
+  @media (max-width: 1024px) {
+    padding: 25px 20px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px 15px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 15px 12px;
+  }
+
+  > h1 {
+    color: $dracula-foreground;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+
+    @media (max-width: 1024px) {
+      font-size: 28px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+  }
+}

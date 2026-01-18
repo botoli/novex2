@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './Home.module.scss';
-import { Tabs } from './Data';
-import { Link } from 'react-router-dom';
-import type { UserInterface } from './Home.Interface';
-
 import {
   SearchIcon,
   NotificationIcon,
   AccountIcon,
-  StatusIcon,
   TeamIcon,
   AIIcon,
-  ExclamationIcon,
   GithubIcon,
   ProjectsIcon,
   MetricsIcon,
@@ -27,25 +21,30 @@ import {
   ArrowUpIcon,
   ArrowDownIcon,
 } from '../Icons';
-import { ProjectsData } from '../Projects/Projects.Mockdata';
-import { Tasks, type TaskInterface } from '../../Tasks/Tasks.mockData';
+import { ProjectsData } from '../../MockData/Projects.Mockdata';
+import { Tasks } from '../../MockData/Tasks.mockData';
 import AccountSettings from '../AccountSettings/AccountSettings';
 import { mockUsers } from '../../MockData/UsersMock';
 
-export default function Home() {
-  const [mockAI, setMockAI] = useState([
-    {
-      id: 0,
-      name: 'ChatGPT',
-      text: 'Решить проблемы с безопасностью ',
-    },
+export default function HomePage() {
+  const mockAI = [
     {
       id: 1,
       name: 'ChatGPT',
-      text: 'Разработать документацию',
+      text: 'сделать рефакторинг',
     },
-  ]);
-  const [users, setUser] = useState([mockUsers]);
+    {
+      id: 2,
+      name: 'Deepseek',
+      text: 'Удалить ненужные файлы',
+    },
+    {
+      id: 3,
+      name: 'ChatGPT',
+      text: 'сделать код чистым',
+    },
+  ];
+  const [users, setUser] = useState(mockUsers);
   const [mockTasks, setMockTasks] = useState(Tasks);
   const [sortBy, setSortBy] = useState('Dedline');
   const [sort, setSort] = useState([]);
@@ -65,9 +64,9 @@ export default function Home() {
     const copyMockTasks = [...mockTasks];
     if (sortBy === 'Dedline') {
       const SortByDedline = copyMockTasks.sort((a, b) => {
-        const dedlineA = parseInt(a.deadline);
-        const dedlineB = parseInt(b.deadline);
-        return isSortDedline ? dedlineA - dedlineB : dedlineB - dedlineA;
+        const deadlineA = a.deadline instanceof Date ? a.deadline.getTime() : parseInt(a.deadline);
+        const deadlineB = b.deadline instanceof Date ? b.deadline.getTime() : parseInt(b.deadline);
+        return isSortDedline ? deadlineA - deadlineB : deadlineB - deadlineA;
       });
       setSort(SortByDedline);
     }
@@ -84,9 +83,6 @@ export default function Home() {
   useEffect(() => {
     sorty();
   }, [mockTasks, sortBy, isSortDedline, isSortRisk]);
-  function openAccountSettings() {
-    setIsOpenAccountSettings(!isOpenAccountSettings);
-  }
 
   function SetStatistikActive(id: number) {
     return Math.floor(
@@ -128,7 +124,7 @@ export default function Home() {
               <NotificationIcon />
             </button>
           </div>
-          {mockUsers.map(
+          {users.map(
             (user) =>
               user.role === 'Admin' && (
                 <div className={styles.allAccount} onClick={OpenModalProfile}>
@@ -145,7 +141,9 @@ export default function Home() {
                   </div>
                   {isopenProfile && (
                     <div className={styles.modalProfile}>
-                      <div className={styles.btnProfile} onClick={openAccountSettings}>
+                      <div
+                        className={styles.btnProfile}
+                        onClick={() => setIsOpenAccountSettings(!isOpenAccountSettings)}>
                         <button className={styles.settings}>
                           <SettingsIcon />
                         </button>
@@ -273,7 +271,7 @@ export default function Home() {
                 <div className={styles.statBlock}>
                   <div className={styles.statRow}>
                     <span className={styles.statLabel}>Total Members</span>
-                    <span className={styles.statValue}>{mockUsers.length}</span>
+                    <span className={styles.statValue}>{users.length}</span>
                   </div>
                   <div className={styles.statProgress}>
                     <div className={styles.statProgressFill} style={{ width: '100%' }} />
@@ -285,7 +283,7 @@ export default function Home() {
                     <span className={styles.statLabel}>Currently Online</span>
                     <div className={styles.onlineStat}>
                       <span className={`${styles.statValue} ${styles.onlineValue}`}>
-                        {mockUsers.filter((user) => user.online).length}
+                        {users.filter((user) => user.online).length}
                       </span>
                     </div>
                   </div>
@@ -294,7 +292,7 @@ export default function Home() {
                       className={`${styles.statProgressFill} ${styles.onlineProgress}`}
                       style={{
                         width: `${
-                          (mockUsers.filter((u) => u.online).length / mockUsers.length) * 100 || 0
+                          (users.filter((u) => u.online).length / users.length) * 100 || 0
                         }%`,
                       }}
                     />
@@ -304,7 +302,7 @@ export default function Home() {
 
               <div className={styles.onlineUsers}>
                 <div className={styles.avatarsRow}>
-                  {mockUsers
+                  {users
                     .filter((user) => user.online)
                     .slice(0, 6)
                     .map((user) => (
@@ -312,14 +310,14 @@ export default function Home() {
                         <AccountIcon className={styles.avatar} />
                       </div>
                     ))}
-                  {mockUsers.filter((user) => user.online).length > 6 && (
+                  {users.filter((user) => user.online).length > 6 && (
                     <div className={styles.moreUsers}>
-                      +{mockUsers.filter((user) => user.online).length - 6}
+                      +{users.filter((user) => user.online).length - 6}
                     </div>
                   )}
                 </div>
                 <p className={styles.onlineHint}>
-                  {mockUsers.filter((u) => u.online).length} of {mockUsers.length} online
+                  {users.filter((u) => u.online).length} of {users.length} online
                 </p>
               </div>
             </div>
@@ -568,10 +566,10 @@ export default function Home() {
                       task.priority === 'low'
                         ? styles.Lowcardstatus
                         : task.priority === 'medium'
-                        ? styles.Mediumcardstatus
-                        : task.priority === 'high'
-                        ? styles.Hightcardstatus
-                        : styles.Hightcardstatus
+                          ? styles.Mediumcardstatus
+                          : task.priority === 'high'
+                            ? styles.Hightcardstatus
+                            : styles.Hightcardstatus
                     }>
                     {task.priority}
                   </div>
