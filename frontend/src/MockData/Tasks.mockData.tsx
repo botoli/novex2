@@ -9,6 +9,7 @@ export const Tasks: TaskInterface[] = [
     priority: 'high',
     createdAt: '2024-01-15',
     deadline: '20 days',
+    assigneeId: 0,
     tags: ['backend', 'database', 'planning'],
   },
   {
