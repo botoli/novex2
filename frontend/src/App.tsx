@@ -6,7 +6,7 @@ import './UI/Styles/app.scss';
 import { ThemeProvider } from './context/Theme.tsx';
 
 import ProjectsPage from './UI/Projects/ProjectsPage.tsx';
-import TaskPage from './Tasks/TaskPage.tsx';
+import TaskPage from './UI/Tasks/TaskPage.tsx';
 import UnderConstruction from './UI/UnderConstruction/UnderConstruction.tsx';
 function App() {
   return (

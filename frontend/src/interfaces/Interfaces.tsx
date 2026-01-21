@@ -31,6 +31,7 @@ export interface TaskInterface {
   status: 'active' | 'completed' | 'blocked' | 'overdue';
   projectId: number; // Ссылка на проект
   priority: 'low' | 'medium' | 'high'; // Вместо risk
+  priorityId: number;
   createdAt: Date | string;
   deadline: Date | string; // Исправлено dedline → deadline
   assigneeId?: number; // Кому назначена

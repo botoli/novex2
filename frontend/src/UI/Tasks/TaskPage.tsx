@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import styles from './TaskPage.module.scss';
-import PageHeader from '../common/PageHeader';
-import { SearchIcon } from '../UI/Icons';
-import { Tasks } from '../MockData/Tasks.mockData';
-import { ProjectsData } from '../MockData/Projects.Mockdata';
-import { mockUsers } from '../MockData/UsersMock';
-import type { TaskInterface } from '../interfaces/Interfaces';
+import PageHeader from '../../common/PageHeader';
+import { SearchIcon } from '../../UI/Icons';
+import { Tasks } from '../../MockData/Tasks.mockData';
+import { ProjectsData } from '../../MockData/Projects.Mockdata';
+import { mockUsers } from '../../MockData/UsersMock';
+import type { TaskInterface } from '../../interfaces/Interfaces';
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState<TaskInterface[]>(Tasks);
@@ -15,6 +15,7 @@ export default function TaskPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('Due Date');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isUp, setIsUp] = useState(false);
   const tasksPerPage = 10;
   const currentUserId = 0; // Assuming current user ID is 0
 
@@ -30,50 +31,17 @@ export default function TaskPage() {
   useEffect(() => {
     localStorage.setItem('activeFilter', activeFilter);
   }, [activeFilter]);
-
-  const filteredTasks = useMemo(() => {
-    let filtered = [...tasks];
-
-    // фильтры для задач
-    if (activeFilter === 'All Tasks') {
-      filtered = tasks;
-    } else if (activeFilter === 'My Tasks') {
-      filtered = tasks.filter((task) => task.assigneeId === currentUserId);
-    } else if (activeFilter === 'Overdue') {
-      filtered = tasks.filter((task) => task.status === 'overdue');
-    } else if (activeFilter === 'Active') {
-      filtered = tasks.filter((task) => task.status === 'active');
-    } else if (activeFilter === 'Blocked') {
-      filtered = tasks.filter((task) => task.status === 'blocked');
-    } else if (activeFilter === 'Complete') {
-      filtered = tasks.filter((task) => task.status === 'completed');
-    }
-
-    // поиск задач
-    if (searchQuery) {
-      filtered = filtered.filter((task) =>
-        task.name.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-    }
-
-    // Apply sorting
-    if (sortBy === 'Due Date') {
-      filtered.sort((a, b) => {
-        const dateA = typeof a.deadline === 'string' ? new Date(a.deadline).getTime() : 0;
-        const dateB = typeof b.deadline === 'string' ? new Date(b.deadline).getTime() : 0;
-        return dateA - dateB;
-      });
-    }
-
-    return filtered;
-  }, [tasks, activeFilter, searchQuery, sortBy, currentUserId]);
-
-  const paginatedTasks = useMemo(() => {
-    const startIndex = (currentPage - 1) * tasksPerPage;
-    return filteredTasks.slice(startIndex, startIndex + tasksPerPage);
-  }, [filteredTasks, currentPage]);
-
-  const totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
+  function SortBy() {
+    setTasks(
+      isUp
+        ? tasks.sort((a, b) => a.priorityId - b.priorityId)
+        : tasks.sort((a, b) => b.priorityId - a.priorityId),
+    );
+  }
+  useEffect(() => {
+    SortBy();
+  }, [isUp]);
+  const [filtered, setFiltered] = useState();
 
   function Filter(name: string) {
     setActiveFilter(name);
@@ -167,7 +135,7 @@ export default function TaskPage() {
 
         <div className={styles.tasksControls}>
           <div className={styles.tasksInfo}>
-            <span className={styles.totalTasks}>Total: {filteredTasks.length}</span>
+            <span className={styles.totalTasks}>Total: {tasks.length}</span>
             <div className={styles.sortContainer}>
               <span className={styles.sortLabel}>Sort By:</span>
               <select
@@ -207,10 +175,15 @@ export default function TaskPage() {
                 </th>
                 <th className={styles.titleCol}>Title</th>
                 <th className={styles.statusCol}>
-                  Status <span className={styles.sortArrow}>▼</span>
+                  Status <span className={styles.sortArrow}></span>
                 </th>
-                <th className={styles.priorityCol}>
-                  Priority <span className={styles.sortArrow}>▼</span>
+                <th
+                  className={styles.priorityCol}
+                  onClick={() => {
+                    SortBy();
+                    setIsUp(!isUp);
+                  }}>
+                  Priority <span className={styles.sortArrow}>{isUp ? '▲' : '▼'}</span>
                 </th>
                 <th className={styles.assigneeCol}>Assignee</th>
                 <th className={styles.dueDateCol}>
@@ -221,7 +194,7 @@ export default function TaskPage() {
               </tr>
             </thead>
             <tbody>
-              {paginatedTasks.map((task) => {
+              {tasks.map((task) => {
                 const assigneeName = getAssigneeName(task.assigneeId);
                 const projectName = getProjectName(task.projectId);
                 const formattedDate = formatDate(task.deadline);
@@ -275,26 +248,6 @@ export default function TaskPage() {
             </tbody>
           </table>
         </div>
-
-        {totalPages > 1 && (
-          <div className={styles.pagination}>
-            <button
-              className={styles.paginationBtn}
-              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-              disabled={currentPage === 1}>
-              ‹
-            </button>
-            <span className={styles.paginationInfo}>
-              {currentPage} / {totalPages}
-            </span>
-            <button
-              className={styles.paginationBtn}
-              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-              disabled={currentPage === totalPages}>
-              ›
-            </button>
-          </div>
-        )}
       </section>
     </div>
   );

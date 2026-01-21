@@ -1,4 +1,4 @@
-@use '../UI/Styles/Variables.scss' as *;
+@use '.././Styles/Variables.scss' as *;
 .TaskContainer {
   min-height: 100vh;
   background-color: $dracula-background;
@@ -344,6 +344,7 @@
 
 .statusCol,
 .priorityCol {
+  cursor: pointer;
   min-width: 100px;
 }
 
