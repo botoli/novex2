@@ -1,40 +1,12 @@
 import React, { useState } from 'react';
 import styles from './AccountSettings.module.scss';
-import type { UserInterface } from '../../interfaces/Interfaces';
 import { CloseIcon, LogoIcon, LogoutIcon } from '../Icons';
+import { useData } from '../../fetch/fetchTasks';
 export default function AccountSettings({ onclose }) {
-  const [mockUsers, setMockUsers] = useState<UserInterface[]>([
-    {
-      userid: 0,
-      email: 'botoli@gmail.com',
+  const { data: users, setData: setUsers } = useData('http://localhost:3001/users');
 
-      password: 'passwd',
-      name: 'botoli',
-      online: false,
-      role: 'Admin',
-      avatar: false,
-    },
-    {
-      userid: 1,
-      email: 'bnix@gmail.com',
-      password: 'passwd',
-      name: 'bnix',
-      online: true,
-      role: 'Designer',
-      avatar: false,
-    },
-    {
-      userid: 2,
-      email: 'test@gmail.com',
-      password: 'passwd',
-      name: 'test',
-      online: true,
-      role: 'Senior',
-      avatar: false,
-    },
-  ]);
   return (
-    <>
+    <div>
       <div className={styles.overlay} onClick={onclose}></div>
       <div className={styles.allAccountSettings}>
         <div className={styles.header} onClick={onclose}>
@@ -44,7 +16,7 @@ export default function AccountSettings({ onclose }) {
           </div>
         </div>
 
-        {mockUsers.map(
+        {users.map(
           (user) =>
             user.role === 'Admin' && (
               <div className={styles.userInfo}>
@@ -58,6 +30,11 @@ export default function AccountSettings({ onclose }) {
                     <p>Role</p>
                     <div>{user.role}</div>
                     <button>Change</button>
+                  </div>
+                  <div className={styles.info}>
+                    <p>GitHub</p>
+                    <div>{user.github ? user.github : 'Привяжите github'}</div>
+                    <button className={styles.gitconnect}>Connect</button>
                   </div>
                   <div className={styles.info}>
                     <p>Email</p>
@@ -86,6 +63,6 @@ export default function AccountSettings({ onclose }) {
             ),
         )}
       </div>
-    </>
+    </div>
   );
 }

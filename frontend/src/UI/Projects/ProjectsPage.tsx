@@ -1,31 +1,19 @@
 import { useEffect, useState } from 'react';
-import {
-  AccountIcon,
-  ActiveIcon,
-  ArrowRightIcon,
-  BlockedIcon,
-  GithubIcon,
-  LogoutIcon,
-  NotificationIcon,
-  OverdueIcon,
-  SearchIcon,
-  SettingsIcon,
-} from '../Icons';
+import { ActiveIcon, ArrowRightIcon, BlockedIcon, GithubIcon, OverdueIcon } from '../Icons';
 import styles from './Projects.module.scss';
-import { ProjectsData } from '../../MockData/Projects.Mockdata';
-import { Tasks } from '../../MockData/Tasks.mockData';
 import { Link } from 'react-router-dom';
 import PageHeader from '../../common/PageHeader';
+import { useData } from '../../fetch/fetchTasks';
 export default function ProjectsPage() {
   const [activeFilter, setActiveFilter] = useState(() => {
     return localStorage.getItem('activeFilter') || 'All Projects';
   });
-  const [Projects, setProjects] = useState(ProjectsData);
+  const { data: projects, setData: setProjects } = useData('http://localhost:3001/projects');
+  const { data: tasks, setData: setTasks } = useData('http://localhost:3001/tasks');
   const [filtered, setFiltered] = useState(() => {
     const storedFiltered = localStorage.getItem('filtered');
-    return storedFiltered ? JSON.parse(storedFiltered) : Projects;
+    return storedFiltered ? JSON.parse(storedFiltered) : projects;
   });
-  const [mockTasks, setMockTasks] = useState(Tasks);
   const btns = [
     { name: 'All Projects' },
     { name: 'Active' },
@@ -40,33 +28,33 @@ export default function ProjectsPage() {
 
   const progress = (id: number) => {
     return Math.floor(
-      (mockTasks.filter((task) => task.projectId === id && task.status === 'completed').length /
-        mockTasks.filter((task) => task.projectId === id).length) *
+      (tasks.filter((task) => task.projectId === id && task.status === 'completed').length /
+        tasks.filter((task) => task.projectId === id).length) *
         100,
     );
   };
 
   function SetStatistikActive(id: number) {
     return Math.floor(
-      mockTasks.filter((task) => task.projectId === id && task.status === 'active').length,
+      tasks.filter((task) => task.projectId === id && task.status === 'active').length,
     );
   }
 
   function SetStatistikBlocked(id: number) {
     return Math.floor(
-      mockTasks.filter((task) => task.projectId === id && task.status === 'blocked').length,
+      tasks.filter((task) => task.projectId === id && task.status === 'blocked').length,
     );
   }
 
   function SetStatistikOverdue(id: number) {
     return Math.floor(
-      mockTasks.filter((task) => task.projectId === id && task.status === 'overdue').length,
+      tasks.filter((task) => task.projectId === id && task.status === 'overdue').length,
     );
   }
 
   function Filter(name: string) {
     setActiveFilter(name);
-    setFiltered(name === 'All Projects' ? Projects : Projects.filter((p) => p.status === name));
+    setFiltered(name === 'All Projects' ? projects : projects.filter((p) => p.status === name));
   }
 
   return (
@@ -85,8 +73,8 @@ export default function ProjectsPage() {
                 <p>{btn.name}</p>
                 <p className={styles.countProjects}>
                   {btn.name === 'All Projects'
-                    ? Projects.length
-                    : Projects.filter((p) => p.status === btn.name).length}
+                    ? projects.length
+                    : projects.filter((p) => p.status === btn.name).length}
                 </p>
               </button>
             ))}
@@ -120,13 +108,13 @@ export default function ProjectsPage() {
                         </div>
                         <p>
                           {Math.floor(
-                            Tasks.filter(
+                            tasks.filter(
                               (task) =>
                                 task.projectId === project.id && task.status === 'completed',
                             ).length,
                           )}
                           /
-                          {Math.floor(Tasks.filter((task) => task.projectId === project.id).length)}
+                          {Math.floor(tasks.filter((task) => task.projectId === project.id).length)}
                         </p>
                       </div>
                     </div>

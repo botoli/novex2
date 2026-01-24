@@ -1,0 +1,551 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "name": "Разработка архитектуры базы данных",
+      "status": "completed",
+      "projectId": 1,
+      "priority": "high",
+      "priorityId": 1,
+      "createdAt": "2024-01-15",
+      "deadline": "20 days",
+      "assigneeId": 0,
+      "tags": ["backend", "database", "planning"]
+    },
+    {
+      "id": 2,
+      "name": "Создание UI компонентов",
+      "status": "active",
+      "projectId": 2,
+      "priority": "high",
+      "priorityId": 1,
+      "createdAt": "2024-02-10T09:30:00Z",
+      "deadline": "20 days",
+      "assigneeId": 2,
+      "tags": ["frontend", "react", "ui"]
+    },
+    {
+      "id": 3,
+      "name": "Тестирование API эндпоинтов",
+      "status": "overdue",
+      "projectId": 3,
+      "priority": "medium",
+      "priorityId": 2,
+      "createdAt": "2024-02-05T14:20:00Z",
+      "deadline": "20 days",
+      "assigneeId": 0,
+      "tags": ["testing", "backend", "api"]
+    },
+    {
+      "id": 4,
+      "name": "Интеграция платежной системы",
+      "status": "blocked",
+      "projectId": 4,
+      "priority": "high",
+      "priorityId": 1,
+      "createdAt": "2024-01-20T11:15:00Z",
+      "deadline": "20 days",
+      "assigneeId": 0,
+      "tags": ["payments", "integration", "security"]
+    },
+    {
+      "id": 5,
+      "name": "Оптимизация производительности",
+      "status": "active",
+      "projectId": 5,
+      "priority": "medium",
+      "priorityId": 2,
+      "createdAt": "2024-02-12T13:45:00Z",
+      "deadline": "20 days",
+      "assigneeId": 0,
+      "tags": ["performance", "optimization"]
+    },
+    {
+      "id": 6,
+      "name": "Документация API",
+      "status": "active",
+      "projectId": 6,
+      "priority": "low",
+      "priorityId": 3,
+      "createdAt": "2024-02-08T10:00:00Z",
+      "deadline": "20 days",
+      "assigneeId": 0,
+      "tags": ["documentation", "api"]
+    },
+    {
+      "id": 7,
+      "name": "Рефакторинг кода",
+      "status": "completed",
+      "projectId": 2,
+      "priority": "low",
+      "priorityId": 3,
+      "createdAt": "2024-01-25T16:20:00Z",
+      "deadline": "20 days",
+      "assigneeId": 0,
+      "tags": ["refactoring", "code-quality"]
+    },
+    {
+      "id": 8,
+      "name": "Настройка CI/CD pipeline",
+      "status": "active",
+      "projectId": 1,
+      "priority": "medium",
+      "priorityId": 2,
+      "createdAt": "2024-01-30T09:00:00Z",
+      "deadline": "12 days",
+      "assigneeId": 0,
+      "tags": ["devops", "ci-cd", "automation"]
+    },
+    {
+      "id": 9,
+      "name": "Создание мобильной версии",
+      "status": "overdue",
+      "projectId": 3,
+      "priority": "high",
+      "priorityId": 1,
+      "createdAt": "2024-02-01T14:30:00Z",
+      "deadline": "451 days",
+      "assigneeId": 4,
+      "tags": ["mobile", "responsive", "frontend"]
+    },
+    {
+      "id": 10,
+      "name": "Анализ пользовательских логов",
+      "status": "completed",
+      "projectId": 4,
+      "priority": "low",
+      "priorityId": 3,
+      "createdAt": "2024-01-18T11:00:00Z",
+      "deadline": "10 days",
+      "assigneeId": 5,
+      "tags": ["analytics", "logs", "monitoring"]
+    },
+    {
+      "id": 11,
+      "name": "Обновление зависимостей",
+      "status": "blocked",
+      "projectId": 5,
+      "priority": "medium",
+      "priorityId": 2,
+      "createdAt": "2024-02-14T10:45:00Z",
+      "deadline": "1 days",
+      "assigneeId": 1,
+      "tags": ["dependencies", "security", "maintenance"]
+    },
+    {
+      "id": 12,
+      "name": "Написание unit-тестов",
+      "status": "overdue",
+      "projectId": 6,
+      "priority": "medium",
+      "priorityId": 2,
+      "createdAt": "2024-02-03T13:15:00Z",
+      "deadline": "3 days",
+      "assigneeId": 2,
+      "tags": ["testing", "unit-tests", "quality"]
+    },
+    {
+      "id": 13,
+      "name": "Дизайн дашборда аналитики",
+      "status": "completed",
+      "projectId": 2,
+      "priority": "high",
+      "priorityId": 1,
+      "createdAt": "2024-01-22T15:30:00Z",
+      "deadline": "2 days",
+      "assigneeId": 3,
+      "tags": ["design", "dashboard", "analytics"]
+    },
+    {
+      "id": 14,
+      "name": "Миграция данных",
+      "status": "overdue",
+      "projectId": 3,
+      "priority": "high",
+      "priorityId": 1,
+      "createdAt": "2024-01-28T09:45:00Z",
+      "deadline": "4 days",
+      "assigneeId": 4,
+      "tags": ["migration", "database", "data"]
+    },
+    {
+      "id": 15,
+      "name": "Реализация поиска",
+      "status": "overdue",
+      "projectId": 1,
+      "priority": "medium",
+      "priorityId": 2,
+      "createdAt": "2024-02-06T11:20:00Z",
+      "deadline": "20 days",
+      "assigneeId": 5,
+      "tags": ["search", "features", "backend"]
+    },
+    {
+      "id": 16,
+      "name": "Код-ревью",
+      "status": "completed",
+      "projectId": 2,
+      "priority": "low",
+      "priorityId": 3,
+      "createdAt": "2024-02-09T16:00:00Z",
+      "deadline": "20 days",
+      "tags": ["code-review", "quality"]
+    },
+    {
+      "id": 17,
+      "name": "Настройка мониторинга",
+      "status": "active",
+      "projectId": 3,
+      "priority": "medium",
+      "priorityId": 2,
+      "createdAt": "2024-02-11T14:10:00Z",
+      "deadline": "20 days",
+      "assigneeId": 1,
+      "tags": ["monitoring", "devops", "observability"]
+    },
+    {
+      "id": 18,
+      "name": "Создание отчетов",
+      "status": "blocked",
+      "projectId": 4,
+      "priority": "low",
+      "priorityId": 3,
+      "createdAt": "2024-02-07T10:30:00Z",
+      "deadline": "20 days",
+      "assigneeId": 2,
+      "tags": ["reports", "business", "export"]
+    },
+    {
+      "id": 19,
+      "name": "Оптимизация SEO",
+      "status": "blocked",
+      "projectId": 5,
+      "priority": "medium",
+      "priorityId": 2,
+      "createdAt": "2024-02-13T09:15:00Z",
+      "deadline": "20 days",
+      "assigneeId": 3,
+      "tags": ["seo", "marketing", "frontend"]
+    },
+    {
+      "id": 20,
+      "name": "Бэкап базы данных",
+      "status": "overdue",
+      "projectId": 6,
+      "priority": "high",
+      "priorityId": 1,
+      "createdAt": "2024-01-31T23:00:00Z",
+      "deadline": "20 days",
+      "assigneeId": 4,
+      "tags": ["backup", "database", "security"]
+    },
+    {
+      "id": 21,
+      "name": "Fix checkout bug with error message",
+      "status": "blocked",
+      "projectId": 7,
+      "priority": "high",
+      "priorityId": 1,
+      "createdAt": "2024-04-20",
+      "deadline": "2024-04-25",
+      "assigneeId": 14,
+      "tags": ["bug", "fix"]
+    },
+    {
+      "id": 22,
+      "name": "Design user profile page",
+      "status": "active",
+      "projectId": 8,
+      "priority": "medium",
+      "priorityId": 2,
+      "createdAt": "2024-04-18",
+      "deadline": "2024-04-25",
+      "assigneeId": 15,
+      "tags": ["design", "ui"]
+    },
+    {
+      "id": 23,
+      "name": "Update dashboard analytics widget",
+      "status": "active",
+      "projectId": 3,
+      "priority": "high",
+      "priorityId": 1,
+      "createdAt": "2024-04-15",
+      "deadline": "2024-04-20",
+      "assigneeId": 16,
+      "tags": ["analytics", "dashboard"]
+    },
+    {
+      "id": 24,
+      "name": "Implement OAuth2 for API authentication",
+      "status": "active",
+      "projectId": 8,
+      "priority": "high",
+      "priorityId": 1,
+      "createdAt": "2024-04-19",
+      "deadline": "2024-04-26",
+      "assigneeId": 17,
+      "tags": ["auth", "api"]
+    },
+    {
+      "id": 25,
+      "name": "Refactor code for cart component",
+      "status": "completed",
+      "projectId": 7,
+      "priority": "low",
+      "priorityId": 3,
+      "createdAt": "2024-04-10",
+      "deadline": "2024-04-19",
+      "assigneeId": 14,
+      "tags": ["refactor", "component"]
+    },
+    {
+      "id": 26,
+      "name": "Improve error logging",
+      "status": "blocked",
+      "projectId": 3,
+      "priority": "medium",
+      "priorityId": 2,
+      "createdAt": "2024-04-12",
+      "deadline": "2024-04-28",
+      "assigneeId": 18,
+      "tags": ["logging", "error"]
+    },
+    {
+      "id": 27,
+      "name": "Optimize SQL queries for user data",
+      "status": "active",
+      "projectId": 3,
+      "priority": "high",
+      "priorityId": 1,
+      "createdAt": "2024-04-14",
+      "deadline": "2024-04-27",
+      "assigneeId": 15,
+      "tags": ["sql", "optimization"]
+    },
+    {
+      "id": 28,
+      "name": "Setup CI/CD pipeline",
+      "status": "active",
+      "projectId": 3,
+      "priority": "high",
+      "priorityId": 1,
+      "createdAt": "2024-04-16",
+      "deadline": "2024-04-29",
+      "assigneeId": 17,
+      "tags": ["ci-cd", "devops"]
+    },
+    {
+      "id": 29,
+      "name": "Write unit tests for mobile app",
+      "status": "active",
+      "projectId": 8,
+      "priority": "medium",
+      "priorityId": 2,
+      "createdAt": "2024-04-17",
+      "deadline": "2024-04-23",
+      "assigneeId": 16,
+      "tags": ["testing", "mobile"]
+    },
+    {
+      "id": 30,
+      "name": "Plan version 2.0 roadmap",
+      "status": "blocked",
+      "projectId": 7,
+      "priority": "high",
+      "priorityId": 1,
+      "createdAt": "2024-04-13",
+      "deadline": "2024-04-30",
+      "tags": ["planning", "roadmap"]
+    }
+  ],
+  "users": [
+    {
+      "userid": 0,
+      "email": "admin@company.com",
+      "password": "admin123",
+      "name": "Andrey",
+      "online": true,
+      "role": "Admin",
+      "avatar": true,
+      "github": false
+    },
+    {
+      "userid": 1,
+      "email": "linda@company.com",
+      "password": "design@321",
+      "name": "Linda",
+      "online": false,
+      "role": "Designer",
+      "avatar": true
+    },
+    {
+      "userid": 2,
+      "email": "robert@company.com",
+      "password": "devpass1",
+      "name": "Robert",
+      "online": true,
+      "role": "Developer",
+      "avatar": false
+    },
+    {
+      "userid": 3,
+      "email": "kate@company.com",
+      "password": "uxrules",
+      "name": "Kate",
+      "online": true,
+      "role": "UX Designer",
+      "avatar": true
+    },
+    {
+      "userid": 4,
+      "email": "tom@company.com",
+      "password": "tomdev",
+      "name": "Tom",
+      "online": false,
+      "role": "Developer",
+      "avatar": false
+    },
+    {
+      "userid": 5,
+      "email": "anna@company.com",
+      "password": "anna2024",
+      "name": "Anna",
+      "online": true,
+      "role": "Project Manager",
+      "avatar": true
+    },
+    {
+      "userid": 6,
+      "email": "david@company.com",
+      "password": "secure!99",
+      "name": "David",
+      "online": true,
+      "role": "QA Engineer",
+      "avatar": false
+    },
+    {
+      "userid": 7,
+      "email": "sophia@company.com",
+      "password": "designme",
+      "name": "Sophia",
+      "online": false,
+      "role": "Designer",
+      "avatar": true
+    },
+    {
+      "userid": 8,
+      "email": "chris@company.com",
+      "password": "backend01",
+      "name": "Chris",
+      "online": true,
+      "role": "Backend Developer",
+      "avatar": false
+    },
+    {
+      "userid": 9,
+      "email": "nina@company.com",
+      "password": "nina_ui",
+      "name": "Nina",
+      "online": true,
+      "role": "UI Designer",
+      "avatar": true
+    },
+    {
+      "userid": 10,
+      "email": "peter@company.com",
+      "password": "peterdev",
+      "name": "Peter",
+      "online": false,
+      "role": "Fullstack Developer",
+      "avatar": false
+    },
+    {
+      "userid": 11,
+      "email": "oliver@company.com",
+      "password": "oliverQA",
+      "name": "Oliver",
+      "online": true,
+      "role": "QA Engineer",
+      "avatar": false
+    },
+    {
+      "userid": 12,
+      "email": "emma@company.com",
+      "password": "emmaUX",
+      "name": "Emma",
+      "online": true,
+      "role": "UX Researcher",
+      "avatar": true
+    },
+    {
+      "userid": 13,
+      "email": "senior.dev@company.com",
+      "password": "seniorPro",
+      "name": "Victor",
+      "online": true,
+      "role": "Senior Developer",
+      "avatar": true
+    },
+    {
+      "userid": 14,
+      "email": "john@company.com",
+      "password": "johnJS",
+      "name": "John",
+      "online": false,
+      "role": "Frontend Developer",
+      "avatar": true
+    },
+    {
+      "userid": 15,
+      "email": "laura@company.com",
+      "password": "lauraDesign",
+      "name": "Laura",
+      "online": true,
+      "role": "Graphic Designer",
+      "avatar": true
+    },
+    {
+      "userid": 16,
+      "email": "mark@company.com",
+      "password": "markDevOps",
+      "name": "Mark",
+      "online": true,
+      "role": "DevOps Engineer",
+      "avatar": false
+    },
+    {
+      "userid": 17,
+      "email": "sarah@company.com",
+      "password": "sarahAPI",
+      "name": "Sarah",
+      "online": false,
+      "role": "Backend Developer",
+      "avatar": true
+    },
+    {
+      "userid": 18,
+      "email": "alex@company.com",
+      "password": "alexMobile",
+      "name": "Alex",
+      "online": true,
+      "role": "Mobile Developer",
+      "avatar": false
+    }
+  ],
+
+  "projects": [
+    {
+      "id": 1,
+      "title": "Landing Page",
+      "description": "Сверстать главную страницу сайта",
+      "status": "Active",
+      "priority": "high",
+      "due_date": "2024-11-20",
+      "project_id": 1,
+      "created_by": 2,
+      "assigned_to": 4,
+      "tags": ["верстка", "ui"]
+    }
+  ]
+}

@@ -1,23 +1,22 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useId } from 'react';
 import styles from './TaskPage.module.scss';
 import PageHeader from '../../common/PageHeader';
 import { SearchIcon } from '../../UI/Icons';
-import { Tasks } from '../../MockData/Tasks.mockData';
-import { ProjectsData } from '../../MockData/Projects.Mockdata';
-import { mockUsers } from '../../MockData/UsersMock';
-import type { TaskInterface } from '../../interfaces/Interfaces';
+import { useData } from '../../fetch/fetchTasks';
 
 export default function TaskPage() {
-  const [tasks, setTasks] = useState<TaskInterface[]>(Tasks);
-  const [activeFilter, setActiveFilter] = useState<string>(() => {
-    return localStorage.getItem('activeFilter') || 'All Tasks';
+  const { data: tasks, setData: setTasks } = useData('http://localhost:3001/tasks');
+  const { data: projects, setData: setProjects } = useData('http://localhost:3001/projects');
+  const { data: users, setData: setUsers } = useData('http://localhost:3001/users');
+
+  const [activeFiltertask, setActiveFiltertask] = useState<string>(() => {
+    return localStorage.getItem('activeFiltertask') || 'All Tasks';
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('Due Date');
   const [currentPage, setCurrentPage] = useState(1);
   const [isUp, setIsUp] = useState(false);
-  const tasksPerPage = 10;
-  const currentUserId = 0; // Assuming current user ID is 0
+  const currentUserId = users.filter((usr) => usr.assigneeId === 0).length; // Assuming current user ID is 0
 
   const btns = [
     { name: 'All Tasks' },
@@ -25,12 +24,12 @@ export default function TaskPage() {
     { name: 'Overdue' },
     { name: 'Active' },
     { name: 'Blocked' },
-    { name: 'Complete' },
+    { name: 'Completed' },
   ];
 
   useEffect(() => {
-    localStorage.setItem('activeFilter', activeFilter);
-  }, [activeFilter]);
+    localStorage.setItem('activeFiltertask', activeFiltertask);
+  }, [activeFiltertask]);
   function SortBy() {
     setTasks(
       isUp
@@ -41,21 +40,23 @@ export default function TaskPage() {
   useEffect(() => {
     SortBy();
   }, [isUp]);
-  const [filtered, setFiltered] = useState();
-
-  function Filter(name: string) {
-    setActiveFilter(name);
-    setCurrentPage(1);
-  }
-
+  const filteredTasks = useMemo(() => {
+    if (activeFiltertask === 'All Tasks') {
+      return tasks;
+    }
+    if (activeFiltertask === 'My Tasks') {
+      return tasks.filter((task) => task.assigneeId === currentUserId);
+    }
+    return tasks.filter((task) => task.status === activeFiltertask.toLowerCase()); // Только меняем активный фильтр
+  }, [tasks, activeFiltertask, currentUserId]);
   const getProjectName = (projectId: number) => {
-    const project = ProjectsData.find((p) => p.id === projectId);
+    const project = projects.find((p) => p.id === projectId);
     return project ? project.title : 'Unknown';
   };
 
   const getAssigneeName = (assigneeId?: number) => {
     if (assigneeId === undefined || assigneeId === null) return null;
-    const user = mockUsers.find((u) => u.userid === assigneeId);
+    const user = users.find((u) => u.userid === assigneeId);
     return user ? user.name : null;
   };
 
@@ -72,7 +73,7 @@ export default function TaskPage() {
           return d.toISOString().split('T')[0];
         }
       }
-      // если это не дата,просто возвращаем
+      // если это не дата просто возвращаем
       return date; // Return as-is for relative dates
     }
     return date.toISOString().split('T')[0];
@@ -105,7 +106,7 @@ export default function TaskPage() {
         return '';
     }
   };
-
+  function setTasksfilter(name) {}
   return (
     <div className={styles.TaskContainer}>
       <PageHeader />
@@ -116,8 +117,8 @@ export default function TaskPage() {
             {btns.map((btn) => (
               <button
                 key={btn.name}
-                className={`${styles.AllTasks} ${activeFilter === btn.name ? styles.active : ''}`}
-                onClick={() => Filter(btn.name)}>
+                className={`${styles.AllTasks} ${activeFiltertask === btn.name ? styles.active : ''}`}
+                onClick={() => setActiveFiltertask(btn.name)}>
                 <p>{btn.name}</p>
                 <p className={styles.countTasks}>
                   {btn.name === 'All Tasks'
@@ -194,7 +195,7 @@ export default function TaskPage() {
               </tr>
             </thead>
             <tbody>
-              {tasks.map((task) => {
+              {filteredTasks.map((task) => {
                 const assigneeName = getAssigneeName(task.assigneeId);
                 const projectName = getProjectName(task.projectId);
                 const formattedDate = formatDate(task.deadline);

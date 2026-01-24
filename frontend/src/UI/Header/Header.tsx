@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import styles from './Header.module.scss';
 import { Tabs } from './tabs';
 import { Link } from 'react-router-dom';
-import { ProjectsData } from '../../MockData/Projects.Mockdata.ts';
 import {
   LogoIcon,
   HomeIcon,
@@ -15,9 +14,13 @@ import {
   CloseIcon,
 } from '../Icons/index.ts';
 import { useTheme } from '../../context/Theme.tsx';
+import { useData } from '../../fetch/fetchTasks.tsx';
 
 export default function Header() {
-  const countOfProjects = ProjectsData.length;
+  const { data: projects, setData: setProjects } = useData('http://localhost:3001/projects');
+  const { data: tasks, setData: setTasks } = useData('http://localhost:3001/tasks');
+  const { data: users, setData: setUser } = useData('http://localhost:3001/users');
+  const countOfProjects = projects.length;
   const [tabs, setTabs] = useState(() => {
     const storedTabs = localStorage.getItem('tabs');
     return storedTabs ? JSON.parse(storedTabs) : Tabs;

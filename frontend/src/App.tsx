@@ -4,10 +4,11 @@ import Header from './UI/Header/Header';
 import Home from './UI/Home/HomePage.tsx';
 import './UI/Styles/app.scss';
 import { ThemeProvider } from './context/Theme.tsx';
-
 import ProjectsPage from './UI/Projects/ProjectsPage.tsx';
 import TaskPage from './UI/Tasks/TaskPage.tsx';
 import UnderConstruction from './UI/UnderConstruction/UnderConstruction.tsx';
+import AIPage from './UI/AI/AIPage.tsx';
+import CodePage from './UI/Code/CodePage.tsx';
 function App() {
   return (
     <ThemeProvider>
@@ -19,7 +20,7 @@ function App() {
           <Route path="/Tasks" element={<TaskPage />} />
           <Route path="/Code" element={<UnderConstruction />} />
           <Route path="/Settings" element={<UnderConstruction />} />
-          <Route path="/Ai" element={<UnderConstruction />} />
+          <Route path="/Ai" element={<AIPage />} />
         </Routes>
       </div>
     </ThemeProvider>

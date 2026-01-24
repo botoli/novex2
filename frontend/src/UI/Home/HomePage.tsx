@@ -21,10 +21,9 @@ import {
   ArrowUpIcon,
   ArrowDownIcon,
 } from '../Icons';
-import { ProjectsData } from '../../MockData/Projects.Mockdata';
-import { Tasks } from '../../MockData/Tasks.mockData';
+
 import AccountSettings from '../AccountSettings/AccountSettings';
-import { mockUsers } from '../../MockData/UsersMock';
+import { useData } from '../../fetch/fetchTasks';
 
 export default function HomePage() {
   const mockAI = [
@@ -44,8 +43,10 @@ export default function HomePage() {
       text: 'сделать код чистым',
     },
   ];
-  const [users, setUser] = useState(mockUsers);
-  const [mockTasks, setMockTasks] = useState(Tasks);
+
+  const { data: projects, setData: setProjects } = useData('http://localhost:3001/projects');
+  const { data: tasks, setData: setTasks } = useData('http://localhost:3001/tasks');
+  const { data: users, setData: setUser } = useData('http://localhost:3001/users');
   const [sortBy, setSortBy] = useState('Dedline');
   const [sort, setSort] = useState([]);
   const [isopenProfile, setIsopenProfile] = useState(false);
@@ -54,14 +55,14 @@ export default function HomePage() {
   const [isSortDedline, setIsSortDedline] = useState(true);
   const progress = (id: number) => {
     return Math.floor(
-      (mockTasks.filter((task) => task.projectId === id && task.status === 'completed').length /
-        mockTasks.filter((task) => task.projectId === id).length) *
-        100,
+      (tasks.filter((task) => task.projectId === id && task.status === 'completed').length /
+        tasks.filter((task) => task.projectId === id).length) *
+        100 || 0,
     );
   };
 
   function sorty() {
-    const copyMockTasks = [...mockTasks];
+    const copyMockTasks = [...tasks];
     if (sortBy === 'Dedline') {
       const SortByDedline = copyMockTasks.sort((a, b) => {
         const deadlineA = a.deadline instanceof Date ? a.deadline.getTime() : parseInt(a.deadline);
@@ -82,22 +83,22 @@ export default function HomePage() {
   }
   useEffect(() => {
     sorty();
-  }, [mockTasks, sortBy, isSortDedline, isSortRisk]);
+  }, [tasks, sortBy, isSortDedline, isSortRisk]);
 
   function SetStatistikActive(id: number) {
     return Math.floor(
-      mockTasks.filter((task) => task.projectId === id && task.status === 'active').length,
+      tasks.filter((task) => task.projectId === id && task.status === 'active').length,
     );
   }
 
   function SetStatistikBlocked(id: number) {
     return Math.floor(
-      mockTasks.filter((task) => task.projectId === id && task.status === 'blocked').length,
+      tasks.filter((task) => task.projectId === id && task.status === 'blocked').length,
     );
   }
   function SetStatistikOverdue(id: number) {
     return Math.floor(
-      mockTasks.filter((task) => task.projectId === id && task.status === 'overdue').length,
+      tasks.filter((task) => task.projectId === id && task.status === 'overdue').length,
     );
   }
 
@@ -178,7 +179,7 @@ export default function HomePage() {
                 <p className={styles.cardSubtitle}>Status overview</p>
               </div>
               <div className={styles.totalBadge}>
-                <span>{ProjectsData.length}</span>
+                <span>{projects.length}</span>
                 <span>Total</span>
               </div>
             </div>
@@ -189,7 +190,7 @@ export default function HomePage() {
                   <div className={styles.statusHeader}>
                     <ActiveIcon className={styles.statusIcon} />
                     <span className={styles.statusCount}>
-                      {ProjectsData.filter((project) => project.status === 'Active').length}
+                      {projects.filter((project) => project.status === 'Active').length}
                     </span>
                   </div>
                   <p className={styles.statusLabel}>Active</p>
@@ -198,8 +199,7 @@ export default function HomePage() {
                       className={styles.statusBarFill}
                       style={{
                         width: `${
-                          (ProjectsData.filter((p) => p.status === 'Active').length /
-                            ProjectsData.length) *
+                          (projects.filter((p) => p.status === 'Active').length / projects.length) *
                             100 || 0
                         }%`,
                       }}
@@ -211,7 +211,7 @@ export default function HomePage() {
                   <div className={styles.statusHeader}>
                     <PauseIconRounded className={styles.statusIcon} />
                     <span className={styles.statusCount}>
-                      {ProjectsData.filter((project) => project.status === 'Paused').length}
+                      {projects.filter((project) => project.status === 'Paused').length}
                     </span>
                   </div>
                   <p className={styles.statusLabel}>Paused</p>
@@ -220,8 +220,7 @@ export default function HomePage() {
                       className={styles.statusBarFill}
                       style={{
                         width: `${
-                          (ProjectsData.filter((p) => p.status === 'Paused').length /
-                            ProjectsData.length) *
+                          (projects.filter((p) => p.status === 'Paused').length / projects.length) *
                             100 || 0
                         }%`,
                       }}
@@ -233,7 +232,7 @@ export default function HomePage() {
                   <div className={styles.statusHeader}>
                     <WarningIcon className={styles.statusIcon} />
                     <span className={styles.statusCount}>
-                      {ProjectsData.filter((project) => project.status === 'Risk').length}
+                      {projects.filter((project) => project.status === 'Risk').length}
                     </span>
                   </div>
                   <p className={styles.statusLabel}>At Risk</p>
@@ -242,8 +241,7 @@ export default function HomePage() {
                       className={styles.statusBarFill}
                       style={{
                         width: `${
-                          (ProjectsData.filter((p) => p.status === 'Risk').length /
-                            ProjectsData.length) *
+                          (projects.filter((p) => p.status === 'Risk').length / projects.length) *
                             100 || 0
                         }%`,
                       }}
@@ -339,7 +337,7 @@ export default function HomePage() {
               <div className={styles.metricsOverview}>
                 <div className={styles.metricItem}>
                   <div className={styles.metricHeader}>
-                    <span className={styles.metricNumber}>{mockTasks.length}</span>
+                    <span className={styles.metricNumber}>{tasks.length}</span>
                     <div className={`${styles.metricTrend} ${styles.neutral}`}>
                       <span>Total</span>
                     </div>
@@ -352,7 +350,7 @@ export default function HomePage() {
                 <div className={styles.metricItem}>
                   <div className={styles.metricHeader}>
                     <span className={`${styles.metricNumber} ${styles.overdue}`}>
-                      {mockTasks.filter((task) => task.status === 'overdue').length}
+                      {tasks.filter((task) => task.status === 'overdue').length}
                     </span>
                     <div className={`${styles.metricTrend} ${styles.negative}`}>
                       <span>Overdue</span>
@@ -367,8 +365,8 @@ export default function HomePage() {
                   <span className={styles.progressLabel}>On Time</span>
                   <span className={styles.progressValue}>
                     {Math.round(
-                      ((mockTasks.length - mockTasks.filter((t) => t.status === 'overdue').length) /
-                        mockTasks.length) *
+                      ((tasks.length - tasks.filter((t) => t.status === 'overdue').length) /
+                        tasks.length) *
                         100 || 0,
                     )}
                     %
@@ -379,9 +377,8 @@ export default function HomePage() {
                     className={styles.progressBarFill}
                     style={{
                       width: `${
-                        ((mockTasks.length -
-                          mockTasks.filter((t) => t.status === 'overdue').length) /
-                          mockTasks.length) *
+                        ((tasks.length - tasks.filter((t) => t.status === 'overdue').length) /
+                          tasks.length) *
                           100 || 0
                       }%`,
                     }}
@@ -450,7 +447,7 @@ export default function HomePage() {
         <div className={styles.tasksSection}>
           <h1 className={styles.sectionTitle}>Projects Focus</h1>
           <div className={styles.gridProjects}>
-            {ProjectsData?.map((project) => (
+            {projects?.map((project) => (
               <div key={project.id} className={styles.taskCard}>
                 <div className={styles.taskHeader}>
                   <div className={styles.taskInfo}>
@@ -469,11 +466,11 @@ export default function HomePage() {
                       </div>
                       <p>
                         {Math.floor(
-                          Tasks.filter(
+                          tasks.filter(
                             (task) => task.projectId === project.id && task.status === 'completed',
                           ).length,
                         )}
-                        /{Math.floor(Tasks.filter((task) => task.projectId === project.id).length)}
+                        /{Math.floor(tasks.filter((task) => task.projectId === project.id).length)}
                       </p>
                     </div>
                   </div>

@@ -1,0 +1,400 @@
+@use '../Styles/Variables.scss' as *;
+
+.aiContainer {
+  min-height: 100vh;
+  background-color: $dracula-background;
+  color: $dracula-foreground;
+  padding-left: 250px;
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  box-sizing: border-box;
+  width: 100%;
+  position: relative;
+
+  @media (max-width: 1024px) {
+    padding-left: 0;
+  }
+}
+
+.dashboard {
+  padding: 30px;
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 1024px) {
+    padding: 25px 20px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px 15px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 15px 12px;
+  }
+
+  > h1 {
+    color: $dracula-foreground;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+
+    @media (max-width: 1024px) {
+      font-size: 28px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+  }
+}
+
+.chatContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: $dracula-current-line;
+  border: 1px solid $dracula-selection;
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 0;
+
+  @media (max-width: 768px) {
+    border-radius: 8px;
+  }
+
+  @media (max-width: 480px) {
+    border-radius: 6px;
+  }
+}
+
+.messagesArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $dracula-background;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $dracula-selection;
+    border-radius: 4px;
+
+    &:hover {
+      background: $dracula-purple;
+    }
+  }
+}
+
+.message {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+
+  @media (max-width: 768px) {
+    gap: 10px;
+  }
+
+  @media (max-width: 480px) {
+    gap: 8px;
+  }
+
+  &.userMessage {
+    flex-direction: row-reverse;
+
+    .messageContent {
+      align-items: flex-end;
+    }
+
+    .messageText {
+      background-color: $dracula-purple;
+      color: $dracula-background;
+    }
+  }
+}
+
+.messageAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: $dracula-purple-rgba-01;
+  border: 1px solid $dracula-selection;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+  }
+
+  @media (max-width: 480px) {
+    width: 32px;
+    height: 32px;
+  }
+
+  svg {
+    color: $dracula-purple;
+    width: 24px;
+    height: 24px;
+
+    @media (max-width: 768px) {
+      width: 20px;
+      height: 20px;
+    }
+
+    @media (max-width: 480px) {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  span {
+    color: $dracula-purple;
+    font-weight: 600;
+    font-size: 16px;
+
+    @media (max-width: 768px) {
+      font-size: 14px;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 12px;
+    }
+  }
+}
+
+.messageContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.messageHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  @media (max-width: 480px) {
+    gap: 8px;
+  }
+}
+
+.messageAuthor {
+  color: $dracula-foreground;
+  font-size: 14px;
+  font-weight: 600;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
+}
+
+.messageTime {
+  color: $dracula-comment;
+  font-size: 12px;
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+  }
+}
+
+.messageText {
+  background-color: $dracula-background;
+  border: 1px solid $dracula-selection;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: $dracula-foreground;
+  font-size: 14px;
+  line-height: 1.6;
+  word-wrap: break-word;
+
+  @media (max-width: 768px) {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+}
+
+.inputArea {
+  border-top: 1px solid $dracula-selection;
+  padding: 16px 20px;
+  background-color: $dracula-background;
+
+  @media (max-width: 768px) {
+    padding: 14px 16px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+  }
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @media (max-width: 768px) {
+    gap: 10px;
+  }
+
+  @media (max-width: 480px) {
+    gap: 8px;
+  }
+}
+
+.chatInput {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: $dracula-current-line;
+  border: 1px solid $dracula-selection;
+  border-radius: 8px;
+  color: $dracula-foreground;
+  font-size: 14px;
+  font-family: inherit;
+  resize: none;
+  min-height: 60px;
+  max-height: 150px;
+
+  @media (max-width: 768px) {
+    padding: 10px 14px;
+    font-size: 13px;
+    min-height: 50px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px 12px;
+    font-size: 12px;
+    min-height: 40px;
+    border-radius: 6px;
+  }
+
+  &::placeholder {
+    color: $dracula-comment;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $dracula-purple;
+    box-shadow: 0 0 0 3px $dracula-purple-rgba-01;
+  }
+}
+
+.inputActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  @media (max-width: 480px) {
+    gap: 8px;
+  }
+}
+
+.attachButton {
+  width: 40px;
+  height: 40px;
+  background-color: $dracula-current-line;
+  border: 1px solid $dracula-selection;
+  border-radius: 8px;
+  color: $dracula-foreground;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  @media (max-width: 480px) {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    border-radius: 6px;
+  }
+
+  &:hover {
+    border-color: $dracula-purple;
+    background-color: $dracula-purple-rgba-01;
+  }
+}
+
+.sendButton {
+  padding: 10px 24px;
+  background-color: $dracula-purple;
+  color: $dracula-background;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-family: inherit;
+
+  @media (max-width: 768px) {
+    padding: 8px 20px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 6px 16px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  &:hover {
+    background-color: $dracula-indigo;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}

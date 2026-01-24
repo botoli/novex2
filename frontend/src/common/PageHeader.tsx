@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { mockUsers } from '../MockData/UsersMock';
 import { AccountIcon, LogoutIcon, NotificationIcon, SearchIcon, SettingsIcon } from '../UI/Icons';
 import styles from './Page.Header.module.scss';
 import AccountSettings from '../UI/AccountSettings/AccountSettings';
+import { useData } from '../fetch/fetchTasks';
 export default function PageHeader() {
   const [isopenProfile, setIsopenProfile] = useState(false);
   const [isOpenAccountSettings, setIsOpenAccountSettings] = useState(false);
-
+  const { data: projects, setData: setProjects } = useData('http://localhost:3001/projects');
+  const { data: tasks, setData: setTasks } = useData('http://localhost:3001/tasks');
+  const { data: users, setData: setUser } = useData('http://localhost:3001/users');
   function OpenModalProfile() {
     isopenProfile === false ? setIsopenProfile(true) : setIsopenProfile(false);
   }
@@ -30,7 +32,7 @@ export default function PageHeader() {
               <NotificationIcon />
             </button>
           </div>
-          {mockUsers.map(
+          {users.map(
             (user) =>
               user.role === 'Admin' && (
                 <div className={styles.allAccount} onClick={OpenModalProfile}>

@@ -1,30 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
-export const ThemeContext = createContext(null);
-
+interface ThemeContextType {
+  theme: string;
+  changeTheme: () => void;
+}
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
-    const value = localStorage.getItem('theme');
-    return value ? JSON.parse(value) : 'dark';
+    const saved = localStorage.getItem('theme');
+    return saved || 'dark';
   });
   useEffect(() => {
-    // Применяем класс темы к root элементу
-    const root = document.documentElement;
-    if (theme === 'light') {
-      root.classList.add('light-theme');
-    } else {
-      root.classList.remove('light-theme');
-    }
-  }, [theme]);
-  useEffect(() => {
-    localStorage.setItem('theme', JSON.stringify(theme));
+    localStorage.setItem('theme', theme);
   }, [theme]);
   function changeTheme() {
-    if (theme === 'dark') {
-      setTheme('light');
-    } else {
-      setTheme('dark');
-    }
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   }
 
   const value = { theme, changeTheme };

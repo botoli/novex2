@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "server": "json-server --watch ../backend/db.json --port 3001"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -45,6 +46,7 @@
     "globals": "^16.5.0",
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
+    "json-server": "^1.0.0-beta.3",
     "ts-jest": "^29.4.6",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
