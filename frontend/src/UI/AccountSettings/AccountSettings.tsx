@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import styles from './AccountSettings.module.scss';
-import { CloseIcon, LogoIcon, LogoutIcon } from '../Icons';
-import { useData } from '../../fetch/fetchTasks';
+import React, { useState } from "react";
+import styles from "./AccountSettings.module.scss";
+import { CloseIcon, LogoIcon, LogoutIcon } from "../Icons";
+import { nowurl, useData } from "../../fetch/fetchTasks";
 export default function AccountSettings({ onclose }) {
-  const { data: users, setData: setUsers } = useData('http://localhost:3001/users');
+  const { data: users, setData: setUsers } = useData(nowurl + "users");
 
   return (
     <div>
@@ -18,7 +18,7 @@ export default function AccountSettings({ onclose }) {
 
         {users.map(
           (user) =>
-            user.role === 'Admin' && (
+            user.role === "Admin" && (
               <div className={styles.userInfo}>
                 <div className={styles.allinfo}>
                   <div className={styles.info}>
@@ -33,7 +33,7 @@ export default function AccountSettings({ onclose }) {
                   </div>
                   <div className={styles.info}>
                     <p>GitHub</p>
-                    <div>{user.github ? user.github : 'Привяжите github'}</div>
+                    <div>{user.github ? user.github : "Привяжите github"}</div>
                     <button className={styles.gitconnect}>Connect</button>
                   </div>
                   <div className={styles.info}>

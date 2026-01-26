@@ -1,14 +1,24 @@
-import { useState } from 'react';
-import { AccountIcon, LogoutIcon, NotificationIcon, SearchIcon, SettingsIcon } from '../UI/Icons';
-import styles from './Page.Header.module.scss';
-import AccountSettings from '../UI/AccountSettings/AccountSettings';
-import { useData } from '../fetch/fetchTasks';
+import { useState } from "react";
+import {
+  AccountIcon,
+  LogoutIcon,
+  NotificationIcon,
+  SearchIcon,
+  SettingsIcon,
+} from "../UI/Icons";
+import styles from "./Page.Header.module.scss";
+import AccountSettings from "../UI/AccountSettings/AccountSettings";
+import { nowurl, useData } from "../fetch/fetchTasks";
 export default function PageHeader() {
   const [isopenProfile, setIsopenProfile] = useState(false);
   const [isOpenAccountSettings, setIsOpenAccountSettings] = useState(false);
-  const { data: projects, setData: setProjects } = useData('http://localhost:3001/projects');
-  const { data: tasks, setData: setTasks } = useData('http://localhost:3001/tasks');
-  const { data: users, setData: setUser } = useData('http://localhost:3001/users');
+  const { data: projects, setData: setProjects } = useData(nowurl + "projects");
+  const { data: tasks, setData: setTasks } = useData(
+    "http://localhost:3001/tasks",
+  );
+  const { data: users, setData: setUser } = useData(
+    "http://localhost:3001/users",
+  );
   function OpenModalProfile() {
     isopenProfile === false ? setIsopenProfile(true) : setIsopenProfile(false);
   }
@@ -16,7 +26,9 @@ export default function PageHeader() {
     <div>
       <div className={styles.AccountSettingsModal}>
         {isOpenAccountSettings && (
-          <AccountSettings onclose={() => setIsOpenAccountSettings(!isOpenAccountSettings)} />
+          <AccountSettings
+            onclose={() => setIsOpenAccountSettings(!isOpenAccountSettings)}
+          />
         )}
       </div>
       <section className={styles.pageHeader}>
@@ -34,7 +46,7 @@ export default function PageHeader() {
           </div>
           {users.map(
             (user) =>
-              user.role === 'Admin' && (
+              user.role === "Admin" && (
                 <div className={styles.allAccount} onClick={OpenModalProfile}>
                   <div className={styles.account}>
                     <div className={styles.accountInfo}>
@@ -51,7 +63,10 @@ export default function PageHeader() {
                     <div className={styles.modalProfile}>
                       <div
                         className={styles.btnProfile}
-                        onClick={() => setIsOpenAccountSettings(!isOpenAccountSettings)}>
+                        onClick={() =>
+                          setIsOpenAccountSettings(!isOpenAccountSettings)
+                        }
+                      >
                         <button className={styles.settings}>
                           <SettingsIcon />
                         </button>

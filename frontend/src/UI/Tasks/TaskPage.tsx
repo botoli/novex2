@@ -1,34 +1,38 @@
-import { useEffect, useState, useMemo, useId } from 'react';
-import styles from './TaskPage.module.scss';
-import PageHeader from '../../common/PageHeader';
-import { SearchIcon } from '../../UI/Icons';
-import { useData } from '../../fetch/fetchTasks';
+import { useEffect, useState, useMemo, useId } from "react";
+import styles from "./TaskPage.module.scss";
+import PageHeader from "../../common/PageHeader";
+import { SearchIcon } from "../../UI/Icons";
+import { nowurl, useData } from "../../fetch/fetchTasks";
 
 export default function TaskPage() {
-  const { data: tasks, setData: setTasks } = useData('http://localhost:3001/tasks');
-  const { data: projects, setData: setProjects } = useData('http://localhost:3001/projects');
-  const { data: users, setData: setUsers } = useData('http://localhost:3001/users');
+  const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
+  const { data: projects, setData: setProjects } = useData(
+    "http://localhost:3001/projects",
+  );
+  const { data: users, setData: setUsers } = useData(
+    "http://localhost:3001/users",
+  );
 
   const [activeFiltertask, setActiveFiltertask] = useState<string>(() => {
-    return localStorage.getItem('activeFiltertask') || 'All Tasks';
+    return localStorage.getItem("activeFiltertask") || "All Tasks";
   });
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('Due Date');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("Due Date");
   const [currentPage, setCurrentPage] = useState(1);
   const [isUp, setIsUp] = useState(false);
   const currentUserId = users.filter((usr) => usr.assigneeId === 0).length; // Assuming current user ID is 0
 
   const btns = [
-    { name: 'All Tasks' },
-    { name: 'My Tasks' },
-    { name: 'Overdue' },
-    { name: 'Active' },
-    { name: 'Blocked' },
-    { name: 'Completed' },
+    { name: "All Tasks" },
+    { name: "My Tasks" },
+    { name: "Overdue" },
+    { name: "Active" },
+    { name: "Blocked" },
+    { name: "Completed" },
   ];
 
   useEffect(() => {
-    localStorage.setItem('activeFiltertask', activeFiltertask);
+    localStorage.setItem("activeFiltertask", activeFiltertask);
   }, [activeFiltertask]);
   function SortBy() {
     setTasks(
@@ -41,17 +45,19 @@ export default function TaskPage() {
     SortBy();
   }, [isUp]);
   const filteredTasks = useMemo(() => {
-    if (activeFiltertask === 'All Tasks') {
+    if (activeFiltertask === "All Tasks") {
       return tasks;
     }
-    if (activeFiltertask === 'My Tasks') {
+    if (activeFiltertask === "My Tasks") {
       return tasks.filter((task) => task.assigneeId === currentUserId);
     }
-    return tasks.filter((task) => task.status === activeFiltertask.toLowerCase()); // Только меняем активный фильтр
+    return tasks.filter(
+      (task) => task.status === activeFiltertask.toLowerCase(),
+    ); // Только меняем активный фильтр
   }, [tasks, activeFiltertask, currentUserId]);
   const getProjectName = (projectId: number) => {
     const project = projects.find((p) => p.id === projectId);
-    return project ? project.title : 'Unknown';
+    return project ? project.title : "Unknown";
   };
 
   const getAssigneeName = (assigneeId?: number) => {
@@ -61,49 +67,49 @@ export default function TaskPage() {
   };
 
   const formatDate = (date: string | Date) => {
-    if (typeof date === 'string') {
+    if (typeof date === "string") {
       // если это строка с датой в формате YYYY-MM-DD
       if (date.match(/^\d{4}-\d{2}-\d{2}$/)) {
         return date;
       }
       // если это строка с датой в другом формате
-      if (date.includes('T') || date.includes('-')) {
+      if (date.includes("T") || date.includes("-")) {
         const d = new Date(date);
         if (!isNaN(d.getTime())) {
-          return d.toISOString().split('T')[0];
+          return d.toISOString().split("T")[0];
         }
       }
       // если это не дата просто возвращаем
       return date; // Return as-is for relative dates
     }
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active':
+      case "active":
         return styles.statusActive;
-      case 'blocked':
+      case "blocked":
         return styles.statusBlocked;
-      case 'completed':
+      case "completed":
         return styles.statusComplete;
-      case 'overdue':
+      case "overdue":
         return styles.statusOverdue;
       default:
-        return '';
+        return "";
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high':
+      case "high":
         return styles.priorityHigh;
-      case 'medium':
+      case "medium":
         return styles.priorityMedium;
-      case 'low':
+      case "low":
         return styles.priorityLow;
       default:
-        return '';
+        return "";
     }
   };
   function setTasksfilter(name) {}
@@ -117,17 +123,23 @@ export default function TaskPage() {
             {btns.map((btn) => (
               <button
                 key={btn.name}
-                className={`${styles.AllTasks} ${activeFiltertask === btn.name ? styles.active : ''}`}
-                onClick={() => setActiveFiltertask(btn.name)}>
+                className={`${styles.AllTasks} ${activeFiltertask === btn.name ? styles.active : ""}`}
+                onClick={() => setActiveFiltertask(btn.name)}
+              >
                 <p>{btn.name}</p>
                 <p className={styles.countTasks}>
-                  {btn.name === 'All Tasks'
+                  {btn.name === "All Tasks"
                     ? tasks.length
-                    : btn.name === 'My Tasks'
-                      ? tasks.filter((task) => task.assigneeId === currentUserId).length
-                      : btn.name === 'Complete'
-                        ? tasks.filter((task) => task.status === 'completed').length
-                        : tasks.filter((task) => task.status === btn.name.toLowerCase()).length}
+                    : btn.name === "My Tasks"
+                      ? tasks.filter(
+                          (task) => task.assigneeId === currentUserId,
+                        ).length
+                      : btn.name === "Complete"
+                        ? tasks.filter((task) => task.status === "completed")
+                            .length
+                        : tasks.filter(
+                            (task) => task.status === btn.name.toLowerCase(),
+                          ).length}
                 </p>
               </button>
             ))}
@@ -142,7 +154,8 @@ export default function TaskPage() {
               <select
                 className={styles.sortSelect}
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}>
+                onChange={(e) => setSortBy(e.target.value)}
+              >
                 <option value="Due Date">Due Date</option>
                 <option value="Priority">Priority</option>
                 <option value="Status">Status</option>
@@ -183,8 +196,10 @@ export default function TaskPage() {
                   onClick={() => {
                     SortBy();
                     setIsUp(!isUp);
-                  }}>
-                  Priority <span className={styles.sortArrow}>{isUp ? '▲' : '▼'}</span>
+                  }}
+                >
+                  Priority{" "}
+                  <span className={styles.sortArrow}>{isUp ? "▲" : "▼"}</span>
                 </th>
                 <th className={styles.assigneeCol}>Assignee</th>
                 <th className={styles.dueDateCol}>
@@ -209,14 +224,19 @@ export default function TaskPage() {
                       <span className={styles.taskTitle}>{task.name}</span>
                     </td>
                     <td className={styles.statusCol}>
-                      <span className={`${styles.statusBadge} ${getStatusColor(task.status)}`}>
-                        {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                      <span
+                        className={`${styles.statusBadge} ${getStatusColor(task.status)}`}
+                      >
+                        {task.status.charAt(0).toUpperCase() +
+                          task.status.slice(1)}
                       </span>
                     </td>
                     <td className={styles.priorityCol}>
                       <span
-                        className={`${styles.priorityBadge} ${getPriorityColor(task.priority)}`}>
-                        {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                        className={`${styles.priorityBadge} ${getPriorityColor(task.priority)}`}
+                      >
+                        {task.priority.charAt(0).toUpperCase() +
+                          task.priority.slice(1)}
                       </span>
                     </td>
                     <td className={styles.assigneeCol}>

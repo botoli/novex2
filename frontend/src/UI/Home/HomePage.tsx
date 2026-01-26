@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
-import styles from './Home.module.scss';
+import { useEffect, useState } from "react";
+import styles from "./Home.module.scss";
+
 import {
-  SearchIcon,
-  NotificationIcon,
   AccountIcon,
   TeamIcon,
   AIIcon,
@@ -16,40 +15,38 @@ import {
   ArrowRightIcon,
   WarningIcon,
   PauseIconRounded,
-  SettingsIcon,
-  LogoutIcon,
   ArrowUpIcon,
   ArrowDownIcon,
-} from '../Icons';
+} from "../Icons";
 
-import AccountSettings from '../AccountSettings/AccountSettings';
-import { useData } from '../../fetch/fetchTasks';
-import PageHeader from '../../common/PageHeader';
-import Login from '../Form/Login/Login';
+import AccountSettings from "../AccountSettings/AccountSettings";
+import { nowurl, useData } from "../../fetch/fetchTasks";
+import PageHeader from "../../common/PageHeader";
+import Login from "../Form/Login/Login";
 
 export default function HomePage() {
   const mockAI = [
     {
       id: 1,
-      name: 'ChatGPT',
-      text: 'сделать рефакторинг',
+      name: "ChatGPT",
+      text: "сделать рефакторинг",
     },
     {
       id: 2,
-      name: 'Deepseek',
-      text: 'Удалить ненужные файлы',
+      name: "Deepseek",
+      text: "Удалить ненужные файлы",
     },
     {
       id: 3,
-      name: 'ChatGPT',
-      text: 'сделать код чистым',
+      name: "ChatGPT",
+      text: "сделать код чистым",
     },
   ];
 
-  const { data: projects, setData: setProjects } = useData('http://localhost:3001/projects');
-  const { data: tasks, setData: setTasks } = useData('http://localhost:3001/tasks');
-  const { data: users, setData: setUser } = useData('http://localhost:3001/users');
-  const [sortBy, setSortBy] = useState('Dedline');
+  const { data: projects, setData: setProjects } = useData(nowurl + "projects");
+  const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
+  const { data: users, setData: setUser } = useData(nowurl + "users");
+  const [sortBy, setSortBy] = useState("Dedline");
   const [sort, setSort] = useState([]);
   const [isopenProfile, setIsopenProfile] = useState(false);
   const [isOpenAccountSettings, setIsOpenAccountSettings] = useState(false);
@@ -57,7 +54,9 @@ export default function HomePage() {
   const [isSortDedline, setIsSortDedline] = useState(true);
   const progress = (id: number) => {
     return Math.floor(
-      (tasks.filter((task) => task.projectId === id && task.status === 'completed').length /
+      (tasks.filter(
+        (task) => task.projectId === id && task.status === "completed",
+      ).length /
         tasks.filter((task) => task.projectId === id).length) *
         100 || 0,
     );
@@ -65,19 +64,27 @@ export default function HomePage() {
 
   function sorty() {
     const copyMockTasks = [...tasks];
-    if (sortBy === 'Dedline') {
+    if (sortBy === "Dedline") {
       const SortByDedline = copyMockTasks.sort((a, b) => {
-        const deadlineA = a.deadline instanceof Date ? a.deadline.getTime() : parseInt(a.deadline);
-        const deadlineB = b.deadline instanceof Date ? b.deadline.getTime() : parseInt(b.deadline);
+        const deadlineA =
+          a.deadline instanceof Date
+            ? a.deadline.getTime()
+            : parseInt(a.deadline);
+        const deadlineB =
+          b.deadline instanceof Date
+            ? b.deadline.getTime()
+            : parseInt(b.deadline);
         return isSortDedline ? deadlineA - deadlineB : deadlineB - deadlineA;
       });
       setSort(SortByDedline);
     }
 
-    if (sortBy === 'Risk') {
+    if (sortBy === "Risk") {
       const sortByRisk = copyMockTasks.sort((a, b) => {
-        const RiskA = a.priority === 'low' ? 1 : a.priority === 'medium' ? 2 : 3;
-        const RiskB = b.priority === 'low' ? 1 : b.priority === 'medium' ? 2 : 3;
+        const RiskA =
+          a.priority === "low" ? 1 : a.priority === "medium" ? 2 : 3;
+        const RiskB =
+          b.priority === "low" ? 1 : b.priority === "medium" ? 2 : 3;
         return isSortRisk ? RiskA - RiskB : RiskB - RiskA;
       });
       setSort(sortByRisk);
@@ -89,18 +96,21 @@ export default function HomePage() {
 
   function SetStatistikActive(id: number) {
     return Math.floor(
-      tasks.filter((task) => task.projectId === id && task.status === 'active').length,
+      tasks.filter((task) => task.projectId === id && task.status === "active")
+        .length,
     );
   }
 
   function SetStatistikBlocked(id: number) {
     return Math.floor(
-      tasks.filter((task) => task.projectId === id && task.status === 'blocked').length,
+      tasks.filter((task) => task.projectId === id && task.status === "blocked")
+        .length,
     );
   }
   function SetStatistikOverdue(id: number) {
     return Math.floor(
-      tasks.filter((task) => task.projectId === id && task.status === 'overdue').length,
+      tasks.filter((task) => task.projectId === id && task.status === "overdue")
+        .length,
     );
   }
 
@@ -111,7 +121,9 @@ export default function HomePage() {
     <div className={styles.homeContainer}>
       <div className={styles.AccountSettingsModal}>
         {isOpenAccountSettings && (
-          <AccountSettings onclose={() => setIsOpenAccountSettings(!isOpenAccountSettings)} />
+          <AccountSettings
+            onclose={() => setIsOpenAccountSettings(!isOpenAccountSettings)}
+          />
         )}
       </div>
       <Login />
@@ -143,7 +155,11 @@ export default function HomePage() {
                   <div className={styles.statusHeader}>
                     <ActiveIcon className={styles.statusIcon} />
                     <span className={styles.statusCount}>
-                      {projects.filter((project) => project.status === 'Active').length}
+                      {
+                        projects.filter(
+                          (project) => project.status === "Active",
+                        ).length
+                      }
                     </span>
                   </div>
                   <p className={styles.statusLabel}>Active</p>
@@ -152,7 +168,9 @@ export default function HomePage() {
                       className={styles.statusBarFill}
                       style={{
                         width: `${
-                          (projects.filter((p) => p.status === 'Active').length / projects.length) *
+                          (projects.filter((p) => p.status === "Active")
+                            .length /
+                            projects.length) *
                             100 || 0
                         }%`,
                       }}
@@ -164,7 +182,11 @@ export default function HomePage() {
                   <div className={styles.statusHeader}>
                     <PauseIconRounded className={styles.statusIcon} />
                     <span className={styles.statusCount}>
-                      {projects.filter((project) => project.status === 'Paused').length}
+                      {
+                        projects.filter(
+                          (project) => project.status === "Paused",
+                        ).length
+                      }
                     </span>
                   </div>
                   <p className={styles.statusLabel}>Paused</p>
@@ -173,7 +195,9 @@ export default function HomePage() {
                       className={styles.statusBarFill}
                       style={{
                         width: `${
-                          (projects.filter((p) => p.status === 'Paused').length / projects.length) *
+                          (projects.filter((p) => p.status === "Paused")
+                            .length /
+                            projects.length) *
                             100 || 0
                         }%`,
                       }}
@@ -185,7 +209,10 @@ export default function HomePage() {
                   <div className={styles.statusHeader}>
                     <WarningIcon className={styles.statusIcon} />
                     <span className={styles.statusCount}>
-                      {projects.filter((project) => project.status === 'Risk').length}
+                      {
+                        projects.filter((project) => project.status === "Risk")
+                          .length
+                      }
                     </span>
                   </div>
                   <p className={styles.statusLabel}>At Risk</p>
@@ -194,7 +221,8 @@ export default function HomePage() {
                       className={styles.statusBarFill}
                       style={{
                         width: `${
-                          (projects.filter((p) => p.status === 'Risk').length / projects.length) *
+                          (projects.filter((p) => p.status === "Risk").length /
+                            projects.length) *
                             100 || 0
                         }%`,
                       }}
@@ -225,7 +253,10 @@ export default function HomePage() {
                     <span className={styles.statValue}>{users.length}</span>
                   </div>
                   <div className={styles.statProgress}>
-                    <div className={styles.statProgressFill} style={{ width: '100%' }} />
+                    <div
+                      className={styles.statProgressFill}
+                      style={{ width: "100%" }}
+                    />
                   </div>
                 </div>
 
@@ -233,7 +264,9 @@ export default function HomePage() {
                   <div className={styles.statRow}>
                     <span className={styles.statLabel}>Currently Online</span>
                     <div className={styles.onlineStat}>
-                      <span className={`${styles.statValue} ${styles.onlineValue}`}>
+                      <span
+                        className={`${styles.statValue} ${styles.onlineValue}`}
+                      >
                         {users.filter((user) => user.online).length}
                       </span>
                     </div>
@@ -243,7 +276,9 @@ export default function HomePage() {
                       className={`${styles.statProgressFill} ${styles.onlineProgress}`}
                       style={{
                         width: `${
-                          (users.filter((u) => u.online).length / users.length) * 100 || 0
+                          (users.filter((u) => u.online).length /
+                            users.length) *
+                            100 || 0
                         }%`,
                       }}
                     />
@@ -268,7 +303,8 @@ export default function HomePage() {
                   )}
                 </div>
                 <p className={styles.onlineHint}>
-                  {users.filter((u) => u.online).length} of {users.length} online
+                  {users.filter((u) => u.online).length} of {users.length}{" "}
+                  online
                 </p>
               </div>
             </div>
@@ -295,15 +331,19 @@ export default function HomePage() {
                       <span>Total</span>
                     </div>
                   </div>
-                  <p className={styles.metricDescription}>All tasks in system</p>
+                  <p className={styles.metricDescription}>
+                    All tasks in system
+                  </p>
                 </div>
 
                 <div className={styles.metricDivider} />
 
                 <div className={styles.metricItem}>
                   <div className={styles.metricHeader}>
-                    <span className={`${styles.metricNumber} ${styles.overdue}`}>
-                      {tasks.filter((task) => task.status === 'overdue').length}
+                    <span
+                      className={`${styles.metricNumber} ${styles.overdue}`}
+                    >
+                      {tasks.filter((task) => task.status === "overdue").length}
                     </span>
                     <div className={`${styles.metricTrend} ${styles.negative}`}>
                       <span>Overdue</span>
@@ -318,7 +358,8 @@ export default function HomePage() {
                   <span className={styles.progressLabel}>On Time</span>
                   <span className={styles.progressValue}>
                     {Math.round(
-                      ((tasks.length - tasks.filter((t) => t.status === 'overdue').length) /
+                      ((tasks.length -
+                        tasks.filter((t) => t.status === "overdue").length) /
                         tasks.length) *
                         100 || 0,
                     )}
@@ -330,7 +371,8 @@ export default function HomePage() {
                     className={styles.progressBarFill}
                     style={{
                       width: `${
-                        ((tasks.length - tasks.filter((t) => t.status === 'overdue').length) /
+                        ((tasks.length -
+                          tasks.filter((t) => t.status === "overdue").length) /
                           tasks.length) *
                           100 || 0
                       }%`,
@@ -359,7 +401,9 @@ export default function HomePage() {
             <div className={styles.cardContent}>
               <div className={styles.pipelineStats}>
                 <div className={styles.pipelineItem}>
-                  <div className={`${styles.statusIndicator} ${styles.success}`} />
+                  <div
+                    className={`${styles.statusIndicator} ${styles.success}`}
+                  />
                   <div className={styles.pipelineInfo}>
                     <span className={styles.pipelineCount}>24</span>
                     <span className={styles.pipelineLabel}>Successful</span>
@@ -367,7 +411,9 @@ export default function HomePage() {
                 </div>
 
                 <div className={styles.pipelineItem}>
-                  <div className={`${styles.statusIndicator} ${styles.failed}`} />
+                  <div
+                    className={`${styles.statusIndicator} ${styles.failed}`}
+                  />
                   <div className={styles.pipelineInfo}>
                     <span className={styles.pipelineCount}>3</span>
                     <span className={styles.pipelineLabel}>Failed</span>
@@ -375,7 +421,9 @@ export default function HomePage() {
                 </div>
 
                 <div className={styles.pipelineItem}>
-                  <div className={`${styles.statusIndicator} ${styles.running}`} />
+                  <div
+                    className={`${styles.statusIndicator} ${styles.running}`}
+                  />
                   <div className={styles.pipelineInfo}>
                     <span className={styles.pipelineCount}>2</span>
                     <span className={styles.pipelineLabel}>Running</span>
@@ -385,11 +433,16 @@ export default function HomePage() {
 
               <div className={styles.deploymentFrequency}>
                 <div className={styles.deploymentHeader}>
-                  <span className={styles.deploymentLabel}>Avg. deployment time</span>
+                  <span className={styles.deploymentLabel}>
+                    Avg. deployment time
+                  </span>
                   <span className={styles.deploymentValue}>12m 34s</span>
                 </div>
                 <div className={styles.deploymentBar}>
-                  <div className={styles.deploymentBarFill} style={{ width: '78%' }} />
+                  <div
+                    className={styles.deploymentBarFill}
+                    style={{ width: "78%" }}
+                  />
                 </div>
               </div>
             </div>
@@ -411,19 +464,28 @@ export default function HomePage() {
                       </button>
                     </h1>
                     <div className={styles.progressContainer}>
-                      <p className={styles.progressText}>{progress(project.id)}%</p>
+                      <p className={styles.progressText}>
+                        {progress(project.id)}%
+                      </p>
                       <div className={styles.progressDiv}>
                         <div
                           className={styles.progressBar}
-                          style={{ width: progress(project.id) + '%' }}></div>
+                          style={{ width: progress(project.id) + "%" }}
+                        ></div>
                       </div>
                       <p>
                         {Math.floor(
                           tasks.filter(
-                            (task) => task.projectId === project.id && task.status === 'completed',
+                            (task) =>
+                              task.projectId === project.id &&
+                              task.status === "completed",
                           ).length,
                         )}
-                        /{Math.floor(tasks.filter((task) => task.projectId === project.id).length)}
+                        /
+                        {Math.floor(
+                          tasks.filter((task) => task.projectId === project.id)
+                            .length,
+                        )}
                       </p>
                     </div>
                   </div>
@@ -435,20 +497,26 @@ export default function HomePage() {
                       <button className={`${styles.btnActive}`}>
                         <ActiveIcon />
                         <span className={styles.label}>Active:</span>
-                        <span className={styles.value}>{SetStatistikActive(project.id)}</span>
+                        <span className={styles.value}>
+                          {SetStatistikActive(project.id)}
+                        </span>
                       </button>
 
                       <button className={`${styles.btnBlocked}`}>
                         <BlockedIcon />
                         <span className={styles.label}>Blocked:</span>
 
-                        <span className={styles.value}>{SetStatistikBlocked(project.id)}</span>
+                        <span className={styles.value}>
+                          {SetStatistikBlocked(project.id)}
+                        </span>
                       </button>
 
                       <button className={`${styles.btnOverdue}`}>
                         <OverdueIcon />
                         <span className={styles.label}>Overdue:</span>
-                        <span className={styles.value}>{SetStatistikOverdue(project.id)}</span>
+                        <span className={styles.value}>
+                          {SetStatistikOverdue(project.id)}
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -459,8 +527,12 @@ export default function HomePage() {
                     <span className={styles.githubCommits}>
                       commits:{/* {CountOfCommits} */} 10
                     </span>
-                    <span className={styles.githubCommits}>PR:{/* {PR} */}7</span>
-                    <span className={styles.githubCommits}>CI:{/* {CI} */}2 </span>
+                    <span className={styles.githubCommits}>
+                      PR:{/* {PR} */}7
+                    </span>
+                    <span className={styles.githubCommits}>
+                      CI:{/* {CI} */}2{" "}
+                    </span>
                   </div>
 
                   <div className={styles.actionButtons}>
@@ -488,18 +560,20 @@ export default function HomePage() {
                 <button
                   className={styles.btnSecondary}
                   onClick={() => {
-                    setSortBy('Risk');
+                    setSortBy("Risk");
                     setIsSortRisk(!isSortRisk);
-                  }}>
+                  }}
+                >
                   <p>Risk</p>
                   {isSortRisk ? <ArrowDownIcon /> : <ArrowUpIcon />}
                 </button>
                 <button
                   className={styles.btnSecondary}
                   onClick={() => {
-                    setSortBy('Dedline');
+                    setSortBy("Dedline");
                     setIsSortDedline(!isSortDedline);
-                  }}>
+                  }}
+                >
                   <p>Dedline</p>
                   {isSortDedline ? <ArrowDownIcon /> : <ArrowUpIcon />}
                 </button>
@@ -513,14 +587,15 @@ export default function HomePage() {
                 <div key={task.id}>
                   <div
                     className={
-                      task.priority === 'low'
+                      task.priority === "low"
                         ? styles.Lowcardstatus
-                        : task.priority === 'medium'
+                        : task.priority === "medium"
                           ? styles.Mediumcardstatus
-                          : task.priority === 'high'
+                          : task.priority === "high"
                             ? styles.Hightcardstatus
                             : styles.Hightcardstatus
-                    }>
+                    }
+                  >
                     {task.priority}
                   </div>
                   <div className={styles.taskInfo}>

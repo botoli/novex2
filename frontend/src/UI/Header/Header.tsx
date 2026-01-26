@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import styles from './Header.module.scss';
-import { Tabs } from './tabs';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import styles from "./Header.module.scss";
+import { Tabs } from "./tabs";
+import { Link } from "react-router-dom";
 import {
   LogoIcon,
   HomeIcon,
@@ -12,17 +12,21 @@ import {
   AIIcon,
   MenuIcon,
   CloseIcon,
-} from '../Icons/index.ts';
-import { useTheme } from '../../context/Theme.tsx';
-import { useData } from '../../fetch/fetchTasks.tsx';
+} from "../Icons/index.ts";
+import { useTheme } from "../../context/Theme.tsx";
+import { nowurl, useData } from "../../fetch/fetchTasks.tsx";
 
 export default function Header() {
-  const { data: projects, setData: setProjects } = useData('http://localhost:3001/projects');
-  const { data: tasks, setData: setTasks } = useData('http://localhost:3001/tasks');
-  const { data: users, setData: setUser } = useData('http://localhost:3001/users');
+  const { data: projects, setData: setProjects } = useData(
+    "http://localhost:3001/projects",
+  );
+  const { data: tasks, setData: setTasks } = useData(
+    "http://localhost:3001/tasks",
+  );
+  const { data: users, setData: setUser } = useData(nowurl + "users");
   const countOfProjects = projects.length;
   const [tabs, setTabs] = useState(() => {
-    const storedTabs = localStorage.getItem('tabs');
+    const storedTabs = localStorage.getItem("tabs");
     return storedTabs ? JSON.parse(storedTabs) : Tabs;
   });
   const { theme, changeTheme } = useTheme();
@@ -30,17 +34,17 @@ export default function Header() {
 
   const getIcon = (name: string) => {
     switch (name.toLowerCase()) {
-      case 'home':
+      case "home":
         return <HomeIcon />;
-      case 'projects':
+      case "projects":
         return <ProjectsIcon />;
-      case 'tasks':
+      case "tasks":
         return <TasksIcon />;
-      case 'code':
+      case "code":
         return <CodeIcon />;
-      case 'settings':
+      case "settings":
         return <SettingsIcon />;
-      case 'ai':
+      case "ai":
         return <AIIcon />;
       default:
         return null;
@@ -48,17 +52,19 @@ export default function Header() {
   };
 
   function toogleActive(name: string) {
-    setTabs((prev) => prev.map((tab) => ({ ...tab, active: tab.name === name })));
+    setTabs((prev) =>
+      prev.map((tab) => ({ ...tab, active: tab.name === name })),
+    );
     if (window.innerWidth <= 1024) {
       setIsMenuOpen(false);
     }
   }
   useEffect(() => {
-    localStorage.setItem('tabs', JSON.stringify(tabs));
+    localStorage.setItem("tabs", JSON.stringify(tabs));
   }, [tabs]);
 
   useEffect(() => {
-    const storedTabs = localStorage.getItem('tabs');
+    const storedTabs = localStorage.getItem("tabs");
     if (storedTabs) {
       setTabs(JSON.parse(storedTabs));
     }
@@ -72,33 +78,42 @@ export default function Header() {
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
     // Блокируем скролл body когда меню открыто на мобильных
     if (isMenuOpen && window.innerWidth <= 1024) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
   }, [isMenuOpen]);
 
   return (
     <>
       {/* Overlay для мобильных */}
-      {isMenuOpen && <div className={styles.overlay} onClick={() => setIsMenuOpen(false)} />}
+      {isMenuOpen && (
+        <div className={styles.overlay} onClick={() => setIsMenuOpen(false)} />
+      )}
 
       {/* Бургер-кнопка для мобильных */}
       <button
         className={styles.burgerButton}
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        aria-label="Toggle menu">
-        {isMenuOpen ? <CloseIcon width={24} height={24} /> : <MenuIcon width={24} height={24} />}
+        aria-label="Toggle menu"
+      >
+        {isMenuOpen ? (
+          <CloseIcon width={24} height={24} />
+        ) : (
+          <MenuIcon width={24} height={24} />
+        )}
       </button>
 
-      <div className={`${styles.allheader} ${isMenuOpen ? styles.menuOpen : ''}`}>
+      <div
+        className={`${styles.allheader} ${isMenuOpen ? styles.menuOpen : ""}`}
+      >
         <div className={styles.logo_Container}>
           <LogoIcon />
           <h1>Novex</h1>
@@ -106,13 +121,14 @@ export default function Header() {
 
         <div className={styles.Tabs}>
           {tabs.map((tab) => (
-            <Link key={tab.id} to={tab.name === 'Home' ? '/' : `/${tab.name}`}>
+            <Link key={tab.id} to={tab.name === "Home" ? "/" : `/${tab.name}`}>
               <div
                 className={tab.active ? styles.activeTab : styles.tab}
-                onClick={() => toogleActive(tab.name)}>
+                onClick={() => toogleActive(tab.name)}
+              >
                 {getIcon(tab.name)}
                 <h2>{tab.name}</h2>
-                {tab.name === 'Projects' && countOfProjects > 0 && (
+                {tab.name === "Projects" && countOfProjects > 0 && (
                   <div className={styles.projectCount}>{countOfProjects}</div>
                 )}
               </div>
@@ -126,7 +142,8 @@ export default function Header() {
               if (window.innerWidth <= 1024) {
                 setIsMenuOpen(false);
               }
-            }}>
+            }}
+          >
             {theme}
           </div>
         </div>
