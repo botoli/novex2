@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = "https://3eb9f544ad7d023a-94-29-7-98.serveousercontent.com/";
 export const nowurl = API_URL;
 export function useData(url: string) {
   const [data, setData] = useState<any[]>([]);
