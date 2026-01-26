@@ -22,7 +22,10 @@ import {
 import AccountSettings from "../AccountSettings/AccountSettings";
 import { nowurl, useData } from "../../fetch/fetchTasks";
 import PageHeader from "../../common/PageHeader";
-import Login from "../Form/Login/Login";
+import Login from "../../common/Login/Login";
+import { useLogin } from "../../context/Modal";
+import Registration from "../../common/Registration/Registration";
+import { useRegistration } from "../../context/RegistrarionModal";
 
 export default function HomePage() {
   const mockAI = [
@@ -46,12 +49,16 @@ export default function HomePage() {
   const { data: projects, setData: setProjects } = useData(nowurl + "projects");
   const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
   const { data: users, setData: setUser } = useData(nowurl + "users");
+
+  const { isOpenLogin, setIsOpenLogin } = useLogin();
   const [sortBy, setSortBy] = useState("Dedline");
   const [sort, setSort] = useState([]);
-  const [isopenProfile, setIsopenProfile] = useState(false);
+  const [isOpenProfile, setIsOpenProfile] = useState(false);
   const [isOpenAccountSettings, setIsOpenAccountSettings] = useState(false);
   const [isSortRisk, setIsSortRisk] = useState(true);
   const [isSortDedline, setIsSortDedline] = useState(true);
+
+  const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const progress = (id: number) => {
     return Math.floor(
       (tasks.filter(
@@ -114,9 +121,6 @@ export default function HomePage() {
     );
   }
 
-  function OpenModalProfile() {
-    isopenProfile === false ? setIsopenProfile(true) : setIsopenProfile(false);
-  }
   return (
     <div className={styles.homeContainer}>
       <div className={styles.AccountSettingsModal}>
@@ -126,9 +130,9 @@ export default function HomePage() {
           />
         )}
       </div>
-      <Login />
       <PageHeader />
-
+      {isOpenLogin ? <Login /> : null}
+      {isOpenRegistration ? <Registration /> : null}
       <section className={styles.dashboard}>
         <h1>Home</h1>
 

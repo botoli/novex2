@@ -1,4 +1,4 @@
-@use '../UI/Styles/Variables.scss' as *;
+@use "../UI/Styles/Variables.scss" as *;
 .pageHeader {
   display: flex;
   align-items: center;
@@ -146,10 +146,89 @@
       width: 100%;
       justify-content: flex-end;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     @media (max-width: 480px) {
       gap: 6px;
+    }
+
+    // Auth buttons (Sign In / Sign Up)
+    .SignIn,
+    .SignUp {
+      button {
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        white-space: nowrap;
+        flex-shrink: 1;
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1;
+
+        &:focus {
+          outline: none;
+          box-shadow: 0 0 0 3px $dracula-purple-rgba-01;
+        }
+
+        @media (max-width: 768px) {
+          padding: 8px 14px;
+          font-size: 13px;
+        }
+
+        @media (max-width: 480px) {
+          padding: 8px 12px;
+          font-size: 12px;
+          border-radius: 6px;
+        }
+
+        @media (max-width: 360px) {
+          font-size: 11.5px;
+          padding: 7px 10px;
+        }
+      }
+    }
+
+    .SignIn {
+      button {
+        width: auto;
+        background-color: $dracula-background;
+        border: 1px solid $dracula-selection;
+        color: $dracula-foreground;
+
+        &:hover {
+          background-color: $dracula-selection;
+          border-color: $dracula-purple;
+        }
+      }
+    }
+
+    .SignUp {
+      button {
+        width: auto;
+        background-color: $dracula-purple;
+        border: 1px solid $dracula-purple;
+        color: $dracula-background;
+
+        &:hover {
+          background-color: $dracula-indigo;
+          border-color: $dracula-indigo;
+        }
+
+        &:active {
+          transform: translateY(0.5px);
+        }
+      }
     }
   }
 
@@ -194,7 +273,7 @@
 
       // Индикатор новых уведомлений
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         top: 8px;
         right: 8px;

@@ -1,0 +1,110 @@
+.blur {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  background: rgba(40, 42, 54, 0.4);
+}
+.registrationContainer {
+  background-color: var(--dracula-background);
+  box-shadow:
+    0 8px 32px 0 rgba(40, 42, 54, 0.37),
+    0 1.5px 6px 0 rgba(80, 250, 123, 0.08);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 420px;
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 350px;
+  width: 100%;
+  animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 0.5rem;
+    min-height: 340px;
+    max-width: 95vw;
+  }
+  .closeIcon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    fill: var(--dracula-comment);
+    transition: fill 0.2s;
+  }
+}
+
+.registrationHeader {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--dracula-foreground);
+    margin: 0;
+  }
+}
+
+.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 300px;
+
+  input {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    background-color: var(--dracula-current-line);
+    border: 1px solid var(--dracula-selection);
+    border-radius: 6px;
+    color: var(--dracula-foreground);
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: var(--dracula-comment);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--dracula-purple);
+      box-shadow: 0 0 0 3px var(--dracula-purple-rgba-01);
+    }
+
+    &:hover {
+      border-color: var(--dracula-purple-rgba-02);
+    }
+  }
+}
+
+.register {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.875rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: var(--dracula-purple);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:active {
+    transform: translateY(0);
+  }
+}

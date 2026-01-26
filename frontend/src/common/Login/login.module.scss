@@ -1,0 +1,155 @@
+.blur {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  background: rgba(40, 42, 54, 0.4);
+}
+
+.loginContainer {
+  background-color: var(--dracula-background);
+  box-shadow:
+    0 8px 32px 0 rgba(40, 42, 54, 0.37),
+    0 1.5px 6px 0 rgba(80, 250, 123, 0.08);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 420px;
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 350px;
+  width: 100%;
+  animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 0.5rem;
+    min-height: 340px;
+    max-width: 95vw;
+  }
+  .closeIcon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    fill: var(--dracula-comment);
+    transition: fill 0.2s;
+  }
+}
+
+.loginHeader {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dracula-foreground);
+    margin: 0;
+    letter-spacing: 1px;
+  }
+}
+
+.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-bottom: 1.7rem;
+  width: 100%;
+  max-width: 300px;
+
+  input {
+    padding: 0.85rem 1.1rem;
+    font-size: 1.05rem;
+    background-color: var(--dracula-current-line);
+    border: 1.5px solid var(--dracula-selection);
+    border-radius: 8px;
+    color: var(--dracula-foreground);
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s,
+      background 0.2s;
+
+    &::placeholder {
+      color: var(--dracula-comment);
+      opacity: 1;
+      font-size: 0.98em;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--dracula-purple);
+      box-shadow: 0 0 0 3px var(--dracula-purple-rgba-01);
+      background: var(--dracula-background);
+    }
+
+    &:hover {
+      border-color: var(--dracula-purple);
+      box-shadow: none;
+      background: var(--dracula-current-line);
+      filter: none;
+      transform: none;
+    }
+  }
+}
+
+.Login {
+  width: 100%;
+  max-width: 300px;
+  padding: 1rem 1.2rem;
+  font-size: 1.08rem;
+  font-weight: 700;
+  background-color: var(--dracula-purple);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    filter: none;
+  }
+
+  &:active {
+    background: var(--dracula-indigo);
+    filter: none;
+  }
+}
+
+.Signup {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: var(--dracula-comment);
+  text-align: center;
+  width: 100%;
+
+  span {
+    color: var(--dracula-purple);
+    font-weight: 700;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--dracula-indigo);
+      text-decoration: underline;
+    }
+
+    &:active {
+      color: var(--dracula-purple);
+    }
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+  }
+}
