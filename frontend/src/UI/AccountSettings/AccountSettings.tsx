@@ -16,7 +16,7 @@ export default function AccountSettings({ onclose }) {
           </div>
         </div>
 
-        {users.map(
+        {users?.map(
           (user) =>
             user.role === "Admin" && (
               <div className={styles.userInfo}>

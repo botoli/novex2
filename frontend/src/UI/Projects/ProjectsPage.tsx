@@ -79,7 +79,7 @@ export default function ProjectsPage() {
         <h1>Projects</h1>
         <div className={styles.headerProjects}>
           <div className={styles.filterall}>
-            {btns.map((btn) => (
+            {btns?.map((btn) => (
               <button
                 className={`${styles.Allprojetcs} ${
                   activeFilter === btn.name ? styles.active : ""

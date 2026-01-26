@@ -633,7 +633,7 @@ export default function HomePage() {
                 <AIIcon width={24} height={24} />
                 <h1 className={styles.sectionTitle}>AI Analysis</h1>
               </div>
-              {mockAI.map((card) => (
+              {mockAI?.map((card) => (
                 <div key={card.id}>
                   <div className={styles.AiCard}>
                     <AIIcon width={20} height={20} />

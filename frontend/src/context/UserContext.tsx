@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 export const UserContext = createContext(undefined);
 export function UserProvider({ children }) {
-  const [currentuser, setCurrentuser] = useState();
+  const [currentuser, setCurrentuser] = useState(null);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("currentuser");

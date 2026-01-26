@@ -6,12 +6,8 @@ import { nowurl, useData } from "../../fetch/fetchTasks";
 
 export default function TaskPage() {
   const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
-  const { data: projects, setData: setProjects } = useData(
-    nowurl + "projects",
-  );
-  const { data: users, setData: setUsers } = useData(
-    nowurl + "users",
-  );
+  const { data: projects, setData: setProjects } = useData(nowurl + "projects");
+  const { data: users, setData: setUsers } = useData(nowurl + "users");
 
   const [activeFiltertask, setActiveFiltertask] = useState<string>(() => {
     return localStorage.getItem("activeFiltertask") || "All Tasks";
@@ -120,7 +116,7 @@ export default function TaskPage() {
         <h1>Tasks</h1>
         <div className={styles.headerTasks}>
           <div className={styles.filterall}>
-            {btns.map((btn) => (
+            {btns?.map((btn) => (
               <button
                 key={btn.name}
                 className={`${styles.AllTasks} ${activeFiltertask === btn.name ? styles.active : ""}`}
@@ -210,7 +206,7 @@ export default function TaskPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredTasks.map((task) => {
+              {filteredTasks?.map((task) => {
                 const assigneeName = getAssigneeName(task.assigneeId);
                 const projectName = getProjectName(task.projectId);
                 const formattedDate = formatDate(task.deadline);

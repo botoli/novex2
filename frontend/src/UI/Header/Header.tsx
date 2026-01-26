@@ -49,7 +49,7 @@ export default function Header() {
 
   function toogleActive(name: string) {
     setTabs((prev) =>
-      prev.map((tab) => ({ ...tab, active: tab.name === name })),
+      prev?.map((tab) => ({ ...tab, active: tab.name === name })),
     );
     if (window.innerWidth <= 1024) {
       setIsMenuOpen(false);
@@ -116,7 +116,7 @@ export default function Header() {
         </div>
 
         <div className={styles.Tabs}>
-          {tabs.map((tab) => (
+          {tabs?.map((tab) => (
             <Link key={tab.id} to={tab.name === "Home" ? "/" : `/${tab.name}`}>
               <div
                 className={tab.active ? styles.activeTab : styles.tab}
