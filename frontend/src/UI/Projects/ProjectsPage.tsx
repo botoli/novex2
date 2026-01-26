@@ -15,9 +15,7 @@ export default function ProjectsPage() {
     return localStorage.getItem("activeFilter") || "All Projects";
   });
   const { data: projects, setData: setProjects } = useData(nowurl + "projects");
-  const { data: tasks, setData: setTasks } = useData(
-    "http://localhost:3001/tasks",
-  );
+  const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
   const [filtered, setFiltered] = useState(() => {
     const storedFiltered = localStorage.getItem("filtered");
     return storedFiltered ? JSON.parse(storedFiltered) : projects;
@@ -32,7 +30,7 @@ export default function ProjectsPage() {
   useEffect(() => {
     localStorage.setItem("activeFilter", activeFilter);
     localStorage.setItem("filtered", JSON.stringify(filtered));
-  });
+  }, [activeFilter, filtered]);
 
   const progress = (id: number) => {
     return Math.floor(

@@ -17,12 +17,8 @@ import { useTheme } from "../../context/Theme.tsx";
 import { nowurl, useData } from "../../fetch/fetchTasks.tsx";
 
 export default function Header() {
-  const { data: projects, setData: setProjects } = useData(
-    "http://localhost:3001/projects",
-  );
-  const { data: tasks, setData: setTasks } = useData(
-    "http://localhost:3001/tasks",
-  );
+  const { data: projects, setData: setProjects } = useData(nowurl + "projects");
+  const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
   const { data: users, setData: setUser } = useData(nowurl + "users");
   const countOfProjects = projects.length;
   const [tabs, setTabs] = useState(() => {

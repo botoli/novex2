@@ -7,10 +7,10 @@ import { nowurl, useData } from "../../fetch/fetchTasks";
 export default function TaskPage() {
   const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
   const { data: projects, setData: setProjects } = useData(
-    "http://localhost:3001/projects",
+    nowurl + "projects",
   );
   const { data: users, setData: setUsers } = useData(
-    "http://localhost:3001/users",
+    nowurl + "users",
   );
 
   const [activeFiltertask, setActiveFiltertask] = useState<string>(() => {
