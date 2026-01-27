@@ -5,4 +5,14 @@ import svgr from 'vite-plugin-svgr';
 export default defineConfig({
   plugins: [react(), svgr()],
   base: '/',
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://api.novextask.ru',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
 });

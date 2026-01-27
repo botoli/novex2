@@ -28,13 +28,13 @@ export interface UserInterface {
 export interface TaskInterface {
   id: number;
   name: string;
-  status: 'active' | 'completed' | 'blocked' | 'overdue';
-  projectId: number; // Ссылка на проект
-  priority: 'low' | 'medium' | 'high'; // Вместо risk
+  status: "active" | "completed" | "blocked" | "overdue";
+  projectId: number;
+  priority: "low" | "medium" | "high";
   priorityId: number;
   createdAt: Date | string;
-  deadline: Date | string; // Исправлено dedline → deadline
-  assigneeId?: number; // Кому назначена
+  deadline: Date | string;
+  assigneeId?: number;
   tags: string[]; // Для фильтрации
 }
 export interface HeaderInterface {

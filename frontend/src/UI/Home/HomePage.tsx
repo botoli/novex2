@@ -57,7 +57,11 @@ export default function HomePage() {
   const [isOpenAccountSettings, setIsOpenAccountSettings] = useState(false);
   const [isSortRisk, setIsSortRisk] = useState(true);
   const [isSortDedline, setIsSortDedline] = useState(true);
-
+  useEffect(() => {
+    setProjects(projects);
+    setTasks(tasks);
+    setUser(users);
+  }, []);
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const progress = (id: number) => {
     return Math.floor(

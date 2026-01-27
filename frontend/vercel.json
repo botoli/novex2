@@ -1,7 +1,11 @@
 {
   "rewrites": [
     {
-      "source": "/((?!assets/).*)",
+      "source": "/api/:path*",
+      "destination": "https://api.novextask.ru/:path*"
+    },
+    {
+      "source": "/((?!api|assets/).*)",
       "destination": "/index.html"
     }
   ],

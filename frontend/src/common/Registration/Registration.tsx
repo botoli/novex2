@@ -18,7 +18,6 @@ export default function Registration() {
     name: name,
     email: email,
     password: password,
-    confirmPassword: confirmPassword,
   };
 
   async function handleRegistration() {
