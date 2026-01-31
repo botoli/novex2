@@ -170,9 +170,13 @@ export default function HomePage() {
               <div className={styles.noProjects}>
                 <div className={styles.noProjectsdiv}>
                   <h1 className={styles.noProjectsTitle}>У вас нет проектов</h1>
+                  <p className={styles.noProjectsSubtitle}>
+                    Создайте свой первый проект, чтобы начать работу
+                  </p>
                 </div>
                 <button className={styles.addButton}>
-                  <p>Добавить проект</p>
+                  <span>+</span>
+                  <p>Создать проект</p>
                 </button>
               </div>
             ) : (

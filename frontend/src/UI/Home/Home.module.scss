@@ -21,40 +21,58 @@
 }
 .noProjects {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 24px;
+  width: 100%;
+  padding: 60px 40px;
+  background-color: $dracula-current-line;
+  border: 1px solid $dracula-selection;
+  border-radius: 8px;
 
   .noProjectsdiv {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 250px;
-    width: 1400px;
-    background-color: $dracula-current-line;
-    border: 1px solid $dracula-selection;
-    border-radius: 10px;
+    gap: 12px;
+    text-align: center;
   }
+
   .noProjectsTitle {
     color: $dracula-foreground;
-    font-size: 40px;
+    font-size: 24px;
     font-weight: 600;
+    margin: 0;
   }
+
+  .noProjectsSubtitle {
+    color: $dracula-comment;
+    font-size: 14px;
+    margin: 0;
+  }
+
   .addButton {
-    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
     background-color: $dracula-purple;
-    color: $dracula-background;
+    color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     font-weight: 500;
     font-size: 14px;
     font-family: inherit;
-    transition: all 0.2s ease;
-    white-space: nowrap;
+    transition: background-color 0.2s ease;
 
     &:hover {
       background-color: $dracula-indigo;
+    }
+
+    p {
+      margin: 0;
     }
   }
 }
@@ -1380,6 +1398,12 @@
   }
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+  }
+
+  // Когда нет проектов или загрузка - растягиваем на всю ширину
+  > .noProjects,
+  > .loading {
+    grid-column: 1 / -1;
   }
 }
 
