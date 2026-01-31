@@ -6,12 +6,13 @@ export const nowurl = API_URL;
 export function useData(url: string) {
   const [data, setData] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!url) {
       console.error("API url is missing");
       setError("API url is missing");
+      setLoading(false);
       return;
     }
     const fetchData = async () => {

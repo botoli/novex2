@@ -27,6 +27,15 @@ export default function ProjectsPage() {
     { name: "At Risk" },
     { name: "Completed" },
   ];
+  function Filter(name: string) {
+    setActiveFilter(name);
+    setFiltered(
+      name === "All Projects"
+        ? projects
+        : projects.filter((p) => p.status === name),
+    );
+  }
+
   useEffect(() => {
     localStorage.setItem("activeFilter", activeFilter);
     localStorage.setItem("filtered", JSON.stringify(filtered));
@@ -65,15 +74,6 @@ export default function ProjectsPage() {
     );
   }
 
-  function Filter(name: string) {
-    setActiveFilter(name);
-    setFiltered(
-      name === "All Projects"
-        ? projects
-        : projects.filter((p) => p.status === name),
-    );
-  }
-
   return (
     <div className={styles.ProjectContainer}>
       <PageHeader />
@@ -98,7 +98,7 @@ export default function ProjectsPage() {
             ))}
           </div>
           <div className={styles.addProject}>
-            <button className={styles.addbtn}>Add new projetct</button>
+            <button className={styles.addbtn}>Add new project</button>
           </div>
         </div>
         <div className={styles.heroProjets}>
