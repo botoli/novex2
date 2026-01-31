@@ -16,10 +16,10 @@ import { UserProvider } from "./context/UserContext.tsx";
 
 function App() {
   return (
-    <UserProvider>
-      <LoginProvider>
-        <RegistrationProvider>
-          <ThemeProvider>
+    <ThemeProvider>
+      <UserProvider>
+        <LoginProvider>
+          <RegistrationProvider>
             <div className="App">
               <Header />
               <Routes>
@@ -31,10 +31,10 @@ function App() {
                 <Route path="/Ai" element={<AIPage />} />
               </Routes>
             </div>
-          </ThemeProvider>
-        </RegistrationProvider>
-      </LoginProvider>
-    </UserProvider>
+          </RegistrationProvider>
+        </LoginProvider>
+      </UserProvider>
+    </ThemeProvider>
   );
 }
 

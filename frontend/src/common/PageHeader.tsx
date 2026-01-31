@@ -38,16 +38,19 @@ export default function PageHeader() {
           />
         )}
       </div>
+
       <section className={styles.pageHeader}>
         <div className={styles.searchBar}>
           <SearchIcon />
           <input type="text" placeholder="Search" />
           <button>Search</button>
         </div>
-
+        {currentuser?.name === "Test User" && (
+          <div className={styles.demoWarning}>Demo Mode</div>
+        )}
         <div className={styles.avatar}>
           <div>
-            <button>
+            <button className={styles.notification}>
               <NotificationIcon />
             </button>
           </div>

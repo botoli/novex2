@@ -233,68 +233,66 @@
   }
 
   // Кнопка уведомлений
-  > div:nth-of-type(2) {
-    button {
-      position: relative;
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      background-color: $dracula-background;
-      border: 1px solid $dracula-selection;
-      color: $dracula-foreground;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
+  .notification {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: $dracula-background;
+    border: 1px solid $dracula-selection;
+    color: $dracula-foreground;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+
+    @media (max-width: 480px) {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+    }
+
+    &:hover {
+      background-color: $dracula-selection;
+      border-color: $dracula-purple;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+      display: block;
 
       @media (max-width: 480px) {
-        width: 36px;
-        height: 36px;
-        border-radius: 6px;
+        width: 18px;
+        height: 18px;
       }
+    }
 
-      &:hover {
-        background-color: $dracula-selection;
-        border-color: $dracula-purple;
+    // Индикатор новых уведомлений
+    &::after {
+      content: "";
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 8px;
+      height: 8px;
+      background-color: $dracula-red;
+      border-radius: 50%;
+      border: 2px solid $dracula-background;
+      display: none; // Показывать только если есть уведомления
+
+      @media (max-width: 480px) {
+        top: 6px;
+        right: 6px;
+        width: 6px;
+        height: 6px;
       }
+    }
 
-      svg {
-        width: 20px;
-        height: 20px;
-        display: block;
-
-        @media (max-width: 480px) {
-          width: 18px;
-          height: 18px;
-        }
-      }
-
-      // Индикатор новых уведомлений
-      &::after {
-        content: "";
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        width: 8px;
-        height: 8px;
-        background-color: $dracula-red;
-        border-radius: 50%;
-        border: 2px solid $dracula-background;
-        display: none; // Показывать только если есть уведомления
-
-        @media (max-width: 480px) {
-          top: 6px;
-          right: 6px;
-          width: 6px;
-          height: 6px;
-        }
-      }
-
-      &.hasNotifications::after {
-        display: block;
-      }
+    &.hasNotifications::after {
+      display: block;
     }
   }
 
@@ -417,6 +415,12 @@
     }
   }
 }
+.demoWarning {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: $dracula-yellow;
+  color: $dracula-background;
+}
 .modalProfile {
   display: flex;
   flex-direction: column;
@@ -501,6 +505,35 @@
   .logOut {
     svg {
       color: $dracula-red;
+    }
+  }
+
+  .demoWarning {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background-color: $dracula-orange;
+    border-radius: 4px;
+    color: $dracula-background;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    margin-left: auto;
+    margin-right: 16px;
+
+    &::before {
+      content: "⚠";
+      font-size: 12px;
+    }
+
+    @media (max-width: 768px) {
+      padding: 4px 8px;
+      font-size: 10px;
+      margin-right: 8px;
+      order: 0;
     }
   }
 }

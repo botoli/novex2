@@ -20,6 +20,11 @@ export default function Registration() {
     password: password,
   };
 
+  const testUser = {
+    name: "Test User",
+    email: "testUser@test.ru",
+    password: "test",
+  };
   async function handleRegistration() {
     try {
       const response = await axios.post(nowurl + "users", RegData, {
@@ -34,6 +39,12 @@ export default function Registration() {
       console.error("Registration failed:", error);
     }
   }
+  function handleTestUser() {
+    setCurrentuser(testUser);
+    setIsOpenRegistration(false);
+    localStorage.setItem("currentuser", JSON.stringify(testUser));
+    localStorage.setItem("token", "1");
+  }
 
   return (
     <div className={styles.blur}>
@@ -45,6 +56,10 @@ export default function Registration() {
           <CloseIcon />
         </div>
         <div className={styles.registrationHeader}>
+          <p className={styles.warning}>
+            Важно: не вводите реальные данные, для доступа к системе нажмите на
+            кнопку "Test User" или введите любые фиктивные данные.
+          </p>
           <h1>Sign Up</h1>
         </div>
         <div className={styles.inputs}>
@@ -73,9 +88,14 @@ export default function Registration() {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
-        <button className={styles.register} onClick={handleRegistration}>
-          Sign Up
-        </button>
+        <div className={styles.buttons}>
+          <button className={styles.register} onClick={handleRegistration}>
+            Sign Up
+          </button>
+          <button className={styles.testUser} onClick={() => handleTestUser()}>
+            Test User
+          </button>
+        </div>
       </div>
     </div>
   );

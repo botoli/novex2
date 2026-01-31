@@ -33,12 +33,14 @@ export default function ProjectsPage() {
   }, [activeFilter, filtered]);
 
   const progress = (id: number) => {
-    return Math.floor(
-      (tasks.filter(
-        (task) => task.projectId === id && task.status === "completed",
-      ).length /
-        tasks.filter((task) => task.projectId === id).length) *
-        100,
+    return (
+      Math.floor(
+        (tasks.filter(
+          (task) => task.projectId === id && task.status === "completed",
+        ).length /
+          tasks.filter((task) => task.projectId === id).length) *
+          100,
+      ) || 0
     );
   };
 

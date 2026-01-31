@@ -19,6 +19,7 @@ export function useData(url: string) {
         setLoading(true);
         setError(null);
         const response = await axios.get(url);
+
         setData(response.data || []);
       } catch (err) {
         console.error("Failed to fetch data from:", url, err);

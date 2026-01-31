@@ -26,6 +26,7 @@ import Login from "../../common/Login/Login";
 import { useLogin } from "../../context/Modal";
 import Registration from "../../common/Registration/Registration";
 import { useRegistration } from "../../context/RegistrarionModal";
+import { useUser } from "../../context/UserContext";
 
 export default function HomePage() {
   const mockAI = [
@@ -46,23 +47,39 @@ export default function HomePage() {
     },
   ];
 
-  const { data: projects, setData: setProjects } = useData(nowurl + "projects");
+  const {
+    data: projects,
+    setData: setProjects,
+    loading: loadingProjects,
+  } = useData(nowurl + "projects");
   const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
   const { data: users, setData: setUser } = useData(nowurl + "users");
 
+  const { currentuser, setCurrentuser } = useUser();
+  const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
+
+  const [currentProjects, setCurrentprojects] = useState([]);
   const [sortBy, setSortBy] = useState("Dedline");
   const [sort, setSort] = useState([]);
   const [isOpenProfile, setIsOpenProfile] = useState(false);
   const [isOpenAccountSettings, setIsOpenAccountSettings] = useState(false);
   const [isSortRisk, setIsSortRisk] = useState(true);
   const [isSortDedline, setIsSortDedline] = useState(true);
+
   useEffect(() => {
-    setProjects(projects);
     setTasks(tasks);
     setUser(users);
   }, []);
-  const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
+
+  useEffect(() => {
+    if (currentuser?.name === "Test User") {
+      setCurrentprojects(projects.filter((p) => p.assigned_to === 1));
+    } else {
+      setCurrentprojects([]);
+    }
+  }, [projects, currentuser]);
+
   const progress = (id: number) => {
     return Math.floor(
       (tasks.filter(
@@ -140,423 +157,123 @@ export default function HomePage() {
       <section className={styles.dashboard}>
         <h1>Home</h1>
 
-        <div className={styles.metricsGrid}>
-          {/* Company Projects Card */}
-          <div className={styles.metricCard}>
-            <div className={styles.cardHeader}>
-              <div className={`${styles.svgdiv} ${styles.projectsIcon}`}>
-                <ProjectsIcon width={32} height={32} />
-              </div>
-              <div className={styles.headerTitle}>
-                <h1>Company Projects</h1>
-                <p className={styles.cardSubtitle}>Status overview</p>
-              </div>
-              <div className={styles.totalBadge}>
-                <span>{projects.length}</span>
-                <span>Total</span>
-              </div>
-            </div>
-
-            <div className={styles.cardContent}>
-              <div className={styles.projectsGrid}>
-                <div className={`${styles.projectStatus} ${styles.active}`}>
-                  <div className={styles.statusHeader}>
-                    <ActiveIcon className={styles.statusIcon} />
-                    <span className={styles.statusCount}>
-                      {
-                        projects.filter(
-                          (project) => project.status === "Active",
-                        ).length
-                      }
-                    </span>
-                  </div>
-                  <p className={styles.statusLabel}>Active</p>
-                  <div className={styles.statusBar}>
-                    <div
-                      className={styles.statusBarFill}
-                      style={{
-                        width: `${
-                          (projects.filter((p) => p.status === "Active")
-                            .length /
-                            projects.length) *
-                            100 || 0
-                        }%`,
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div className={`${styles.projectStatus} ${styles.paused}`}>
-                  <div className={styles.statusHeader}>
-                    <PauseIconRounded className={styles.statusIcon} />
-                    <span className={styles.statusCount}>
-                      {
-                        projects.filter(
-                          (project) => project.status === "Paused",
-                        ).length
-                      }
-                    </span>
-                  </div>
-                  <p className={styles.statusLabel}>Paused</p>
-                  <div className={styles.statusBar}>
-                    <div
-                      className={styles.statusBarFill}
-                      style={{
-                        width: `${
-                          (projects.filter((p) => p.status === "Paused")
-                            .length /
-                            projects.length) *
-                            100 || 0
-                        }%`,
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div className={`${styles.projectStatus} ${styles.risk}`}>
-                  <div className={styles.statusHeader}>
-                    <WarningIcon className={styles.statusIcon} />
-                    <span className={styles.statusCount}>
-                      {
-                        projects.filter((project) => project.status === "Risk")
-                          .length
-                      }
-                    </span>
-                  </div>
-                  <p className={styles.statusLabel}>At Risk</p>
-                  <div className={styles.statusBar}>
-                    <div
-                      className={styles.statusBarFill}
-                      style={{
-                        width: `${
-                          (projects.filter((p) => p.status === "Risk").length /
-                            projects.length) *
-                            100 || 0
-                        }%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Company Teams Card */}
-          <div className={styles.metricCard}>
-            <div className={styles.cardHeader}>
-              <div className={`${styles.svgdiv} ${styles.teamsIcon}`}>
-                <TeamIcon width={32} height={32} />
-              </div>
-              <div className={styles.headerTitle}>
-                <h1>Company Teams</h1>
-                <p className={styles.cardSubtitle}>Online members</p>
-              </div>
-            </div>
-
-            <div className={styles.cardContent}>
-              <div className={styles.teamsStats}>
-                <div className={styles.statBlock}>
-                  <div className={styles.statRow}>
-                    <span className={styles.statLabel}>Total Members</span>
-                    <span className={styles.statValue}>{users.length}</span>
-                  </div>
-                  <div className={styles.statProgress}>
-                    <div
-                      className={styles.statProgressFill}
-                      style={{ width: "100%" }}
-                    />
-                  </div>
-                </div>
-
-                <div className={styles.statBlock}>
-                  <div className={styles.statRow}>
-                    <span className={styles.statLabel}>Currently Online</span>
-                    <div className={styles.onlineStat}>
-                      <span
-                        className={`${styles.statValue} ${styles.onlineValue}`}
-                      >
-                        {users.filter((user) => user.online).length}
-                      </span>
-                    </div>
-                  </div>
-                  <div className={styles.statProgress}>
-                    <div
-                      className={`${styles.statProgressFill} ${styles.onlineProgress}`}
-                      style={{
-                        width: `${
-                          (users.filter((u) => u.online).length /
-                            users.length) *
-                            100 || 0
-                        }%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.onlineUsers}>
-                <div className={styles.avatarsRow}>
-                  {users
-                    .filter((user) => user.online)
-                    .slice(0, 6)
-                    .map((user) => (
-                      <div key={user.userid} className={styles.avatarWrapper}>
-                        <AccountIcon className={styles.avatar} />
-                      </div>
-                    ))}
-                  {users.filter((user) => user.online).length > 6 && (
-                    <div className={styles.moreUsers}>
-                      +{users.filter((user) => user.online).length - 6}
-                    </div>
-                  )}
-                </div>
-                <p className={styles.onlineHint}>
-                  {users.filter((u) => u.online).length} of {users.length}{" "}
-                  online
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Global Metrics Card */}
-          <div className={styles.metricCard}>
-            <div className={styles.cardHeader}>
-              <div className={`${styles.svgdiv} ${styles.metricsIcon}`}>
-                <MetricsIcon width={32} height={32} />
-              </div>
-              <div className={styles.headerTitle}>
-                <h1>Global Metrics</h1>
-                <p className={styles.cardSubtitle}>Task performance</p>
-              </div>
-            </div>
-
-            <div className={styles.cardContent}>
-              <div className={styles.metricsOverview}>
-                <div className={styles.metricItem}>
-                  <div className={styles.metricHeader}>
-                    <span className={styles.metricNumber}>{tasks.length}</span>
-                    <div className={`${styles.metricTrend} ${styles.neutral}`}>
-                      <span>Total</span>
-                    </div>
-                  </div>
-                  <p className={styles.metricDescription}>
-                    All tasks in system
-                  </p>
-                </div>
-
-                <div className={styles.metricDivider} />
-
-                <div className={styles.metricItem}>
-                  <div className={styles.metricHeader}>
-                    <span
-                      className={`${styles.metricNumber} ${styles.overdue}`}
-                    >
-                      {tasks.filter((task) => task.status === "overdue").length}
-                    </span>
-                    <div className={`${styles.metricTrend} ${styles.negative}`}>
-                      <span>Overdue</span>
-                    </div>
-                  </div>
-                  <p className={styles.metricDescription}>Require attention</p>
-                </div>
-              </div>
-
-              <div className={styles.tasksProgress}>
-                <div className={styles.progressInfo}>
-                  <span className={styles.progressLabel}>On Time</span>
-                  <span className={styles.progressValue}>
-                    {Math.round(
-                      ((tasks.length -
-                        tasks.filter((t) => t.status === "overdue").length) /
-                        tasks.length) *
-                        100 || 0,
-                    )}
-                    %
-                  </span>
-                </div>
-                <div className={styles.progressBar}>
-                  <div
-                    className={styles.progressBarFill}
-                    style={{
-                      width: `${
-                        ((tasks.length -
-                          tasks.filter((t) => t.status === "overdue").length) /
-                          tasks.length) *
-                          100 || 0
-                      }%`,
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* CI/CD Health Card */}
-          <div className={styles.metricCard}>
-            <div className={styles.cardHeader}>
-              <div className={`${styles.svgdiv} ${styles.healthIcon}`}>
-                <CICDHealthIcon width={32} height={32} />
-              </div>
-              <div className={styles.headerTitle}>
-                <h1>CI/CD Health</h1>
-                <p className={styles.cardSubtitle}>Pipeline status</p>
-              </div>
-              <div className={styles.healthScore}>
-                <span>85%</span>
-              </div>
-            </div>
-
-            <div className={styles.cardContent}>
-              <div className={styles.pipelineStats}>
-                <div className={styles.pipelineItem}>
-                  <div
-                    className={`${styles.statusIndicator} ${styles.success}`}
-                  />
-                  <div className={styles.pipelineInfo}>
-                    <span className={styles.pipelineCount}>24</span>
-                    <span className={styles.pipelineLabel}>Successful</span>
-                  </div>
-                </div>
-
-                <div className={styles.pipelineItem}>
-                  <div
-                    className={`${styles.statusIndicator} ${styles.failed}`}
-                  />
-                  <div className={styles.pipelineInfo}>
-                    <span className={styles.pipelineCount}>3</span>
-                    <span className={styles.pipelineLabel}>Failed</span>
-                  </div>
-                </div>
-
-                <div className={styles.pipelineItem}>
-                  <div
-                    className={`${styles.statusIndicator} ${styles.running}`}
-                  />
-                  <div className={styles.pipelineInfo}>
-                    <span className={styles.pipelineCount}>2</span>
-                    <span className={styles.pipelineLabel}>Running</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.deploymentFrequency}>
-                <div className={styles.deploymentHeader}>
-                  <span className={styles.deploymentLabel}>
-                    Avg. deployment time
-                  </span>
-                  <span className={styles.deploymentValue}>12m 34s</span>
-                </div>
-                <div className={styles.deploymentBar}>
-                  <div
-                    className={styles.deploymentBarFill}
-                    style={{ width: "78%" }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Projects Focus Section */}
         <div className={styles.tasksSection}>
           <h1 className={styles.sectionTitle}>Projects Focus</h1>
           <div className={styles.gridProjects}>
-            {projects?.map((project) => (
-              <div key={project.id} className={styles.taskCard}>
-                <div className={styles.taskHeader}>
-                  <div className={styles.taskInfo}>
-                    <h1>
-                      {project.title}
-                      <button>
-                        <ArrowRightIcon />
-                      </button>
-                    </h1>
-                    <div className={styles.progressContainer}>
-                      <p className={styles.progressText}>
-                        {progress(project.id)}%
-                      </p>
-                      <div className={styles.progressDiv}>
-                        <div
-                          className={styles.progressBar}
-                          style={{ width: progress(project.id) + "%" }}
-                        ></div>
-                      </div>
-                      <p>
-                        {Math.floor(
-                          tasks.filter(
-                            (task) =>
-                              task.projectId === project.id &&
-                              task.status === "completed",
-                          ).length,
-                        )}
-                        /
-                        {Math.floor(
-                          tasks.filter((task) => task.projectId === project.id)
-                            .length,
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={styles.taskFooter}>
-                  <div className={styles.taskMetrics}>
-                    <div className={styles.metricButtons}>
-                      <button className={`${styles.btnActive}`}>
-                        <ActiveIcon />
-                        <span className={styles.label}>Active:</span>
-                        <span className={styles.value}>
-                          {SetStatistikActive(project.id)}
-                        </span>
-                      </button>
-
-                      <button className={`${styles.btnBlocked}`}>
-                        <BlockedIcon />
-                        <span className={styles.label}>Blocked:</span>
-
-                        <span className={styles.value}>
-                          {SetStatistikBlocked(project.id)}
-                        </span>
-                      </button>
-
-                      <button className={`${styles.btnOverdue}`}>
-                        <OverdueIcon />
-                        <span className={styles.label}>Overdue:</span>
-                        <span className={styles.value}>
-                          {SetStatistikOverdue(project.id)}
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className={styles.githubInfo}>
-                    <GithubIcon />
-                    <span>github:</span>
-                    <span className={styles.githubCommits}>
-                      commits:{/* {CountOfCommits} */} 10
-                    </span>
-                    <span className={styles.githubCommits}>
-                      PR:{/* {PR} */}7
-                    </span>
-                    <span className={styles.githubCommits}>
-                      CI:{/* {CI} */}2{" "}
-                    </span>
-                  </div>
-
-                  <div className={styles.actionButtons}>
-                    <button className={styles.btnBoard}>
-                      <p>Board</p>
-                    </button>
-                    <button className={styles.btnGithub}>
-                      <p>Repo</p>
-                    </button>
-                    <button className={styles.btnAnalytics}>
-                      <p>Analytics</p>
-                    </button>
-                  </div>
-                </div>
+            {loadingProjects ? (
+              <div className={styles.loading}>
+                <div className={styles.spinner}></div>
+                <p>Загрузка проектов...</p>
               </div>
-            ))}
+            ) : currentProjects.length === 0 ? (
+              <div className={styles.noProjects}>
+                <div className={styles.noProjectsdiv}>
+                  <h1 className={styles.noProjectsTitle}>У вас нет проектов</h1>
+                </div>
+                <button className={styles.addButton}>
+                  <p>Добавить проект</p>
+                </button>
+              </div>
+            ) : (
+              currentProjects.map((project) => (
+                <div key={project.id} className={styles.taskCard}>
+                  <div className={styles.taskHeader}>
+                    <div className={styles.taskInfo}>
+                      <h1>
+                        {project.title}
+                        <button>
+                          <ArrowRightIcon />
+                        </button>
+                      </h1>
+                      <div className={styles.progressContainer}>
+                        <p className={styles.progressText}>
+                          {progress(project.id)}%
+                        </p>
+                        <div className={styles.progressDiv}>
+                          <div
+                            className={styles.progressBar}
+                            style={{ width: progress(project.id) + "%" }}
+                          ></div>
+                        </div>
+                        <p>
+                          {Math.floor(
+                            tasks.filter(
+                              (task) =>
+                                task.projectId === project.id &&
+                                task.status === "completed",
+                            ).length,
+                          )}
+                          /
+                          {Math.floor(
+                            tasks.filter(
+                              (task) => task.projectId === project.id,
+                            ).length,
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.taskFooter}>
+                    <div className={styles.taskMetrics}>
+                      <div className={styles.metricButtons}>
+                        <button className={`${styles.btnActive}`}>
+                          <ActiveIcon />
+                          <span className={styles.label}>Active:</span>
+                          <span className={styles.value}>
+                            {SetStatistikActive(project.id)}
+                          </span>
+                        </button>
+
+                        <button className={`${styles.btnBlocked}`}>
+                          <BlockedIcon />
+                          <span className={styles.label}>Blocked:</span>
+
+                          <span className={styles.value}>
+                            {SetStatistikBlocked(project.id)}
+                          </span>
+                        </button>
+
+                        <button className={`${styles.btnOverdue}`}>
+                          <OverdueIcon />
+                          <span className={styles.label}>Overdue:</span>
+                          <span className={styles.value}>
+                            {SetStatistikOverdue(project.id)}
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className={styles.githubInfo}>
+                      <GithubIcon />
+                      <span>github:</span>
+                      <span className={styles.githubCommits}>
+                        commits:{/* {CountOfCommits} */} 10
+                      </span>
+                      <span className={styles.githubCommits}>
+                        PR:{/* {PR} */}7
+                      </span>
+                      <span className={styles.githubCommits}>
+                        CI:{/* {CI} */}2{" "}
+                      </span>
+                    </div>
+
+                    <div className={styles.actionButtons}>
+                      <button className={styles.btnBoard}>
+                        <p>Board</p>
+                      </button>
+                      <button className={styles.btnGithub}>
+                        <p>Repo</p>
+                      </button>
+                      <button className={styles.btnAnalytics}>
+                        <p>Analytics</p>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
         {/* Active Tasks */}
