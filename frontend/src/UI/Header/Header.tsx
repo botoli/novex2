@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Header.module.scss";
 import { Tabs } from "./tabs";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   LogoIcon,
   HomeIcon,
@@ -17,10 +17,17 @@ import { useTheme } from "../../context/Theme.tsx";
 import { nowurl, useData } from "../../fetch/fetchTasks.tsx";
 
 export default function Header() {
-  const { data: projects, setData: setProjects } = useData(nowurl + "projects");
-  const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
-  const { data: users, setData: setUser } = useData(nowurl + "users");
-  const countOfProjects = projects.length;
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const { data: projects, setData: setProjects } = useData(nowurl + "/projects");
+  const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
+  const { data: users, setData: setUser } = useData(nowurl + "/users");
+  const [currentProjects, setCurrentProjects] = useState<any[]>(projects);
+  const token = localStorage.getItem("token");
+  useEffect(() => {
+    setCurrentProjects(projects.filter((p) => p.assigned_to === Number(token)));
+  }, [projects, token]);
+  const countOfProjects = currentProjects.length;
   const [tabs, setTabs] = useState(() => {
     const storedTabs = localStorage.getItem("tabs");
     return storedTabs ? JSON.parse(storedTabs) : Tabs;
@@ -67,7 +74,6 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    // Закрываем меню при изменении размера окна
     const handleResize = () => {
       if (window.innerWidth > 1024) {
         setIsMenuOpen(false);
@@ -79,7 +85,6 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    // Блокируем скролл body когда меню открыто на мобильных
     if (isMenuOpen && window.innerWidth <= 1024) {
       document.body.style.overflow = "hidden";
     } else {
@@ -116,20 +121,28 @@ export default function Header() {
         </div>
 
         <div className={styles.Tabs}>
-          {tabs?.map((tab) => (
-            <Link key={tab.id} to={tab.name === "Home" ? "/" : `/${tab.name}`}>
-              <div
-                className={tab.active ? styles.activeTab : styles.tab}
-                onClick={() => toogleActive(tab.name)}
-              >
-                {getIcon(tab.name)}
-                <h2>{tab.name}</h2>
-                {tab.name === "Projects" && countOfProjects > 0 && (
-                  <div className={styles.projectCount}>{countOfProjects}</div>
-                )}
-              </div>
-            </Link>
-          ))}
+          {tabs?.map((tab) => {
+            const tabPath =
+              tab.name === "Home" ? "/" : `/${tab.name.toLowerCase()}`;
+            const isActive =
+              currentPath === tabPath ||
+              (tabPath !== "/" && currentPath.startsWith(tabPath + "/"));
+
+            return (
+              <Link key={tab.id} to={tabPath}>
+                <div
+                  className={isActive ? styles.activeTab : styles.tab}
+                  onClick={() => toogleActive(tab.name)}
+                >
+                  {getIcon(tab.name)}
+                  <h2>{tab.name}</h2>
+                  {tab.name === "Projects" && countOfProjects > 0 && (
+                    <div className={styles.projectCount}>{countOfProjects}</div>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
           <div
             className={styles.tab}
             onClick={() => {

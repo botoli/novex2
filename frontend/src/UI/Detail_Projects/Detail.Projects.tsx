@@ -4,7 +4,7 @@ import { ArrowRightIcon } from "../Icons/Icon";
 import { nowurl, useData } from "../../fetch/fetchTasks";
 
 export default function DetailProject({ name }) {
-  const { data: projects, setData: setProjects } = useData(nowurl + "projects");
+  const { data: projects, setData: setProjects } = useData(nowurl + "/projects");
   return (
     <div className={styles.allDetailProject}>
       {projects

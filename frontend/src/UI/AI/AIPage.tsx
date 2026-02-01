@@ -1,12 +1,21 @@
-import React from 'react';
-import styles from './AIPage.module.scss';
-import PageHeader from '../../common/PageHeader';
-import { AIIcon } from '../Icons';
+import React from "react";
+import styles from "./AIPage.module.scss";
+import PageHeader from "../../common/PageHeader";
+import { AIIcon } from "../Icons";
+import Registration from "../../common/Registration/Registration";
+import { useLogin } from "../../context/Modal";
+import { useRegistration } from "../../context/RegistrarionModal";
+import Login from "../../common/Login/Login";
 
 export default function AIPage() {
+  const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
+  const { isOpenLogin, setIsOpenLogin } = useLogin();
   return (
     <div className={styles.aiContainer}>
       <PageHeader />
+
+      {isOpenLogin ? <Login /> : null}
+      {isOpenRegistration ? <Registration /> : null}
       <section className={styles.dashboard}>
         <h1>AI</h1>
 
@@ -23,8 +32,8 @@ export default function AIPage() {
                   <span className={styles.messageTime}>10:30 AM</span>
                 </div>
                 <div className={styles.messageText}>
-                  Hello! How can I help you today? I can assist with code analysis, debugging, or answer questions about
-                  your projects.
+                  Hello! How can I help you today? I can assist with code
+                  analysis, debugging, or answer questions about your projects.
                 </div>
               </div>
             </div>
@@ -54,8 +63,9 @@ export default function AIPage() {
                   <span className={styles.messageTime}>10:33 AM</span>
                 </div>
                 <div className={styles.messageText}>
-                  Of course! I'd be happy to help you refactor your component to TypeScript. Please share the component
-                  code you'd like to refactor, and I'll provide suggestions and improvements.
+                  Of course! I'd be happy to help you refactor your component to
+                  TypeScript. Please share the component code you'd like to
+                  refactor, and I'll provide suggestions and improvements.
                 </div>
               </div>
             </div>

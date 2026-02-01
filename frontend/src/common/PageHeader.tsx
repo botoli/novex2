@@ -26,6 +26,7 @@ export default function PageHeader() {
   function Logout() {
     localStorage.removeItem("currentuser");
     localStorage.removeItem("token");
+
     setCurrentuser(null);
   }
 
@@ -78,7 +79,7 @@ export default function PageHeader() {
               <div className={styles.account}>
                 <div className={styles.accountInfo}>
                   <div className={styles.accountAvatar}>
-                    <AccountIcon />
+                    {currentuser.name.charAt(0).toUpperCase()}
                   </div>
                   <div className={styles.accountDetails}>
                     <p className={styles.accountName}>{currentuser.name}</p>

@@ -1,17 +1,27 @@
-import React from 'react';
-import styles from './CodePage.module.scss';
-import PageHeader from '../../common/PageHeader';
-import { AIIcon, GithubIcon, SearchIcon } from '../Icons';
+import React from "react";
+import styles from "./CodePage.module.scss";
+import PageHeader from "../../common/PageHeader";
+import { AIIcon, GithubIcon, SearchIcon } from "../Icons";
+import { useLogin } from "../../context/Modal";
+import { useRegistration } from "../../context/RegistrarionModal";
+import Login from "../../common/Login/Login";
+import Registration from "../../common/Registration/Registration";
 
 export default function CodePage() {
+  const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
+  const { isOpenLogin, setIsOpenLogin } = useLogin();
   return (
     <div className={styles.codeContainer}>
       <PageHeader />
+      {isOpenLogin ? <Login /> : null}
+      {isOpenRegistration ? <Registration /> : null}
       <section className={styles.dashboard}>
         <h1>Code</h1>
 
         <div className={styles.subNavigation}>
-          <button className={`${styles.subNavButton} ${styles.active}`}>All Repos</button>
+          <button className={`${styles.subNavButton} ${styles.active}`}>
+            All Repos
+          </button>
           <button className={styles.subNavButton}>
             My Commits
             <span className={styles.dropdownArrow}>▼</span>
@@ -62,7 +72,9 @@ export default function CodePage() {
                 </div>
                 <div className={styles.repoInfo}>
                   <h3 className={styles.repoName}>Admin Dashboard</h3>
-                  <p className={styles.repoUrl}>github.com/novex/admin-dashboard</p>
+                  <p className={styles.repoUrl}>
+                    github.com/novex/admin-dashboard
+                  </p>
                   <div className={styles.repoStats}>
                     <span className={styles.statItem}>★ 25</span>
                     <span className={styles.statItem}>↓ 11</span>
@@ -87,7 +99,9 @@ export default function CodePage() {
               </div>
             </div>
             <div className={styles.architectureDiagram}>
-              <div className={`${styles.diagramNode} ${styles.nodeClient}`}>Client</div>
+              <div className={`${styles.diagramNode} ${styles.nodeClient}`}>
+                Client
+              </div>
               <div className={`${styles.diagramNode} ${styles.nodeFrontend}`}>
                 <div className={styles.nodeContent}>
                   <span className={styles.nodeIcon}>📧</span>
@@ -95,8 +109,12 @@ export default function CodePage() {
                 </div>
                 Frontend UI
               </div>
-              <div className={`${styles.diagramNode} ${styles.nodeAPI}`}>API</div>
-              <div className={`${styles.diagramNode} ${styles.nodeBusiness}`}>Business Logic</div>
+              <div className={`${styles.diagramNode} ${styles.nodeAPI}`}>
+                API
+              </div>
+              <div className={`${styles.diagramNode} ${styles.nodeBusiness}`}>
+                Business Logic
+              </div>
               <div className={`${styles.diagramNode} ${styles.nodeDB}`}>
                 <span className={styles.nodeIcon}>📁</span>
                 Database
@@ -186,7 +204,9 @@ export default function CodePage() {
                 <span className={styles.lineNumber}>2</span>
                 <span className={styles.codeContent}>
                   <span className={styles.keyword}>import</span>
-                  <span className={styles.variable}>{`{ BrowserRouter, Route, Switch }`}</span>
+                  <span
+                    className={styles.variable}
+                  >{`{ BrowserRouter, Route, Switch }`}</span>
                   <span className={styles.keyword}>from</span>
                   <span className={styles.string}>'react-router-dom'</span>;
                 </span>
@@ -226,28 +246,28 @@ export default function CodePage() {
                 <span className={styles.lineNumber}>7</span>
                 <span className={styles.codeContent}>
                   <span className={styles.function}>function</span>
-                  <span className={styles.variable}>App</span>() {'{'}
+                  <span className={styles.variable}>App</span>() {"{"}
                 </span>
               </div>
               <div className={styles.codeLine}>
                 <span className={styles.lineNumber}>8</span>
                 <span className={styles.codeContent}>
-                  {'  '}
+                  {"  "}
                   <span className={styles.keyword}>return</span> (
                 </span>
               </div>
               <div className={styles.codeLine}>
                 <span className={styles.lineNumber}>9</span>
                 <span className={styles.codeContent}>
-                  {'    '}
+                  {"    "}
                   <span className={styles.variable}>{`<BrowserRouter>`}</span>
                 </span>
               </div>
               <div className={styles.codeLine}>
                 <span className={styles.lineNumber}>10</span>
                 <span className={styles.codeContent}>
-                  {'      '}
-                  <span className={styles.variable}>{`<Route`}</span>{' '}
+                  {"      "}
+                  <span className={styles.variable}>{`<Route`}</span>{" "}
                   <span className={styles.string}>path="/"</span>
                   <span className={styles.variable}>component</span>=
                   {<span className={styles.variable}>Home</span>}
@@ -282,7 +302,7 @@ export default function CodePage() {
               </div>
               <div className={styles.codeLine}>
                 <span className={styles.lineNumber}>15</span>
-                <span className={styles.codeContent}>{'}'}</span>
+                <span className={styles.codeContent}>{"}"}</span>
               </div>
             </div>
           </div>

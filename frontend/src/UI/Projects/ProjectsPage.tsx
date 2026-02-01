@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActiveIcon,
   ArrowRightIcon,
@@ -10,16 +10,27 @@ import styles from "./Projects.module.scss";
 import { Link } from "react-router-dom";
 import PageHeader from "../../common/PageHeader";
 import { nowurl, useData } from "../../fetch/fetchTasks";
+import { useLogin } from "../../context/Modal";
+import { useRegistration } from "../../context/RegistrarionModal";
+import Login from "../../common/Login/Login";
+import Registration from "../../common/Registration/Registration";
+import { init } from "@emailjs/browser";
 export default function ProjectsPage() {
   const [activeFilter, setActiveFilter] = useState(() => {
     return localStorage.getItem("activeFilter") || "All Projects";
   });
-  const { data: projects, setData: setProjects } = useData(nowurl + "projects");
-  const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
+  const { data: projects, setData: setProjects } = useData(
+    nowurl + "/projects",
+  );
+  const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
   const [filtered, setFiltered] = useState(() => {
     const storedFiltered = localStorage.getItem("filtered");
-    return storedFiltered ? JSON.parse(storedFiltered) : projects;
+    return storedFiltered ? JSON.parse(storedFiltered) : currentProjects;
   });
+  const [currentProjects, setCurrentProjects] = useState<any[]>(projects);
+  const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
+  const { isOpenLogin, setIsOpenLogin } = useLogin();
+
   const btns = [
     { name: "All Projects" },
     { name: "Active" },
@@ -27,19 +38,24 @@ export default function ProjectsPage() {
     { name: "At Risk" },
     { name: "Completed" },
   ];
-  function Filter(name: string) {
-    setActiveFilter(name);
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    setCurrentProjects(projects.filter((p) => p.assigned_to === Number(token)));
+  }, [projects]);
+  useMemo(() => {
+    setActiveFilter(activeFilter);
     setFiltered(
-      name === "All Projects"
-        ? projects
-        : projects.filter((p) => p.status === name),
+      activeFilter === "All Projects"
+        ? currentProjects
+        : currentProjects.filter((p) => p.status === activeFilter),
     );
-  }
+  }, [activeFilter, currentProjects]);
 
   useEffect(() => {
     localStorage.setItem("activeFilter", activeFilter);
     localStorage.setItem("filtered", JSON.stringify(filtered));
-  }, [activeFilter, filtered]);
+  }, [activeFilter, currentProjects, projects]);
 
   const progress = (id: number) => {
     return (
@@ -77,6 +93,8 @@ export default function ProjectsPage() {
   return (
     <div className={styles.ProjectContainer}>
       <PageHeader />
+      {isOpenLogin ? <Login /> : null}
+      {isOpenRegistration ? <Registration /> : null}
       <section className={styles.dashboard}>
         <h1>Projects</h1>
         <div className={styles.headerProjects}>
@@ -86,13 +104,14 @@ export default function ProjectsPage() {
                 className={`${styles.Allprojetcs} ${
                   activeFilter === btn.name ? styles.active : ""
                 }`}
-                onClick={() => Filter(btn.name)}
+                onClick={() => setActiveFilter(btn.name)}
               >
                 <p>{btn.name}</p>
                 <p className={styles.countProjects}>
                   {btn.name === "All Projects"
-                    ? projects.length
-                    : projects.filter((p) => p.status === btn.name).length}
+                    ? currentProjects.length
+                    : currentProjects.filter((p) => p.status === btn.name)
+                        .length}
                 </p>
               </button>
             ))}

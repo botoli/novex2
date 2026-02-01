@@ -3,12 +3,17 @@ import styles from "./TaskPage.module.scss";
 import PageHeader from "../../common/PageHeader";
 import { SearchIcon } from "../../UI/Icons";
 import { nowurl, useData } from "../../fetch/fetchTasks";
+import { useLogin } from "../../context/Modal";
+import { useRegistration } from "../../context/RegistrarionModal";
+import Registration from "../../common/Registration/Registration";
+import Login from "../../common/Login/Login";
 
 export default function TaskPage() {
-  const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
-  const { data: projects, setData: setProjects } = useData(nowurl + "projects");
-  const { data: users, setData: setUsers } = useData(nowurl + "users");
-
+  const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
+  const { data: projects, setData: setProjects } = useData(nowurl + "/projects");
+  const { data: users, setData: setUsers } = useData(nowurl + "/users");
+  const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
+  const { isOpenLogin, setIsOpenLogin } = useLogin();
   const [activeFiltertask, setActiveFiltertask] = useState<string>(() => {
     return localStorage.getItem("activeFiltertask") || "All Tasks";
   });
@@ -16,8 +21,9 @@ export default function TaskPage() {
   const [sortBy, setSortBy] = useState("Due Date");
   const [currentPage, setCurrentPage] = useState(1);
   const [isUp, setIsUp] = useState(false);
-  const currentUserId = users.filter((usr) => usr.assigneeId === 0).length; // Assuming current user ID is 0
 
+  const currentUserId = users.filter((usr) => usr.assigneeId === 0).length; // Assuming current user ID is 0
+  console.log(currentUserId);
   const btns = [
     { name: "All Tasks" },
     { name: "My Tasks" },
@@ -49,17 +55,16 @@ export default function TaskPage() {
     }
     return tasks.filter(
       (task) => task.status === activeFiltertask.toLowerCase(),
-    ); // Только меняем активный фильтр
+    );
   }, [tasks, activeFiltertask, currentUserId]);
   const getProjectName = (projectId: number) => {
     const project = projects.find((p) => p.id === projectId);
     return project ? project.title : "Unknown";
   };
 
-  const getAssigneeName = (assigneeId?: number) => {
-    if (assigneeId === undefined || assigneeId === null) return null;
-    const user = users.find((u) => u.userid === assigneeId);
-    return user ? user.name : null;
+  const getAssigneeName = (assigneeId: number) => {
+    const user = users.find((u) => u.id === assigneeId);
+    return user ? user.name : null; // или user.username, в зависимости от структуры данных
   };
 
   const formatDate = (date: string | Date) => {
@@ -112,6 +117,8 @@ export default function TaskPage() {
   return (
     <div className={styles.TaskContainer}>
       <PageHeader />
+      {isOpenLogin ? <Login /> : null}
+      {isOpenRegistration ? <Registration /> : null}
       <section className={styles.dashboard}>
         <h1>Tasks</h1>
         <div className={styles.headerTasks}>
@@ -241,7 +248,7 @@ export default function TaskPage() {
                           <div className={styles.assigneeAvatar}>
                             {assigneeName.charAt(0).toUpperCase()}
                           </div>
-                          <span>{assigneeName}</span>
+                          <span>{assigneeName + " "} </span>
                         </div>
                       ) : (
                         <div className={styles.unassigned}>

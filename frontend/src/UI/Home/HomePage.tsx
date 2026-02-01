@@ -27,6 +27,7 @@ import { useLogin } from "../../context/Modal";
 import Registration from "../../common/Registration/Registration";
 import { useRegistration } from "../../context/RegistrarionModal";
 import { useUser } from "../../context/UserContext";
+import { Link } from "react-router";
 
 export default function HomePage() {
   const mockAI = [
@@ -51,10 +52,9 @@ export default function HomePage() {
     data: projects,
     setData: setProjects,
     loading: loadingProjects,
-  } = useData(nowurl + "projects");
-  const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
-  const { data: users, setData: setUser } = useData(nowurl + "users");
-
+  } = useData(nowurl + "/projects");
+  const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
+  const { data: projecs, setData: setProjecs } = useData(nowurl + "/projects");
   const { currentuser, setCurrentuser } = useUser();
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
@@ -66,15 +66,17 @@ export default function HomePage() {
   const [isOpenAccountSettings, setIsOpenAccountSettings] = useState(false);
   const [isSortRisk, setIsSortRisk] = useState(true);
   const [isSortDedline, setIsSortDedline] = useState(true);
+  const [currentTasks, setCurrentTasks] = useState([]);
 
+  const token = localStorage.getItem("token");
   useEffect(() => {
-    setTasks(tasks);
-    setUser(users);
-  }, []);
-
+    setCurrentTasks(tasks.filter((t) => t.assigneeId === Number(token)));
+  }, [tasks, token]);
   useEffect(() => {
-    if (currentuser?.name === "Test User") {
-      setCurrentprojects(projects.filter((p) => p.assigned_to === 1));
+    if (projecs.filter((p) => p.assigned_to === Number(token))) {
+      setCurrentprojects(
+        projects.filter((p) => p.assigned_to === Number(token)),
+      );
     } else {
       setCurrentprojects([]);
     }
@@ -91,7 +93,7 @@ export default function HomePage() {
   };
 
   function sorty() {
-    const copyMockTasks = [...tasks];
+    const copyMockTasks = [...currentTasks];
     if (sortBy === "Dedline") {
       const SortByDedline = copyMockTasks.sort((a, b) => {
         const deadlineA =
@@ -120,25 +122,28 @@ export default function HomePage() {
   }
   useEffect(() => {
     sorty();
-  }, [tasks, sortBy, isSortDedline, isSortRisk]);
+  }, [currentTasks, sortBy, isSortDedline, isSortRisk]);
 
   function SetStatistikActive(id: number) {
     return Math.floor(
-      tasks.filter((task) => task.projectId === id && task.status === "active")
-        .length,
+      currentTasks.filter(
+        (task) => task.projectId === id && task.status === "active",
+      ).length,
     );
   }
 
   function SetStatistikBlocked(id: number) {
     return Math.floor(
-      tasks.filter((task) => task.projectId === id && task.status === "blocked")
-        .length,
+      currentTasks.filter(
+        (task) => task.projectId === id && task.status === "blocked",
+      ).length,
     );
   }
   function SetStatistikOverdue(id: number) {
     return Math.floor(
-      tasks.filter((task) => task.projectId === id && task.status === "overdue")
-        .length,
+      currentTasks.filter(
+        (task) => task.projectId === id && task.status === "overdue",
+      ).length,
     );
   }
 
@@ -152,6 +157,7 @@ export default function HomePage() {
         )}
       </div>
       <PageHeader />
+
       {isOpenLogin ? <Login /> : null}
       {isOpenRegistration ? <Registration /> : null}
       <section className={styles.dashboard}>
@@ -202,7 +208,7 @@ export default function HomePage() {
                         </div>
                         <p>
                           {Math.floor(
-                            tasks.filter(
+                            currentTasks.filter(
                               (task) =>
                                 task.projectId === project.id &&
                                 task.status === "completed",
@@ -210,7 +216,7 @@ export default function HomePage() {
                           )}
                           /
                           {Math.floor(
-                            tasks.filter(
+                            currentTasks.filter(
                               (task) => task.projectId === project.id,
                             ).length,
                           )}
@@ -309,7 +315,9 @@ export default function HomePage() {
               </div>
 
               {/* <p className={styles.Overdue}>Overdue: {SetStatistikOverdue(1)}</p> */}
-              <button className={styles.btnSecondary}>View All</button>
+              <Link to="/tasks">
+                <button className={styles.btnSecondary}>View All</button>
+              </Link>
             </div>
             <div className={styles.mytaskscard}>
               {sort?.map((task) => (
