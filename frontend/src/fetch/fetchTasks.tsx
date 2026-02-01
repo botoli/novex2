@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 // Используем прокси /api/ везде (Vite dev proxy + Vercel rewrites)
-const API_URL = "/api";
+const API_URL = "/api/";
 export const nowurl = API_URL;
 export function useData(url: string) {
   const [data, setData] = useState<any[]>([]);

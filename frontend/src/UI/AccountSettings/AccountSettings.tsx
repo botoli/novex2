@@ -58,9 +58,9 @@ export default function AccountSettings({ onclose }) {
               </div>
             </div>
             <div className={styles.logOut}>
-              <p>Loh out</p>
+              <p>Log out</p>
               <button className={styles.logOutBtn} onClick={() => Logout()}>
-                <p>Loh out</p>
+                <p>Log out</p>
               </button>
             </div>
 
