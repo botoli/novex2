@@ -23,11 +23,12 @@ export default function ProjectsPage() {
     nowurl + "/projects",
   );
   const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
+  const [currentProjects, setCurrentProjects] = useState<any[]>(projects);
   const [filtered, setFiltered] = useState(() => {
     const storedFiltered = localStorage.getItem("filtered");
     return storedFiltered ? JSON.parse(storedFiltered) : currentProjects;
   });
-  const [currentProjects, setCurrentProjects] = useState<any[]>(projects);
+
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
 
