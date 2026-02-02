@@ -10,7 +10,9 @@ import Login from "../../common/Login/Login";
 
 export default function TaskPage() {
   const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
-  const { data: projects, setData: setProjects } = useData(nowurl + "/projects");
+  const { data: projects, setData: setProjects } = useData(
+    nowurl + "/projects",
+  );
   const { data: users, setData: setUsers } = useData(nowurl + "/users");
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
@@ -21,7 +23,7 @@ export default function TaskPage() {
   const [sortBy, setSortBy] = useState("Due Date");
   const [currentPage, setCurrentPage] = useState(1);
   const [isUp, setIsUp] = useState(false);
-
+  const token = localStorage.getItem("token");
   const currentUserId = users.filter((usr) => usr.assigneeId === 0).length; // Assuming current user ID is 0
   console.log(currentUserId);
   const btns = [
@@ -51,7 +53,7 @@ export default function TaskPage() {
       return tasks;
     }
     if (activeFiltertask === "My Tasks") {
-      return tasks.filter((task) => task.assigneeId === currentUserId);
+      return tasks.filter((task) => task.assigneeId === Number(token));
     }
     return tasks.filter(
       (task) => task.status === activeFiltertask.toLowerCase(),
