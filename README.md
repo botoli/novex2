@@ -82,7 +82,7 @@
 
 ### Доступен демо-мод для быстрого понимания функционала сайта
 
-<img width="1905" height="1078" alt="image" src="https://github.com/user-attachments/assets/36a002bd-3fe5-4c61-b017-790a7fb95386" />
+<img width="1905" height="1079" alt="image" src="https://github.com/user-attachments/assets/6243af8c-69de-4527-a2d4-a110cd9c9a45" />
 
 ### Страница проектов — обзор всех активностей
 

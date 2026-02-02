@@ -66,26 +66,7 @@ export default function TaskPage() {
 
   const getAssigneeName = (assigneeId: number) => {
     const user = users.find((u) => u.id === assigneeId);
-    return user ? user.name : null; // или user.username, в зависимости от структуры данных
-  };
-
-  const formatDate = (date: string | Date) => {
-    if (typeof date === "string") {
-      // если это строка с датой в формате YYYY-MM-DD
-      if (date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        return date;
-      }
-      // если это строка с датой в другом формате
-      if (date.includes("T") || date.includes("-")) {
-        const d = new Date(date);
-        if (!isNaN(d.getTime())) {
-          return d.toISOString().split("T")[0];
-        }
-      }
-      // если это не дата просто возвращаем
-      return date; // Return as-is for relative dates
-    }
-    return date.toISOString().split("T")[0];
+    return user ? user.name : null;
   };
 
   const getStatusColor = (status: string) => {
@@ -218,7 +199,6 @@ export default function TaskPage() {
               {filteredTasks?.map((task) => {
                 const assigneeName = getAssigneeName(task.assigneeId);
                 const projectName = getProjectName(task.projectId);
-                const formattedDate = formatDate(task.deadline);
 
                 return (
                   <tr key={task.id} className={styles.tableRow}>
@@ -260,7 +240,7 @@ export default function TaskPage() {
                       )}
                     </td>
                     <td className={styles.dueDateCol}>
-                      <span className={styles.dueDate}>{formattedDate}</span>
+                      <span className={styles.dueDate}>{task.deadline}</span>
                     </td>
                     <td className={styles.projectCol}>
                       <span className={styles.projectName}>{projectName}</span>
