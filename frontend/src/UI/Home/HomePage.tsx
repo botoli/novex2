@@ -83,12 +83,14 @@ export default function HomePage() {
   }, [projects, currentuser]);
 
   const progress = (id: number) => {
-    return Math.floor(
-      (tasks.filter(
-        (task) => task.projectId === id && task.status === "completed",
-      ).length /
-        tasks.filter((task) => task.projectId === id).length) *
-        100 || 0,
+    return (
+      Math.floor(
+        (tasks.filter(
+          (task) => task.projectId === id && task.status === "completed",
+        ).length /
+          tasks.filter((task) => task.projectId === id).length) *
+          100,
+      ) || 0
     );
   };
 
@@ -208,7 +210,7 @@ export default function HomePage() {
                         </div>
                         <p>
                           {Math.floor(
-                            currentTasks.filter(
+                            tasks.filter(
                               (task) =>
                                 task.projectId === project.id &&
                                 task.status === "completed",
@@ -216,7 +218,7 @@ export default function HomePage() {
                           )}
                           /
                           {Math.floor(
-                            currentTasks.filter(
+                            tasks.filter(
                               (task) => task.projectId === project.id,
                             ).length,
                           )}
