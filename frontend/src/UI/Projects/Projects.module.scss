@@ -1,4 +1,5 @@
 @use '../Styles/Variables.scss' as *;
+
 .ProjectContainer {
   min-height: 100vh;
   background-color: $dracula-background;
@@ -11,19 +12,20 @@
   width: 100%;
   position: relative;
 
-  @media (max-width: 1400px) {
-  }
+  @media (max-width: 1400px) {}
 
   @media (max-width: 1024px) {
     padding-left: 0;
   }
 }
+
 .headerProjects {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 // Стили для фильтрации проектов
 .filterall {
   display: flex;
@@ -119,6 +121,215 @@
   }
 }
 
+.blur {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  background: rgba(40, 42, 54, 0.4);
+}
+
+.AddProjectModal {
+  background-color: var(--dracula-background);
+  box-shadow:
+    0 8px 32px 0 rgba(40, 42, 54, 0.37),
+    0 1.5px 6px 0 rgba(80, 250, 123, 0.08);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 500px;
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 420px;
+  width: 100%;
+  animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 1rem;
+    min-height: 450px;
+    max-width: 95vw;
+  }
+
+  &>div:first-child {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    transition: fill 0.2s;
+
+    svg {
+      fill: var(--dracula-comment);
+      width: 100%;
+      height: 100%;
+
+      &:hover {
+        fill: var(--dracula-foreground);
+      }
+    }
+  }
+}
+
+.closedAddProjectModal {
+  display: none;
+}
+
+.input {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background-color: var(--dracula-current-line);
+  border: 1px solid var(--dracula-selection);
+  border-radius: 6px;
+  color: var(--dracula-foreground);
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 350px;
+
+  &::placeholder {
+    color: var(--dracula-comment);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--dracula-purple);
+    box-shadow: 0 0 0 3px var(--dracula-purple-rgba-01);
+  }
+
+  &:hover {
+    border-color: var(--dracula-purple-rgba-02);
+  }
+}
+
+.status,
+.priority,
+.assigned_to {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background-color: var(--dracula-current-line);
+  border: 1px solid var(--dracula-selection);
+  border-radius: 6px;
+  color: var(--dracula-foreground);
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 350px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--dracula-purple-rgba-02);
+  }
+}
+
+.assigned_to {
+  position: relative;
+}
+
+.openAsigned,
+.closedAsigned {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: var(--dracula-current-line);
+  border: 1px solid var(--dracula-selection);
+  border-radius: 6px;
+  margin-top: 0.25rem;
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.openAsigned {
+  display: block;
+  animation: slideDown 0.2s ease-out;
+}
+
+.closedAsigned {
+  display: none;
+}
+
+.openAsigned>div {
+  padding: 0.75rem 1rem;
+  color: var(--dracula-foreground);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--dracula-selection);
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--dracula-selection);
+  }
+}
+
+.active {
+  background-color: #333333;
+}
+
+.activeUser {
+  display: flex;
+  flex-flow: column;
+  gap: 10px;
+  width: 100%;
+  background-color: $dracula-background;
+
+  .user {
+    margin-bottom: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    background-color: $dracula-comment;
+  }
+}
+
+.addNewProject {
+  width: 100%;
+  max-width: 350px;
+  padding: 0.875rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: var(--dracula-purple);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+
+  &:hover {
+    background: var(--dracula-purple-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(189, 147, 249, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(189, 147, 249, 0.2);
+  }
+}
+
+
+
+.closedAddProjectModal {
+  display: none;
+}
+
 // Стили для кнопки добавления проекта
 .addProject {
   margin-bottom: 20px;
@@ -131,6 +342,16 @@
   @media (max-width: 480px) {
     margin-bottom: 14px;
   }
+}
+
+
+
+.AddProjectModal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+
 }
 
 .addbtn {
@@ -206,9 +427,11 @@
   @media (max-width: 1500px) {
     grid-template-columns: repeat(2, 1fr);
   }
+
   @media (max-width: 1100px) {
     grid-template-columns: repeat(1, 1fr);
   }
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
@@ -374,6 +597,7 @@
           svg {
             color: $dracula-green;
           }
+
           .value {
             color: $dracula-green;
           }
@@ -387,6 +611,7 @@
           svg {
             color: $dracula-red;
           }
+
           .value {
             color: $dracula-red;
           }
@@ -400,6 +625,7 @@
           svg {
             color: $dracula-orange;
           }
+
           .value {
             color: $dracula-orange;
           }
@@ -548,6 +774,7 @@
     }
   }
 }
+
 .progressContainer {
   height: 20px;
   margin-top: 15px;
@@ -588,6 +815,7 @@
     }
   }
 }
+
 .progressDiv {
   width: 100%;
   height: 10px;
@@ -606,6 +834,7 @@
     transition: width 0.3s ease;
   }
 }
+
 .dashboard {
   padding: 30px;
 
@@ -621,7 +850,7 @@
     padding: 15px 12px;
   }
 
-  > h1 {
+  >h1 {
     color: $dracula-foreground;
     font-size: 32px;
     font-weight: 700;

@@ -12,6 +12,7 @@
   z-index: 9999;
   background: rgba(40, 42, 54, 0.4);
 }
+
 .registrationContainer {
   background-color: var(--dracula-background);
   box-shadow:
@@ -34,6 +35,7 @@
     min-height: 340px;
     max-width: 95vw;
   }
+
   .closeIcon {
     position: absolute;
     top: 20px;
@@ -90,18 +92,21 @@
     }
   }
 }
+
 .warning {
   color: var(--dracula-red);
   font-size: 0.875rem;
   margin-bottom: 1rem;
   text-align: center;
 }
+
 .buttons {
   display: flex;
   flex-direction: row;
   gap: 1rem;
   width: 100%;
   max-width: 300px;
+
   .testUser {
     width: 100%;
     max-width: 300px;
@@ -120,6 +125,7 @@
     }
   }
 }
+
 .register {
   width: 100%;
   max-width: 300px;

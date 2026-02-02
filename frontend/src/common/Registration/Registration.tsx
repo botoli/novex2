@@ -57,7 +57,7 @@ export default function Registration() {
         </div>
         <div className={styles.registrationHeader}>
           <p className={styles.warning}>
-            Важно: не вводите реальные данные, для доступа к системе нажмите на
+            Важно!Не вводите реальные данные, для доступа к системе нажмите на
             кнопку "Test User" или введите любые фиктивные данные.
           </p>
           <h1>Sign Up</h1>

@@ -1,4 +1,5 @@
 @use "../UI/Styles/Variables.scss" as *;
+
 .pageHeader {
   display: flex;
   align-items: center;
@@ -415,12 +416,14 @@
     }
   }
 }
+
 .demoWarning {
   padding: 8px 12px;
   border-radius: 8px;
   background-color: $dracula-yellow;
   color: $dracula-background;
 }
+
 .modalProfile {
   display: flex;
   flex-direction: column;

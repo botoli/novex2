@@ -3,26 +3,29 @@ import {
   ActiveIcon,
   ArrowRightIcon,
   BlockedIcon,
+  CloseIcon,
   GithubIcon,
   OverdueIcon,
 } from "../Icons";
 import styles from "./Projects.module.scss";
-import { Link } from "react-router-dom";
 import PageHeader from "../../common/PageHeader";
 import { nowurl, useData } from "../../fetch/fetchTasks";
 import { useLogin } from "../../context/Modal";
 import { useRegistration } from "../../context/RegistrarionModal";
 import Login from "../../common/Login/Login";
 import Registration from "../../common/Registration/Registration";
-import { init } from "@emailjs/browser";
+
 export default function ProjectsPage() {
+
   const [activeFilter, setActiveFilter] = useState(() => {
     return localStorage.getItem("activeFilter") || "All Projects";
   });
+  const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
   const { data: projects, setData: setProjects } = useData(
     nowurl + "/projects",
   );
-  const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
+  const { data: users, setData: setUsres } = useData(nowurl + "/users");
+  const [isOpenAddProject, setIsOpenAddProject] = useState(false)
   const [currentProjects, setCurrentProjects] = useState<any[]>(projects);
   const [filtered, setFiltered] = useState(() => {
     const storedFiltered = localStorage.getItem("filtered");
@@ -31,7 +34,11 @@ export default function ProjectsPage() {
 
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
-
+  const [isOpenasignedTo, setisOpenasignedTo] = useState(false);
+  const [tagas, setTags] = useState<string>('')
+  const [title, setTitle] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
+  const [selectedId, setSelectedId] = useState([])
   const btns = [
     { name: "All Projects" },
     { name: "Active" },
@@ -39,11 +46,20 @@ export default function ProjectsPage() {
     { name: "At Risk" },
     { name: "Completed" },
   ];
+
   const token = localStorage.getItem("token");
+
+
+
+  function toogleUser(id: number) {
+
+  }
+
 
   useEffect(() => {
     setCurrentProjects(projects.filter((p) => p.assigned_to === Number(token)));
   }, [projects]);
+
   useMemo(() => {
     setActiveFilter(activeFilter);
     setFiltered(
@@ -65,7 +81,7 @@ export default function ProjectsPage() {
           (task) => task.projectId === id && task.status === "completed",
         ).length /
           tasks.filter((task) => task.projectId === id).length) *
-          100,
+        100,
       ) || 0
     );
   };
@@ -92,19 +108,50 @@ export default function ProjectsPage() {
   }
 
   return (
+
     <div className={styles.ProjectContainer}>
       <PageHeader />
       {isOpenLogin ? <Login /> : null}
       {isOpenRegistration ? <Registration /> : null}
+      <div className={isOpenAddProject && styles.blur}>
+        <div className={isOpenAddProject ? styles.AddProjectModal : styles.closedAddProjectModal}>
+          <div onClick={() => setIsOpenAddProject(!isOpenAddProject)}><CloseIcon />
+          </div>
+          <div>
+            <input className={styles.input} type="text" placeholder="title" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <input className={styles.input} type="text" placeholder="description" value={description} onChange={(e) => setDescription(e.target.value)} />
+            <div className={styles.status}>
+              Status
+            </div>
+            <div className={styles.priority}>
+              Priority
+            </div>
+            <div className={styles.assigned_to} onClick={() => setisOpenasignedTo(!isOpenasignedTo)}>
+              Assigned to
+              <div className={isOpenasignedTo ? styles.openAsigned : styles.closedAsigned}>
+                {users.map(u => <div onClick={() => toogleUser(u.id)}>{u.name} {u.id}</div>)}
+
+              </div>
+
+            </div>
+            <div className={styles.activeUser}>
+
+              {selectedId.map(user => <div className={styles.user}><p>{user}</p> <div onClick={() => toogleUser(user)}><CloseIcon /></div></div>)}
+
+            </div>
+            <input className={styles.input} type="text" placeholder="tags" value={tagas} onChange={(e) => setTags(e.target.value)} />
+          </div>
+          <button className={styles.addNewProject}>Create Project</button>
+        </div>
+      </div>
       <section className={styles.dashboard}>
         <h1>Projects</h1>
         <div className={styles.headerProjects}>
           <div className={styles.filterall}>
             {btns?.map((btn) => (
               <button
-                className={`${styles.Allprojetcs} ${
-                  activeFilter === btn.name ? styles.active : ""
-                }`}
+                className={`${styles.Allprojetcs} ${activeFilter === btn.name ? styles.active : ""
+                  }`}
                 onClick={() => setActiveFilter(btn.name)}
               >
                 <p>{btn.name}</p>
@@ -112,14 +159,15 @@ export default function ProjectsPage() {
                   {btn.name === "All Projects"
                     ? currentProjects.length
                     : currentProjects.filter((p) => p.status === btn.name)
-                        .length}
+                      .length}
                 </p>
               </button>
             ))}
           </div>
           <div className={styles.addProject}>
-            <button className={styles.addbtn}>Add new project</button>
+            <button className={styles.addbtn} onClick={() => setIsOpenAddProject(!isOpenAddProject)}>Add new project</button>
           </div>
+
         </div>
         <div className={styles.heroProjets}>
           <div className={styles.tasksSection}>
@@ -131,11 +179,11 @@ export default function ProjectsPage() {
                     <div className={styles.taskInfo}>
                       <h1>
                         {project.title}
-                        <Link to={`/Projects/${project.title}`}>
-                          <button name={project.title}>
-                            <ArrowRightIcon />
-                          </button>
-                        </Link>
+
+                        <button name={project.title}>
+                          <ArrowRightIcon />
+                        </button>
+
                       </h1>
                       <div className={styles.progressContainer}>
                         <p className={styles.progressText}>
