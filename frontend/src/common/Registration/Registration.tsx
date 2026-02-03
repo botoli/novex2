@@ -4,12 +4,13 @@ import { CloseIcon } from "../../UI/Icons";
 import styles from "./Registration.module.scss";
 import axios from "axios";
 import { nowurl } from "../../fetch/fetchTasks";
-import { useUser } from "../../context/UserContext";
+import { observer } from "mobx-react-lite";
+import { CurrentUserStore } from "../../Store/User.store";
+
 // filepath: /workspaces/novex2/novex2/frontend/src/UI/Form/Registration/Registration.tsx
 
-export default function Registration() {
+const Registration = observer(() => {
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
-  const { currentuser, setCurrentuser } = useUser();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,16 +34,15 @@ export default function Registration() {
       const NewUser = response.data;
       localStorage.setItem("currentuser", JSON.stringify(response.data));
       localStorage.setItem("token", `${response.data.id ?? ""}`);
-      setCurrentuser(NewUser);
+      CurrentUserStore.setCurrentuser(NewUser);
       setIsOpenRegistration(false);
     } catch (error) {
       console.error("Registration failed:", error);
     }
   }
   function handleTestUser() {
-    setCurrentuser(testUser);
+    CurrentUserStore.setCurrentuser(testUser);
     setIsOpenRegistration(false);
-    localStorage.setItem("currentuser", JSON.stringify(testUser));
     localStorage.setItem("token", "1");
   }
 
@@ -99,4 +99,5 @@ export default function Registration() {
       </div>
     </div>
   );
-}
+})
+export default Registration

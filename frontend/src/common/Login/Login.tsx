@@ -4,11 +4,12 @@ import { CloseIcon } from "../../UI/Icons";
 import styles from "./login.module.scss";
 import { useState } from "react";
 import { nowurl, useData } from "../../fetch/fetchTasks";
-import { useUser } from "../../context/UserContext";
-export default function Login() {
+import { observer } from "mobx-react-lite";
+import { CurrentUserStore } from "../../Store/User.store";
+const Login = observer(() => {
   const { isOpenLogin, setIsOpenLogin } = useLogin();
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
-  const { currentuser, setCurrentuser } = useUser();
+
   const { data: users, setData: setUser } = useData(nowurl + "users");
 
   const [email, setEmail] = useState("");
@@ -20,7 +21,7 @@ export default function Login() {
     if (found) {
       localStorage.setItem("currentuser", JSON.stringify(found));
       localStorage.setItem("token", `${found.id ?? ""}`);
-      setCurrentuser(found);
+      CurrentUserStore.setCurrentuser(found);
     }
   }
   return (
@@ -70,3 +71,5 @@ export default function Login() {
     </div>
   );
 }
+)
+export default Login

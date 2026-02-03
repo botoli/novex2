@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AccountIcon,
   LogoutIcon,
@@ -11,25 +11,23 @@ import AccountSettings from "../UI/AccountSettings/AccountSettings";
 import { nowurl, useData } from "../fetch/fetchTasks";
 import { useLogin } from "../context/Modal";
 import { useRegistration } from "../context/RegistrarionModal";
-import { useUser } from "../context/UserContext";
-export default function PageHeader() {
+
+import { observer } from "mobx-react-lite";
+import { CurrentUserStore } from "../Store/User.store";
+const PageHeader = observer(() => {
   const { data: projects, setData: setProjects } = useData(nowurl + "projects");
   const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
-  const { data: users, setData: setUser } = useData(nowurl + "users");
+  const { data: users, setData: setUsres } = useData(nowurl + "users");
 
   const [isOpenProfile, setIsOpenProfile] = useState(false);
   const [isOpenAccountSettings, setIsOpenAccountSettings] = useState(false);
-
+  const [user, setUser] = useState()
   const { isOpenLogin, setIsOpenLogin } = useLogin();
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
-  const { currentuser, setCurrentuser } = useUser();
+
   function Logout() {
-    localStorage.removeItem("currentuser");
-    localStorage.removeItem("token");
-
-    setCurrentuser(null);
+    CurrentUserStore.logOut()
   }
-
   return (
     <div>
       <div className={styles.AccountSettingsModal}>
@@ -46,7 +44,7 @@ export default function PageHeader() {
           <input type="text" placeholder="Search" />
           <button>Search</button>
         </div>
-        {currentuser?.name === "Test User" && (
+        {CurrentUserStore.currentuser?.name === "Test User" && (
           <div className={styles.demoWarning}>Demo Mode</div>
         )}
         <div className={styles.avatar}>
@@ -55,7 +53,7 @@ export default function PageHeader() {
               <NotificationIcon />
             </button>
           </div>
-          {!currentuser ? (
+          {!CurrentUserStore.currentuser ? (
             <>
               <div className={styles.SignIn}>
                 <button onClick={() => setIsOpenLogin(true)}>Sign In</button>
@@ -79,10 +77,10 @@ export default function PageHeader() {
               <div className={styles.account}>
                 <div className={styles.accountInfo}>
                   <div className={styles.accountAvatar}>
-                    {currentuser.name.charAt(0).toUpperCase()}
+                    {CurrentUserStore.currentuser.name.charAt(0).toUpperCase()}
                   </div>
                   <div className={styles.accountDetails}>
-                    <p className={styles.accountName}>{currentuser.name}</p>
+                    <p className={styles.accountName}>{CurrentUserStore.currentuser.name}</p>
                     <p className={styles.accountRole}></p>
                   </div>
                 </div>
@@ -114,4 +112,5 @@ export default function PageHeader() {
       </section>
     </div>
   );
-}
+})
+export default PageHeader
