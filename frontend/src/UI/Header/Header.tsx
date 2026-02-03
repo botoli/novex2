@@ -15,11 +15,15 @@ import {
 } from "../Icons/index.ts";
 import { useTheme } from "../../context/Theme.tsx";
 import { nowurl, useData } from "../../fetch/fetchTasks.tsx";
+import { observer } from "mobx-react-lite";
+import { CurrentUserStore } from "../../Store/User.store.tsx";
 
-export default function Header() {
+const Header = observer(() => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const { data: projects, setData: setProjects } = useData(nowurl + "/projects");
+  const { data: projects, setData: setProjects } = useData(
+    nowurl + "/projects",
+  );
   const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
   const { data: users, setData: setUser } = useData(nowurl + "/users");
   const [currentProjects, setCurrentProjects] = useState<any[]>(projects);
@@ -64,7 +68,7 @@ export default function Header() {
   }
   useEffect(() => {
     localStorage.setItem("tabs", JSON.stringify(tabs));
-  }, [tabs]);
+  }, [tabs, CurrentUserStore.currentuser]);
 
   useEffect(() => {
     const storedTabs = localStorage.getItem("tabs");
@@ -90,7 +94,7 @@ export default function Header() {
     } else {
       document.body.style.overflow = "";
     }
-  }, [isMenuOpen]);
+  }, [isMenuOpen, CurrentUserStore.currentuser]);
 
   return (
     <>
@@ -159,4 +163,5 @@ export default function Header() {
       </div>
     </>
   );
-}
+});
+export default Header;

@@ -1,20 +1,14 @@
 import { useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
 import styles from "./Home.module.scss";
 
 import {
-  AccountIcon,
-  TeamIcon,
   AIIcon,
   GithubIcon,
-  ProjectsIcon,
-  MetricsIcon,
-  CICDHealthIcon,
   ActiveIcon,
   OverdueIcon,
   BlockedIcon,
   ArrowRightIcon,
-  WarningIcon,
-  PauseIconRounded,
   ArrowUpIcon,
   ArrowDownIcon,
 } from "../Icons";
@@ -28,8 +22,9 @@ import Registration from "../../common/Registration/Registration";
 import { useRegistration } from "../../context/RegistrarionModal";
 import { useUser } from "../../context/UserContext";
 import { Link } from "react-router";
+import { CurrentUserStore } from "../../Store/User.store";
 
-export default function HomePage() {
+const HomePage = observer(() => {
   const mockAI = [
     {
       id: 1,
@@ -55,7 +50,6 @@ export default function HomePage() {
   } = useData(nowurl + "/projects");
   const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
   const { data: projecs, setData: setProjecs } = useData(nowurl + "/projects");
-  const { currentuser, setCurrentuser } = useUser();
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
 
@@ -68,19 +62,23 @@ export default function HomePage() {
   const [isSortDedline, setIsSortDedline] = useState(true);
   const [currentTasks, setCurrentTasks] = useState([]);
 
-  const token = localStorage.getItem("token");
+  // Получаем token из currentuser в MobX store для реактивности
+  const token =
+    CurrentUserStore.currentuser?.id ?? localStorage.getItem("token");
+
   useEffect(() => {
-    setCurrentTasks(tasks.filter((t) => t.assigneeId === Number(token)));
-  }, [tasks, token]);
+    token
+      ? setCurrentTasks(tasks.filter((t) => t.assigneeId === Number(token)))
+      : setCurrentTasks([]);
+  }, [tasks, CurrentUserStore.currentuser, token]);
+
   useEffect(() => {
-    if (projecs.filter((p) => p.assigned_to === Number(token))) {
-      setCurrentprojects(
-        projects.filter((p) => p.assigned_to === Number(token)),
-      );
-    } else {
-      setCurrentprojects([]);
-    }
-  }, [projects, currentuser]);
+    token
+      ? setCurrentprojects(
+          projects.filter((p) => p.assigned_to === Number(token)),
+        )
+      : setCurrentprojects([]);
+  }, [CurrentUserStore.currentuser, projects, token]);
 
   const progress = (id: number) => {
     return (
@@ -383,4 +381,5 @@ export default function HomePage() {
       </section>
     </div>
   );
-}
+});
+export default HomePage;
