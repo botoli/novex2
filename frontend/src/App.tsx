@@ -28,7 +28,6 @@ function App() {
           <RegistrationProvider>
             <div className="App">
               <Header />
-              <ReactQueryDevtools initialIsOpen={false} />
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/Projects" element={<ProjectsPage />} />

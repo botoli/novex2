@@ -24,11 +24,6 @@ const dataStroe = {
       })
       .catch((error) => {
         console.error("Ошибка получения данных:", error);
-      })
-      .finally(() => {
-        runInAction(() => {
-          this.isLoading = false;
-        });
       });
   },
 };

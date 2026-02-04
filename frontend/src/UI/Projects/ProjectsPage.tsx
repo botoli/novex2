@@ -23,13 +23,6 @@ const ProjectsPage = observer(() => {
   });
 
   const [isOpenAddProject, setIsOpenAddProject] = useState(false);
-  const [currentProjects, setCurrentProjects] = useState<any[]>(
-    dataStroe.projects,
-  );
-  const [filtered, setFiltered] = useState(() => {
-    const storedFiltered = localStorage.getItem("filtered");
-    return storedFiltered ? JSON.parse(storedFiltered) : currentProjects;
-  });
 
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
@@ -51,25 +44,19 @@ const ProjectsPage = observer(() => {
 
   function toogleUser(id: number) {}
 
-  useEffect(() => {
-    setCurrentProjects(
-      dataStroe.projects.filter((p) => p.assigned_to === Number(token)),
-    );
+  const currentProjects = useMemo(() => {
+    return dataStroe.projects.filter((p) => p.assigned_to === Number(token));
   }, [dataStroe.projects, token, CurrentUserStore.currentuser]);
 
-  useMemo(() => {
-    setActiveFilter(activeFilter);
-    setFiltered(
-      activeFilter === "All Projects"
-        ? currentProjects
-        : currentProjects.filter((p) => p.status === activeFilter),
-    );
+  const filtered = useMemo(() => {
+    return activeFilter === "All Projects"
+      ? currentProjects
+      : currentProjects.filter((p) => p.status === activeFilter);
   }, [activeFilter, currentProjects]);
 
   useEffect(() => {
     localStorage.setItem("activeFilter", activeFilter);
-    localStorage.setItem("filtered", JSON.stringify(filtered));
-  }, [activeFilter, currentProjects, dataStroe.projects]);
+  }, [activeFilter]);
 
   const progress = (id: number) => {
     return (
