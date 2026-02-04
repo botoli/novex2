@@ -6,16 +6,15 @@ import { useState } from "react";
 import { nowurl, useData } from "../../fetch/fetchTasks";
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../../Store/User.store";
+import dataStroe from "../../Store/Data";
 const Login = observer(() => {
   const { isOpenLogin, setIsOpenLogin } = useLogin();
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
 
-  const { data: users, setData: setUser } = useData(nowurl + "users");
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   function LoginValidate() {
-    const found = users.find(
+    const found = dataStroe.users.find(
       (user) => user.email === email && user.password === password,
     );
     if (found) {
@@ -70,6 +69,5 @@ const Login = observer(() => {
       </div>
     </div>
   );
-}
-)
-export default Login
+});
+export default Login;
