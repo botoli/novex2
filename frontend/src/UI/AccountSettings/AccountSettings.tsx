@@ -4,7 +4,7 @@ import { CloseIcon, LogoIcon, LogoutIcon } from "../Icons";
 import { nowurl, useData } from "../../fetch/fetchTasks";
 import { useUser } from "../../context/UserContext";
 export default function AccountSettings({ onclose }) {
-  const { data: users, setData: setUsers } = useData(nowurl + "/users");
+  const { data: users } = useData(nowurl + "users");
   const token = localStorage.getItem("token");
   const currentUser = users.find((user) => user.id === Number(token));
   const { currentuser, setCurrentuser } = useUser();

@@ -23,6 +23,7 @@ import { useRegistration } from "../../context/RegistrarionModal";
 import { useUser } from "../../context/UserContext";
 import { Link } from "react-router";
 import { CurrentUserStore } from "../../Store/User.store";
+import dataStroe from "../../Store/Data";
 
 const HomePage = observer(() => {
   const mockAI = [
@@ -43,13 +44,6 @@ const HomePage = observer(() => {
     },
   ];
 
-  const {
-    data: projects,
-    setData: setProjects,
-    loading: loadingProjects,
-  } = useData(nowurl + "/projects");
-  const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
-  const { data: projecs, setData: setProjecs } = useData(nowurl + "/projects");
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
 
@@ -62,31 +56,32 @@ const HomePage = observer(() => {
   const [isSortDedline, setIsSortDedline] = useState(true);
   const [currentTasks, setCurrentTasks] = useState([]);
 
-  // Получаем token из currentuser в MobX store для реактивности
   const token =
     CurrentUserStore.currentuser?.id ?? localStorage.getItem("token");
 
   useEffect(() => {
     token
-      ? setCurrentTasks(tasks.filter((t) => t.assigneeId === Number(token)))
+      ? setCurrentTasks(
+          dataStroe.tasks.filter((t) => t.assigneeId === Number(token)),
+        )
       : setCurrentTasks([]);
-  }, [tasks, CurrentUserStore.currentuser, token]);
+  }, [dataStroe.tasks, CurrentUserStore.currentuser, token]);
 
   useEffect(() => {
     token
       ? setCurrentprojects(
-          projects.filter((p) => p.assigned_to === Number(token)),
+          dataStroe.projects.filter((p) => p.assigned_to === Number(token)),
         )
       : setCurrentprojects([]);
-  }, [CurrentUserStore.currentuser, projects, token]);
+  }, [CurrentUserStore.currentuser, dataStroe.projects, token]);
 
   const progress = (id: number) => {
     return (
       Math.floor(
-        (tasks.filter(
+        (dataStroe.tasks.filter(
           (task) => task.projectId === id && task.status === "completed",
         ).length /
-          tasks.filter((task) => task.projectId === id).length) *
+          dataStroe.tasks.filter((task) => task.projectId === id).length) *
           100,
       ) || 0
     );
@@ -167,7 +162,7 @@ const HomePage = observer(() => {
         <div className={styles.tasksSection}>
           <h1 className={styles.sectionTitle}>Projects Focus</h1>
           <div className={styles.gridProjects}>
-            {loadingProjects ? (
+            {dataStroe.isLoading ? (
               <div className={styles.loading}>
                 <div className={styles.spinner}></div>
                 <p>Загрузка проектов...</p>
@@ -208,7 +203,7 @@ const HomePage = observer(() => {
                         </div>
                         <p>
                           {Math.floor(
-                            tasks.filter(
+                            dataStroe.tasks.filter(
                               (task) =>
                                 task.projectId === project.id &&
                                 task.status === "completed",
@@ -216,7 +211,7 @@ const HomePage = observer(() => {
                           )}
                           /
                           {Math.floor(
-                            tasks.filter(
+                            dataStroe.tasks.filter(
                               (task) => task.projectId === project.id,
                             ).length,
                           )}

@@ -17,21 +17,24 @@ import { useTheme } from "../../context/Theme.tsx";
 import { nowurl, useData } from "../../fetch/fetchTasks.tsx";
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../../Store/User.store.tsx";
+import dataStroe from "../../Store/Data.tsx";
 
 const Header = observer(() => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const { data: projects, setData: setProjects } = useData(
-    nowurl + "/projects",
-  );
-  const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
-  const { data: users, setData: setUser } = useData(nowurl + "/users");
-  const [currentProjects, setCurrentProjects] = useState<any[]>(projects);
+
+  const [currentProjects, setCurrentProjects] = useState<any[]>([]);
   const token = localStorage.getItem("token");
+
   useEffect(() => {
-    setCurrentProjects(projects.filter((p) => p.assigned_to === Number(token)));
-  }, [projects, token]);
-  const countOfProjects = currentProjects.length;
+    if (dataStroe.projects) {
+      setCurrentProjects(
+        dataStroe.projects.filter((p: any) => p.assigned_to === Number(token)),
+      );
+    }
+  }, [dataStroe.projects, token]);
+
+  const countOfProjects = currentProjects?.length ?? 0;
   const [tabs, setTabs] = useState(() => {
     const storedTabs = localStorage.getItem("tabs");
     return storedTabs ? JSON.parse(storedTabs) : Tabs;

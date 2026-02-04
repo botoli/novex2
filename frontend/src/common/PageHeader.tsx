@@ -15,18 +15,14 @@ import { useRegistration } from "../context/RegistrarionModal";
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../Store/User.store";
 const PageHeader = observer(() => {
-  const { data: projects, setData: setProjects } = useData(nowurl + "projects");
-  const { data: tasks, setData: setTasks } = useData(nowurl + "tasks");
-  const { data: users, setData: setUsres } = useData(nowurl + "users");
-
   const [isOpenProfile, setIsOpenProfile] = useState(false);
   const [isOpenAccountSettings, setIsOpenAccountSettings] = useState(false);
-  const [user, setUser] = useState()
+  const [user, setUser] = useState();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
 
   function Logout() {
-    CurrentUserStore.logOut()
+    CurrentUserStore.logOut();
   }
   return (
     <div>
@@ -80,7 +76,9 @@ const PageHeader = observer(() => {
                     {CurrentUserStore.currentuser.name.charAt(0).toUpperCase()}
                   </div>
                   <div className={styles.accountDetails}>
-                    <p className={styles.accountName}>{CurrentUserStore.currentuser.name}</p>
+                    <p className={styles.accountName}>
+                      {CurrentUserStore.currentuser.name}
+                    </p>
                     <p className={styles.accountRole}></p>
                   </div>
                 </div>
@@ -98,11 +96,11 @@ const PageHeader = observer(() => {
                     </button>
                     <p>Account settings</p>
                   </div>
-                  <div className={styles.btnProfile}>
+                  <div className={styles.btnProfile} onClick={() => Logout()}>
                     <button className={styles.logOut}>
                       <LogoutIcon />
                     </button>
-                    <p onClick={() => Logout()}>Log out</p>
+                    <p>Log out</p>
                   </div>
                 </div>
               )}
@@ -112,5 +110,5 @@ const PageHeader = observer(() => {
       </section>
     </div>
   );
-})
-export default PageHeader
+});
+export default PageHeader;

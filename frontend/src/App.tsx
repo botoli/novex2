@@ -13,8 +13,14 @@ import Login from "./common/Login/Login.tsx";
 import { LoginProvider, useLogin } from "./context/Modal.tsx";
 import { RegistrationProvider } from "./context/RegistrarionModal.tsx";
 import { UserProvider } from "./context/UserContext.tsx";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { useEffect } from "react";
+import dataStroe from "./Store/Data.tsx";
 
 function App() {
+  useEffect(() => {
+    dataStroe.FetchALl();
+  }, []);
   return (
     <ThemeProvider>
       <UserProvider>
@@ -22,6 +28,7 @@ function App() {
           <RegistrationProvider>
             <div className="App">
               <Header />
+              <ReactQueryDevtools initialIsOpen={false} />
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/Projects" element={<ProjectsPage />} />

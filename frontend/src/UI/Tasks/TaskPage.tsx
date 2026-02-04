@@ -9,11 +9,9 @@ import Registration from "../../common/Registration/Registration";
 import Login from "../../common/Login/Login";
 
 export default function TaskPage() {
-  const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
-  const { data: projects, setData: setProjects } = useData(
-    nowurl + "/projects",
-  );
-  const { data: users, setData: setUsers } = useData(nowurl + "/users");
+  const { data: tasks } = useData(nowurl + "/tasks");
+  const { data: projects } = useData(nowurl + "/projects");
+  const { data: users } = useData(nowurl + "/users");
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
   const [activeFiltertask, setActiveFiltertask] = useState<string>(() => {
@@ -22,6 +20,7 @@ export default function TaskPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Due Date");
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortedTasks, setSortedTasks] = useState(tasks);
   const [isUp, setIsUp] = useState(false);
   const token = localStorage.getItem("token");
   const currentUserId = users.filter((usr) => usr.assigneeId === 0).length; // Assuming current user ID is 0
@@ -39,7 +38,7 @@ export default function TaskPage() {
     localStorage.setItem("activeFiltertask", activeFiltertask);
   }, [activeFiltertask]);
   function SortBy() {
-    setTasks(
+    setSortedTasks(
       isUp
         ? tasks.sort((a, b) => a.priorityId - b.priorityId)
         : tasks.sort((a, b) => b.priorityId - a.priorityId),

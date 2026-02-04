@@ -16,17 +16,16 @@ import Login from "../../common/Login/Login";
 import Registration from "../../common/Registration/Registration";
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../../Store/User.store";
+import dataStroe from "../../Store/Data";
 const ProjectsPage = observer(() => {
   const [activeFilter, setActiveFilter] = useState(() => {
     return localStorage.getItem("activeFilter") || "All Projects";
   });
-  const { data: tasks, setData: setTasks } = useData(nowurl + "/tasks");
-  const { data: projects, setData: setProjects } = useData(
-    nowurl + "/projects",
-  );
-  const { data: users, setData: setUsres } = useData(nowurl + "/users");
+
   const [isOpenAddProject, setIsOpenAddProject] = useState(false);
-  const [currentProjects, setCurrentProjects] = useState<any[]>(projects);
+  const [currentProjects, setCurrentProjects] = useState<any[]>(
+    dataStroe.projects,
+  );
   const [filtered, setFiltered] = useState(() => {
     const storedFiltered = localStorage.getItem("filtered");
     return storedFiltered ? JSON.parse(storedFiltered) : currentProjects;
@@ -53,8 +52,10 @@ const ProjectsPage = observer(() => {
   function toogleUser(id: number) {}
 
   useEffect(() => {
-    setCurrentProjects(projects.filter((p) => p.assigned_to === Number(token)));
-  }, [projects, token, CurrentUserStore.currentuser]);
+    setCurrentProjects(
+      dataStroe.projects.filter((p) => p.assigned_to === Number(token)),
+    );
+  }, [dataStroe.projects, token, CurrentUserStore.currentuser]);
 
   useMemo(() => {
     setActiveFilter(activeFilter);
@@ -68,15 +69,15 @@ const ProjectsPage = observer(() => {
   useEffect(() => {
     localStorage.setItem("activeFilter", activeFilter);
     localStorage.setItem("filtered", JSON.stringify(filtered));
-  }, [activeFilter, currentProjects, projects]);
+  }, [activeFilter, currentProjects, dataStroe.projects]);
 
   const progress = (id: number) => {
     return (
       Math.floor(
-        (tasks.filter(
+        (dataStroe.tasks.filter(
           (task) => task.projectId === id && task.status === "completed",
         ).length /
-          tasks.filter((task) => task.projectId === id).length) *
+          dataStroe.tasks.filter((task) => task.projectId === id).length) *
           100,
       ) || 0
     );
@@ -84,22 +85,25 @@ const ProjectsPage = observer(() => {
 
   function SetStatistikActive(id: number) {
     return Math.floor(
-      tasks.filter((task) => task.projectId === id && task.status === "active")
-        .length,
+      dataStroe.tasks.filter(
+        (task) => task.projectId === id && task.status === "active",
+      ).length,
     );
   }
 
   function SetStatistikBlocked(id: number) {
     return Math.floor(
-      tasks.filter((task) => task.projectId === id && task.status === "blocked")
-        .length,
+      dataStroe.tasks.filter(
+        (task) => task.projectId === id && task.status === "blocked",
+      ).length,
     );
   }
 
   function SetStatistikOverdue(id: number) {
     return Math.floor(
-      tasks.filter((task) => task.projectId === id && task.status === "overdue")
-        .length,
+      dataStroe.tasks.filter(
+        (task) => task.projectId === id && task.status === "overdue",
+      ).length,
     );
   }
 
@@ -146,7 +150,7 @@ const ProjectsPage = observer(() => {
                   isOpenasignedTo ? styles.openAsigned : styles.closedAsigned
                 }
               >
-                {users.map((u) => (
+                {dataStroe.users.map((u) => (
                   <div onClick={() => toogleUser(u.id)}>
                     {u.name} {u.id}
                   </div>
@@ -231,7 +235,7 @@ const ProjectsPage = observer(() => {
                         </div>
                         <p>
                           {Math.floor(
-                            tasks.filter(
+                            dataStroe.tasks.filter(
                               (task) =>
                                 task.projectId === project.id &&
                                 task.status === "completed",
@@ -239,7 +243,7 @@ const ProjectsPage = observer(() => {
                           )}
                           /
                           {Math.floor(
-                            tasks.filter(
+                            dataStroe.tasks.filter(
                               (task) => task.projectId === project.id,
                             ).length,
                           )}
