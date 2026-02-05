@@ -1,0 +1,262 @@
+@use "../../UI/Styles/Variables.scss" as *;
+
+// --- Overlay ---
+.blur {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  background-color: var(--dracula-shadow-dark);
+}
+
+// --- Modal ---
+.AddProjectModal {
+  background-color: var(--dracula-background);
+  border: 1px solid var(--dracula-selection);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 2rem 1.75rem;
+  max-width: 440px;
+  width: 100%;
+  position: relative;
+
+  @media (max-width: 480px) {
+    padding: 1.25rem 1rem;
+    max-width: 95vw;
+  }
+
+  // Close button
+  & > div:first-child {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      fill: var(--dracula-comment);
+      width: 100%;
+      height: 100%;
+      transition: fill 0.15s ease;
+
+      &:hover {
+        fill: var(--dracula-red);
+      }
+    }
+  }
+
+  // Form body
+  & > div:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+}
+
+.closedAddProjectModal {
+  display: none;
+}
+
+// --- Inputs ---
+.input {
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9rem;
+  background-color: var(--dracula-current-line);
+  border: 1px solid var(--dracula-selection);
+  border-radius: 6px;
+  color: var(--dracula-foreground);
+  transition: border-color 0.15s ease;
+  width: 100%;
+
+  &::placeholder {
+    color: var(--dracula-comment);
+    font-size: 0.85rem;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--dracula-purple);
+  }
+
+  &:hover:not(:focus) {
+    border-color: var(--dracula-purple-rgba-03);
+  }
+}
+
+// --- Select-like fields ---
+.status,
+.priority,
+.assigned_to {
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9rem;
+  background-color: var(--dracula-current-line);
+  border: 1px solid var(--dracula-selection);
+  border-radius: 6px;
+  color: var(--dracula-comment);
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.15s ease;
+  user-select: none;
+
+  &:hover {
+    border-color: var(--dracula-purple-rgba-03);
+  }
+}
+
+.assigned_to {
+  position: relative;
+}
+
+// --- Dropdown ---
+.openAssigned,
+.closedAssigned {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background-color: var(--dracula-current-line);
+  border: 1px solid var(--dracula-selection);
+  border-radius: 6px;
+  z-index: 10;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.openAssigned {
+  display: block;
+}
+
+.closedAssigned {
+  display: none;
+}
+
+.openAssigned > div {
+  padding: 0.5rem 0.875rem;
+  font-size: 0.85rem;
+  color: var(--dracula-foreground);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+
+  &:hover {
+    background-color: var(--dracula-selection);
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--dracula-selection);
+  }
+}
+
+// --- Active / selected state ---
+.active {
+  background-color: var(--dracula-selection);
+}
+
+// --- Assigned users chips ---
+.activeUser {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+
+  .user {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background-color: var(--dracula-purple-rgba-02);
+    color: var(--dracula-foreground);
+    font-size: 0.8rem;
+
+    p {
+      margin: 0;
+    }
+
+    div {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+
+      svg {
+        width: 12px;
+        height: 12px;
+        fill: var(--dracula-comment);
+        transition: fill 0.12s ease;
+
+        &:hover {
+          fill: var(--dracula-red);
+        }
+      }
+    }
+  }
+}
+
+// --- Tags row ---
+.addTags {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  .input {
+    flex: 1;
+    margin: 0;
+  }
+}
+
+.addTagsBtn {
+  padding: 0.625rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background-color: var(--dracula-current-line);
+  color: var(--dracula-foreground);
+  border: 1px solid var(--dracula-selection);
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+
+  p {
+    margin: 0;
+  }
+
+  &:hover {
+    background-color: var(--dracula-selection);
+    border-color: var(--dracula-purple-rgba-03);
+  }
+}
+
+// --- Submit button ---
+.addNewProject {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background-color: var(--dracula-purple);
+  color: var(--dracula-foreground);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: var(--dracula-indigo);
+  }
+
+  &:active {
+    background-color: var(--dracula-purple);
+  }
+}

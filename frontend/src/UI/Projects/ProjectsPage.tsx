@@ -17,20 +17,16 @@ import Registration from "../../common/Registration/Registration";
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../../Store/User.store";
 import dataStroe from "../../Store/Data";
+import AddProjectModal from "../../common/AddProject/AddProject.Modal";
+import projectsStore from "../../Store/Projects.store";
 const ProjectsPage = observer(() => {
   const [activeFilter, setActiveFilter] = useState(() => {
     return localStorage.getItem("activeFilter") || "All Projects";
   });
 
-  const [isOpenAddProject, setIsOpenAddProject] = useState(false);
-
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
-  const [isOpenasignedTo, setisOpenasignedTo] = useState(false);
-  const [tagas, setTags] = useState<string>("");
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [selectedId, setSelectedId] = useState([]);
+
   const btns = [
     { name: "All Projects" },
     { name: "Active" },
@@ -41,8 +37,6 @@ const ProjectsPage = observer(() => {
 
   const token =
     CurrentUserStore.currentuser?.id ?? localStorage.getItem("token");
-
-  function toogleUser(id: number) {}
 
   const currentProjects = useMemo(() => {
     return dataStroe.projects.filter((p) => p.assigned_to === Number(token));
@@ -99,72 +93,8 @@ const ProjectsPage = observer(() => {
       <PageHeader />
       {isOpenLogin ? <Login /> : null}
       {isOpenRegistration ? <Registration /> : null}
-      <div className={isOpenAddProject && styles.blur}>
-        <div
-          className={
-            isOpenAddProject
-              ? styles.AddProjectModal
-              : styles.closedAddProjectModal
-          }
-        >
-          <div onClick={() => setIsOpenAddProject(!isOpenAddProject)}>
-            <CloseIcon />
-          </div>
-          <div>
-            <input
-              className={styles.input}
-              type="text"
-              placeholder="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <input
-              className={styles.input}
-              type="text"
-              placeholder="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-            <div className={styles.status}>Status</div>
-            <div className={styles.priority}>Priority</div>
-            <div
-              className={styles.assigned_to}
-              onClick={() => setisOpenasignedTo(!isOpenasignedTo)}
-            >
-              Assigned to
-              <div
-                className={
-                  isOpenasignedTo ? styles.openAsigned : styles.closedAsigned
-                }
-              >
-                {dataStroe.users.map((u) => (
-                  <div onClick={() => toogleUser(u.id)}>
-                    {u.name} {u.id}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className={styles.activeUser}>
-              {selectedId.map((user) => (
-                <div className={styles.user}>
-                  <p>{user}</p>{" "}
-                  <div onClick={() => toogleUser(user)}>
-                    <CloseIcon />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <input
-              className={styles.input}
-              type="text"
-              placeholder="tags"
-              value={tagas}
-              onChange={(e) => setTags(e.target.value)}
-            />
-          </div>
-          <button className={styles.addNewProject}>Create Project</button>
-        </div>
-      </div>
+      {<AddProjectModal />}
+
       <section className={styles.dashboard}>
         <h1>Projects</h1>
         <div className={styles.headerProjects}>
@@ -189,7 +119,7 @@ const ProjectsPage = observer(() => {
           <div className={styles.addProject}>
             <button
               className={styles.addbtn}
-              onClick={() => setIsOpenAddProject(!isOpenAddProject)}
+              onClick={() => projectsStore.changeIsOpen()}
             >
               Add new project
             </button>
