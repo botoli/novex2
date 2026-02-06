@@ -59,7 +59,7 @@ const ProjectsPage = observer(() => {
           (task) => task.projectId === id && task.status === "completed",
         ).length /
           dataStroe.tasks.filter((task) => task.projectId === id).length) *
-          100,
+        100,
       ) || 0
     );
   };
@@ -101,9 +101,9 @@ const ProjectsPage = observer(() => {
           <div className={styles.filterall}>
             {btns?.map((btn) => (
               <button
-                className={`${styles.Allprojetcs} ${
-                  activeFilter === btn.name ? styles.active : ""
-                }`}
+                key={btn.name}
+                className={`${styles.Allprojetcs} ${activeFilter === btn.name ? styles.active : ""
+                  }`}
                 onClick={() => setActiveFilter(btn.name)}
               >
                 <p>{btn.name}</p>
@@ -111,7 +111,7 @@ const ProjectsPage = observer(() => {
                   {btn.name === "All Projects"
                     ? currentProjects.length
                     : currentProjects.filter((p) => p.status === btn.name)
-                        .length}
+                      .length}
                 </p>
               </button>
             ))}

@@ -7,11 +7,10 @@ import { useLogin } from "../../context/Modal";
 import { useRegistration } from "../../context/RegistrarionModal";
 import Registration from "../../common/Registration/Registration";
 import Login from "../../common/Login/Login";
+import { observer } from "mobx-react-lite";
+import dataStroe from "../../Store/Data";
 
-export default function TaskPage() {
-  const { data: tasks } = useData(nowurl + "/tasks");
-  const { data: projects } = useData(nowurl + "/projects");
-  const { data: users } = useData(nowurl + "/users");
+const TaskPage = observer(() => {
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
   const [activeFiltertask, setActiveFiltertask] = useState<string>(() => {
@@ -20,11 +19,10 @@ export default function TaskPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Due Date");
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortedTasks, setSortedTasks] = useState(tasks);
+  const [sortedTasks, setSortedTasks] = useState(dataStroe.tasks);
   const [isUp, setIsUp] = useState(false);
   const token = localStorage.getItem("token");
-  const currentUserId = users.filter((usr) => usr.assigneeId === 0).length; // Assuming current user ID is 0
-  console.log(currentUserId);
+
   const btns = [
     { name: "All Tasks" },
     { name: "My Tasks" },
@@ -40,8 +38,8 @@ export default function TaskPage() {
   function SortBy() {
     setSortedTasks(
       isUp
-        ? tasks.sort((a, b) => a.priorityId - b.priorityId)
-        : tasks.sort((a, b) => b.priorityId - a.priorityId),
+        ? dataStroe.tasks.sort((a, b) => a.priorityId - b.priorityId)
+        : dataStroe.tasks.sort((a, b) => b.priorityId - a.priorityId),
     );
   }
   useEffect(() => {
@@ -49,22 +47,22 @@ export default function TaskPage() {
   }, [isUp]);
   const filteredTasks = useMemo(() => {
     if (activeFiltertask === "All Tasks") {
-      return tasks;
+      return dataStroe.tasks;
     }
     if (activeFiltertask === "My Tasks") {
-      return tasks.filter((task) => task.assigneeId === Number(token));
+      return dataStroe.tasks.filter((task) => task.assigneeId === Number(token));
     }
-    return tasks.filter(
+    return dataStroe.tasks.filter(
       (task) => task.status === activeFiltertask.toLowerCase(),
     );
-  }, [tasks, activeFiltertask, currentUserId]);
+  }, [dataStroe.tasks, activeFiltertask]);
   const getProjectName = (projectId: number) => {
-    const project = projects.find((p) => p.id === projectId);
+    const project = dataStroe.projects.find((p) => p.id === projectId);
     return project ? project.title : "Unknown";
   };
 
   const getAssigneeName = (assigneeId: number) => {
-    const user = users.find((u) => u.id === assigneeId);
+    const user = dataStroe.users.find((u) => u.id === assigneeId);
     return user ? user.name : null;
   };
 
@@ -95,7 +93,7 @@ export default function TaskPage() {
         return "";
     }
   };
-  function setTasksfilter(name) {}
+  function setTasksfilter(name) { }
   return (
     <div className={styles.TaskContainer}>
       <PageHeader />
@@ -114,17 +112,17 @@ export default function TaskPage() {
                 <p>{btn.name}</p>
                 <p className={styles.countTasks}>
                   {btn.name === "All Tasks"
-                    ? tasks.length
+                    ? dataStroe.tasks.length
                     : btn.name === "My Tasks"
-                      ? tasks.filter(
-                          (task) => task.assigneeId === currentUserId,
-                        ).length
+                      ? dataStroe.tasks.filter(
+                        (task) => task.assigneeId === Number(token),
+                      ).length
                       : btn.name === "Complete"
-                        ? tasks.filter((task) => task.status === "completed")
-                            .length
-                        : tasks.filter(
-                            (task) => task.status === btn.name.toLowerCase(),
-                          ).length}
+                        ? dataStroe.tasks.filter((task) => task.status === "completed")
+                          .length
+                        : dataStroe.tasks.filter(
+                          (task) => task.status === btn.name.toLowerCase(),
+                        ).length}
                 </p>
               </button>
             ))}
@@ -133,7 +131,7 @@ export default function TaskPage() {
 
         <div className={styles.tasksControls}>
           <div className={styles.tasksInfo}>
-            <span className={styles.totalTasks}>Total: {tasks.length}</span>
+            <span className={styles.totalTasks}>Total: {dataStroe.tasks.length}</span>
             <div className={styles.sortContainer}>
               <span className={styles.sortLabel}>Sort By:</span>
               <select
@@ -256,4 +254,5 @@ export default function TaskPage() {
       </section>
     </div>
   );
-}
+})
+export default TaskPage;

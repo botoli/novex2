@@ -14,13 +14,11 @@ import {
 } from "../Icons";
 
 import AccountSettings from "../AccountSettings/AccountSettings";
-import { nowurl, useData } from "../../fetch/fetchTasks";
 import PageHeader from "../../common/PageHeader";
 import Login from "../../common/Login/Login";
 import { useLogin } from "../../context/Modal";
 import Registration from "../../common/Registration/Registration";
 import { useRegistration } from "../../context/RegistrarionModal";
-import { useUser } from "../../context/UserContext";
 import { Link } from "react-router";
 import { CurrentUserStore } from "../../Store/User.store";
 import dataStroe from "../../Store/Data";
@@ -62,16 +60,16 @@ const HomePage = observer(() => {
   useEffect(() => {
     token
       ? setCurrentTasks(
-          dataStroe.tasks.filter((t) => t.assigneeId === Number(token)),
-        )
+        dataStroe.tasks.filter((t) => t.assigneeId === Number(token)),
+      )
       : setCurrentTasks([]);
   }, [dataStroe.tasks, CurrentUserStore.currentuser, token]);
 
   useEffect(() => {
     token
       ? setCurrentprojects(
-          dataStroe.projects.filter((p) => p.assigned_to === Number(token)),
-        )
+        dataStroe.projects.filter((p) => p.assigned_to === Number(token)),
+      )
       : setCurrentprojects([]);
   }, [CurrentUserStore.currentuser, dataStroe.projects, token]);
 
@@ -82,7 +80,7 @@ const HomePage = observer(() => {
           (task) => task.projectId === id && task.status === "completed",
         ).length /
           dataStroe.tasks.filter((task) => task.projectId === id).length) *
-          100,
+        100,
       ) || 0
     );
   };
