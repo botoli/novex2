@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import projectsStore from "../../Store/Projects.store";
 import dataStroe from "../../Store/Data";
 import styles from "./AddProject.module.scss";
@@ -98,7 +98,7 @@ const AddProjectModal = observer(() => {
             >
               {dataStroe.users.map((u) => (
                 <div onClick={() => form.toogleUser(u.id, u.name)} key={u.id}>
-                  {u.name} {u.id}
+                  {u.name}
                 </div>
               ))}
             </div>

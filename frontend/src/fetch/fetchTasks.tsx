@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useState } from "react";
 const API_URL = "/api/";
 export const nowurl = API_URL;
 export function useData(url: string) {
