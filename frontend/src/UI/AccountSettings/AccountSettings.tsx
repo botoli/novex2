@@ -3,25 +3,25 @@ import styles from "./AccountSettings.module.scss";
 import { CloseIcon, LogoIcon, LogoutIcon } from "../Icons";
 import { nowurl, useData } from "../../fetch/fetchTasks";
 import { useUser } from "../../context/UserContext";
-export default function AccountSettings({ onclose }) {
+import { observer } from "mobx-react-lite";
+import projectsStore from "../../Store/Projects.store";
+import { CurrentUserStore } from "../../Store/User.store";
+const AccountSettings = observer(() => {
   const { data: users } = useData(nowurl + "users");
   const token = localStorage.getItem("token");
   const currentUser = users.find((user) => user.id === Number(token));
   const { currentuser, setCurrentuser } = useUser();
 
   function Logout() {
-    localStorage.removeItem("currentuser");
-    localStorage.removeItem("token");
-
-    setCurrentuser(null);
+    CurrentUserStore.logOut();
   }
   return (
     <div>
-      <div className={styles.overlay} onClick={onclose}></div>
+      <div className={styles.overlay} onClick={() => projectsStore.changeIsOpenSettings()}></div>
       <div className={styles.allAccountSettings}>
-        <div className={styles.header} onClick={onclose}>
+        <div className={styles.header} onClick={() => projectsStore.changeIsOpenSettings()}>
           <h1>Account Settings</h1>
-          <div className={styles.icon}>
+          <div className={styles.icon} onClick={() => projectsStore.changeIsOpenSettings()}>
             <CloseIcon />
           </div>
         </div>
@@ -74,6 +74,7 @@ export default function AccountSettings({ onclose }) {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
-}
+})
+export default AccountSettings

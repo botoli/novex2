@@ -14,9 +14,11 @@ import { useRegistration } from "../context/RegistrarionModal";
 
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../Store/User.store";
+import projectsStore from "../Store/Projects.store";
+
 const PageHeader = observer(() => {
   const [isOpenProfile, setIsOpenProfile] = useState(false);
-  const [isOpenAccountSettings, setIsOpenAccountSettings] = useState(false);
+
   const [user, setUser] = useState();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
@@ -24,14 +26,11 @@ const PageHeader = observer(() => {
   function Logout() {
     CurrentUserStore.logOut();
   }
+
   return (
     <div>
-      <div className={styles.AccountSettingsModal}>
-        {isOpenAccountSettings && (
-          <AccountSettings
-            onclose={() => setIsOpenAccountSettings(!isOpenAccountSettings)}
-          />
-        )}
+      <div className={styles.AccountSettingsModal} onClick={() => projectsStore.changeIsOpenSettings()}>
+        {projectsStore.IsOpenSettings ? <AccountSettings /> : null}
       </div>
 
       <section className={styles.pageHeader}>
@@ -87,9 +86,7 @@ const PageHeader = observer(() => {
                 <div className={styles.modalProfile}>
                   <div
                     className={styles.btnProfile}
-                    onClick={() =>
-                      setIsOpenAccountSettings(!isOpenAccountSettings)
-                    }
+                    onClick={() => projectsStore.changeIsOpenSettings()}
                   >
                     <button className={styles.settings}>
                       <SettingsIcon />

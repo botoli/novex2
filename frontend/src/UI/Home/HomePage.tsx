@@ -144,9 +144,7 @@ const HomePage = observer(() => {
     <div className={styles.homeContainer}>
       <div className={styles.AccountSettingsModal}>
         {isOpenAccountSettings && (
-          <AccountSettings
-            onclose={() => setIsOpenAccountSettings(!isOpenAccountSettings)}
-          />
+          <AccountSettings />
         )}
       </div>
       <PageHeader />
