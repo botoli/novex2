@@ -7,6 +7,7 @@ import { nowurl, useData } from "../../fetch/fetchTasks";
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../../Store/User.store";
 import dataStroe from "../../Store/Data";
+import { Link } from "react-router-dom";
 const Login = observer(() => {
   const { isOpenLogin, setIsOpenLogin } = useLogin();
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
@@ -46,15 +47,18 @@ const Login = observer(() => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <button
-          className={styles.Login}
-          onClick={() => {
-            LoginValidate();
-            setIsOpenLogin(false);
-          }}
-        >
-          Sign In
-        </button>
+        <Link to="/home">
+          <button
+            className={styles.Login}
+            onClick={() => {
+              LoginValidate();
+              setIsOpenLogin(false);
+            }}
+          >
+            Sign In
+          </button>
+        </Link>
+
         <div className={styles.Signup}>
           Don't have an account?{" "}
           <span

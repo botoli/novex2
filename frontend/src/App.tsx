@@ -16,8 +16,11 @@ import { UserProvider } from "./context/UserContext.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useEffect } from "react";
 import dataStroe from "./Store/Data.tsx";
+import StartPage from "./UI/Start/StartPage.tsx";
+import { observer } from "mobx-react-lite";
+import { CurrentUserStore } from "./Store/User.store.tsx";
 
-function App() {
+const App = observer(() => {
   useEffect(() => {
     dataStroe.FetchALl();
   }, []);
@@ -27,9 +30,14 @@ function App() {
         <LoginProvider>
           <RegistrationProvider>
             <div className="App">
-              <Header />
+              {CurrentUserStore.currentuser ||
+              window.location.pathname !== "/" ? (
+                <Header />
+              ) : (
+                <StartPage />
+              )}
               <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/Home" element={<Home />} />
                 <Route path="/Projects" element={<ProjectsPage />} />
                 <Route path="/Tasks" element={<TaskPage />} />
                 <Route path="/Code" element={<UnderConstruction />} />
@@ -42,6 +50,6 @@ function App() {
       </UserProvider>
     </ThemeProvider>
   );
-}
+});
 
 export default App;

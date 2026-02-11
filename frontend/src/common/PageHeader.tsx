@@ -15,6 +15,7 @@ import { useRegistration } from "../context/RegistrarionModal";
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../Store/User.store";
 import projectsStore from "../Store/Projects.store";
+import { Link } from "react-router-dom";
 
 const PageHeader = observer(() => {
   const [isOpenProfile, setIsOpenProfile] = useState(false);
@@ -29,7 +30,10 @@ const PageHeader = observer(() => {
 
   return (
     <div>
-      <div className={styles.AccountSettingsModal} onClick={() => projectsStore.changeIsOpenSettings()}>
+      <div
+        className={styles.AccountSettingsModal}
+        onClick={() => projectsStore.changeIsOpenSettings()}
+      >
         {projectsStore.IsOpenSettings ? <AccountSettings /> : null}
       </div>
 
@@ -93,12 +97,14 @@ const PageHeader = observer(() => {
                     </button>
                     <p>Account settings</p>
                   </div>
-                  <div className={styles.btnProfile} onClick={() => Logout()}>
-                    <button className={styles.logOut}>
-                      <LogoutIcon />
-                    </button>
-                    <p>Log out</p>
-                  </div>
+                  <Link to={"/"}>
+                    <div className={styles.btnProfile} onClick={() => Logout()}>
+                      <button className={styles.logOut}>
+                        <LogoutIcon />
+                      </button>
+                      <p>Log out</p>
+                    </div>
+                  </Link>
                 </div>
               )}
             </div>

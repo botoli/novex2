@@ -129,11 +129,9 @@ const Header = observer(() => {
 
         <div className={styles.Tabs}>
           {tabs?.map((tab) => {
-            const tabPath =
-              tab.name === "Home" ? "/" : `/${tab.name.toLowerCase()}`;
+            const tabPath = `/${tab.name.toLowerCase()}`;
             const isActive =
-              currentPath === tabPath ||
-              (tabPath !== "/" && currentPath.startsWith(tabPath + "/"));
+              currentPath === tabPath || currentPath.startsWith(tabPath + "/");
 
             return (
               <Link key={tab.id} to={tabPath}>
