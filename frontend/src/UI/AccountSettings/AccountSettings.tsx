@@ -6,6 +6,7 @@ import { useUser } from "../../context/UserContext";
 import { observer } from "mobx-react-lite";
 import projectsStore from "../../Store/Projects.store";
 import { CurrentUserStore } from "../../Store/User.store";
+import { Link } from "react-router-dom";
 const AccountSettings = observer(() => {
   const { data: users } = useData(nowurl + "users");
   const token = localStorage.getItem("token");
@@ -17,11 +18,20 @@ const AccountSettings = observer(() => {
   }
   return (
     <div>
-      <div className={styles.overlay} onClick={() => projectsStore.changeIsOpenSettings()}></div>
+      <div
+        className={styles.overlay}
+        onClick={() => projectsStore.changeIsOpenSettings()}
+      ></div>
       <div className={styles.allAccountSettings}>
-        <div className={styles.header} onClick={() => projectsStore.changeIsOpenSettings()}>
+        <div
+          className={styles.header}
+          onClick={() => projectsStore.changeIsOpenSettings()}
+        >
           <h1>Account Settings</h1>
-          <div className={styles.icon} onClick={() => projectsStore.changeIsOpenSettings()}>
+          <div
+            className={styles.icon}
+            onClick={() => projectsStore.changeIsOpenSettings()}
+          >
             <CloseIcon />
           </div>
         </div>
@@ -59,9 +69,11 @@ const AccountSettings = observer(() => {
             </div>
             <div className={styles.logOut}>
               <p>Log out</p>
-              <button className={styles.logOutBtn} onClick={() => Logout()}>
-                <p>Log out</p>
-              </button>
+              <Link to="/home">
+                <button className={styles.logOutBtn} onClick={() => Logout()}>
+                  <p>Log out</p>
+                </button>
+              </Link>
             </div>
 
             {currentUser?.name === "Test User" ? null : (
@@ -74,7 +86,7 @@ const AccountSettings = observer(() => {
           </div>
         )}
       </div>
-    </div >
+    </div>
   );
-})
-export default AccountSettings
+});
+export default AccountSettings;

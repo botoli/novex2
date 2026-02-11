@@ -6,6 +6,7 @@ import axios from "axios";
 import { nowurl } from "../../fetch/fetchTasks";
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../../Store/User.store";
+import { Link } from "react-router-dom";
 
 // filepath: /workspaces/novex2/novex2/frontend/src/UI/Form/Registration/Registration.tsx
 
@@ -89,15 +90,22 @@ const Registration = observer(() => {
           />
         </div>
         <div className={styles.buttons}>
-          <button className={styles.register} onClick={handleRegistration}>
-            Sign Up
-          </button>
-          <button className={styles.testUser} onClick={() => handleTestUser()}>
-            Test User
-          </button>
+          <Link to="/home">
+            <button className={styles.register} onClick={handleRegistration}>
+              Sign Up
+            </button>
+          </Link>
+          <Link to="/home">
+            <button
+              className={styles.testUser}
+              onClick={() => handleTestUser()}
+            >
+              Test User
+            </button>
+          </Link>
         </div>
       </div>
     </div>
   );
-})
-export default Registration
+});
+export default Registration;
