@@ -4,15 +4,13 @@
   min-height: 100vh;
   background-color: $dracula-background;
   color: $dracula-foreground;
-  padding-left: 250px; // Отступ для сайдбара
+  padding-left: 250px;
   margin: 0;
   padding-top: 0;
   padding-bottom: 0;
   box-sizing: border-box;
   width: 100%;
   position: relative;
-
-  @media (max-width: 1400px) {}
 
   @media (max-width: 1024px) {
     padding-left: 0;
@@ -25,14 +23,13 @@
   align-items: center;
   padding: 20px;
   background: var(--dracula-background);
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
 }
 
 .errorDiv {
   background: var(--dracula-current-line);
   border-radius: 12px;
   padding: 24px 32px;
-
   width: 100%;
   border: 1px solid var(--dracula-selection);
   box-shadow: 0 4px 12px var(--dracula-shadow-dark);
@@ -66,53 +63,6 @@
   }
 }
 
-// Кнопка повтора
-.retryButton {
-  margin-top: 20px;
-  padding: 8px 20px;
-  background: var(--dracula-selection);
-  color: var(--dracula-foreground);
-  border: 1px solid var(--dracula-comment);
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-  transition: none;
-
-  &:hover {
-    background: var(--dracula-purple-rgba-02);
-    border-color: var(--dracula-purple);
-  }
-
-  &:active {
-    background: var(--dracula-purple-rgba-03);
-  }
-}
-
-// Компактный режим для мобильных
-@media (max-width: 640px) {
-  .errorCont {
-    padding: 16px;
-  }
-
-  .errorDiv {
-    padding: 20px 24px;
-  }
-
-  .ErrorTitle {
-    &:first-of-type {
-      font-size: 18px;
-    }
-
-    &:last-of-type {
-      font-size: 14px;
-      padding: 10px;
-    }
-  }
-}
-
-// Опционально: добавить кнопку повтора
 .retryButton {
   margin-top: 32px;
   padding: 14px 32px;
@@ -142,6 +92,31 @@
     transform: translateY(0);
   }
 }
+
+@media (max-width: 640px) {
+  .errorCont {
+    padding: 16px;
+  }
+
+  .errorDiv {
+    padding: 20px 24px;
+  }
+
+  .ErrorTitle {
+    &:first-of-type {
+      font-size: 18px;
+    }
+
+    &:last-of-type {
+      font-size: 14px;
+      padding: 10px;
+    }
+  }
+}
+
+// ============================================
+// EMPTY STATE (NO PROJECTS)
+// ============================================
 
 .noProjects {
   display: flex;
@@ -201,6 +176,10 @@
   }
 }
 
+// ============================================
+// LOADING STATE
+// ============================================
+
 .loading {
   display: flex;
   flex-direction: column;
@@ -234,1219 +213,9 @@
   }
 }
 
-.pageHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 30px;
-  background-color: $dracula-current-line;
-  border-bottom: 1px solid $dracula-selection;
-  gap: 20px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  margin: 0;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-
-  @media (min-width: 1400px) {
-    padding-left: 30px;
-    padding-right: 30px;
-    left: 250px;
-  }
-
-  @media (max-width: 1400px) {
-    padding-left: 30px;
-    padding-right: 30px;
-    left: 200px;
-  }
-
-  @media (max-width: 1024px) {
-    padding: 15px 20px;
-    padding-left: 70px; // Отступ для бургер-кнопки
-    z-index: 998; // Ниже бургер-кнопки
-    gap: 15px;
-    width: 100%;
-    margin-left: 0;
-  }
-
-  @media (max-width: 768px) {
-    padding: 12px 15px;
-    padding-left: 64px;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  @media (max-width: 480px) {
-    padding-left: 64px;
-  }
-
-  .searchBar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    max-width: 500px;
-    min-width: 0;
-
-    @media (max-width: 1024px) {
-      max-width: 400px;
-    }
-
-    @media (max-width: 768px) {
-      max-width: 100%;
-      width: 100%;
-      order: 1;
-    }
-
-    svg {
-      width: 20px;
-      height: 20px;
-      color: $dracula-comment;
-      flex-shrink: 0;
-
-      @media (max-width: 480px) {
-        width: 18px;
-        height: 18px;
-      }
-    }
-
-    input {
-      flex: 1;
-      padding: 10px 15px;
-      background-color: $dracula-background;
-      border: 1px solid $dracula-selection;
-      border-radius: 6px;
-      color: $dracula-foreground;
-      font-size: 14px;
-      font-family: inherit;
-      min-width: 0;
-
-      @media (max-width: 480px) {
-        padding: 8px 12px;
-        font-size: 13px;
-      }
-
-      &::placeholder {
-        color: $dracula-comment;
-      }
-
-      &:focus {
-        outline: none;
-        border-color: $dracula-purple;
-        box-shadow: 0 0 0 3px $dracula-purple-rgba-01;
-      }
-    }
-
-    button {
-      padding: 10px 20px;
-      background-color: $dracula-purple;
-      color: $dracula-background;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 14px;
-      font-family: inherit;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-      flex-shrink: 0;
-
-      @media (max-width: 768px) {
-        padding: 8px 16px;
-        font-size: 13px;
-      }
-
-      @media (max-width: 480px) {
-        padding: 8px 12px;
-        font-size: 12px;
-      }
-
-      &:hover {
-        background-color: $dracula-indigo;
-      }
-    }
-  }
-
-  // Стили для кнопок уведомлений и аккаунта
-  .avatar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-shrink: 0;
-
-    @media (max-width: 768px) {
-      order: 2;
-      width: 100%;
-      justify-content: flex-end;
-      gap: 8px;
-    }
-
-    @media (max-width: 480px) {
-      gap: 6px;
-    }
-  }
-
-  // Кнопка уведомлений
-  >div:nth-of-type(2) {
-    button {
-      position: relative;
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      background-color: $dracula-background;
-      border: 1px solid $dracula-selection;
-      color: $dracula-foreground;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-
-      @media (max-width: 480px) {
-        width: 36px;
-        height: 36px;
-        border-radius: 6px;
-      }
-
-      &:hover {
-        background-color: $dracula-selection;
-        border-color: $dracula-purple;
-      }
-
-      svg {
-        width: 20px;
-        height: 20px;
-        display: block;
-
-        @media (max-width: 480px) {
-          width: 18px;
-          height: 18px;
-        }
-      }
-
-      // Индикатор новых уведомлений
-      &::after {
-        content: "";
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        width: 8px;
-        height: 8px;
-        background-color: $dracula-red;
-        border-radius: 50%;
-        border: 2px solid $dracula-background;
-        display: none; // Показывать только если есть уведомления
-
-        @media (max-width: 480px) {
-          top: 6px;
-          right: 6px;
-          width: 6px;
-          height: 6px;
-        }
-      }
-
-      &.hasNotifications::after {
-        display: block;
-      }
-    }
-  }
-
-  // Стили для блока аккаунта
-  .account {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 12px;
-    background-color: $dracula-background;
-    border: 1px solid $dracula-selection;
-    border-radius: 12px;
-    min-width: 0;
-
-    @media (max-width: 768px) {
-      padding: 6px 10px;
-      gap: 10px;
-    }
-
-    @media (max-width: 480px) {
-      padding: 6px 8px;
-      gap: 8px;
-      border-radius: 10px;
-    }
-
-    .accountInfo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex: 1;
-      min-width: 0;
-
-      @media (max-width: 480px) {
-        gap: 8px;
-      }
-    }
-
-    .accountAvatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background-color: $dracula-purple;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      border: 1px solid $dracula-selection;
-
-      @media (max-width: 768px) {
-        width: 36px;
-        height: 36px;
-      }
-
-      @media (max-width: 480px) {
-        width: 32px;
-        height: 32px;
-      }
-
-      svg {
-        width: 22px;
-        height: 22px;
-        color: $dracula-background;
-
-        @media (max-width: 768px) {
-          width: 20px;
-          height: 20px;
-        }
-
-        @media (max-width: 480px) {
-          width: 18px;
-          height: 18px;
-        }
-      }
-    }
-
-    .accountDetails {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-
-      .accountName {
-        color: $dracula-foreground;
-        font-size: 15px;
-        font-weight: 600;
-        margin: 0;
-        line-height: 1.2;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        @media (max-width: 768px) {
-          font-size: 14px;
-        }
-
-        @media (max-width: 480px) {
-          font-size: 13px;
-        }
-      }
-
-      .accountRole {
-        color: $dracula-comment;
-        font-size: 13px;
-        font-weight: 500;
-        margin: 0;
-        line-height: 1.2;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        @media (max-width: 768px) {
-          font-size: 12px;
-        }
-
-        @media (max-width: 480px) {
-          font-size: 11px;
-        }
-      }
-    }
-  }
-}
-
-.modalProfile {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  right: 30px;
-  margin-top: 10px;
-  min-width: 200px;
-  border-radius: 12px;
-  background-color: $dracula-background;
-  border: 1px solid $dracula-selection;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-
-  @media (max-width: 768px) {
-    right: 15px;
-    min-width: 180px;
-  }
-
-  @media (max-width: 480px) {
-    right: 10px;
-    min-width: 160px;
-    margin-top: 8px;
-    border-radius: 10px;
-  }
-
-  a {
-    color: $dracula-foreground;
-    text-decoration: none;
-  }
-
-  .btnProfile {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    border-radius: 8px;
-    margin: 4px;
-
-    @media (max-width: 480px) {
-      padding: 10px 12px;
-      gap: 10px;
-    }
-
-    &:hover {
-      background-color: $dracula-selection;
-    }
-
-    p {
-      margin: 0;
-      font-size: 14px;
-      font-weight: 500;
-
-      @media (max-width: 480px) {
-        font-size: 13px;
-      }
-    }
-
-    button {
-      background: none;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      svg {
-        width: 18px;
-        height: 18px;
-
-        @media (max-width: 480px) {
-          width: 16px;
-          height: 16px;
-        }
-      }
-    }
-  }
-
-  .logOut {
-    svg {
-      color: $dracula-red;
-    }
-  }
-}
-
-.dashboard {
-  padding: 30px;
-
-  @media (max-width: 1024px) {
-    padding: 25px 20px;
-  }
-
-  @media (max-width: 768px) {
-    padding: 20px 15px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 15px 12px;
-  }
-
-  >h1 {
-    color: $dracula-foreground;
-    font-size: 32px;
-    font-weight: 700;
-    margin: 0 0 20px 0;
-
-    @media (max-width: 1024px) {
-      font-size: 28px;
-      margin-bottom: 18px;
-    }
-
-    @media (max-width: 768px) {
-      font-size: 24px;
-      margin-bottom: 16px;
-    }
-
-    @media (max-width: 480px) {
-      font-size: 20px;
-      margin-bottom: 14px;
-    }
-  }
-}
-
-// Company Overview заголовок (если понадобится)
-.companyOverview {
-  color: $dracula-foreground;
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0 0 20px 0;
-  padding-bottom: 10px;
-  border-bottom: 1px solid $dracula-selection;
-}
-
-// Company Overview - 4 карточки метрик
-.metricsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
-  margin-bottom: 40px;
-  width: 100%;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-  }
-
-  .metricCard {
-    background-color: $dracula-current-line;
-    border: 1px solid $dracula-selection;
-    border-radius: 10px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    height: 280px;
-    transition: border-color 200ms ease;
-
-    @media (max-width: 768px) {
-      padding: 16px;
-      height: 260px;
-    }
-
-    @media (max-width: 480px) {
-      height: 250px;
-    }
-
-    // Card Header
-    .cardHeader {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid $dracula-selection;
-      flex-shrink: 0;
-
-      @media (max-width: 768px) {
-        gap: 10px;
-        margin-bottom: 14px;
-        padding-bottom: 14px;
-      }
-
-      .svgdiv {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        flex-shrink: 0;
-
-        svg {
-          width: 22px;
-          height: 22px;
-        }
-
-        &.projectsIcon {
-          background-color: rgba($dracula-cyan, 0.1);
-          border-color: rgba($dracula-cyan, 0.3);
-
-          svg {
-            color: $dracula-cyan;
-          }
-        }
-
-        &.teamsIcon {
-          background-color: rgba($dracula-purple, 0.1);
-          border-color: rgba($dracula-purple, 0.3);
-
-          svg {
-            color: $dracula-purple;
-          }
-        }
-
-        &.metricsIcon {
-          background-color: rgba($dracula-orange, 0.1);
-          border-color: rgba($dracula-orange, 0.3);
-
-          svg {
-            color: $dracula-orange;
-          }
-        }
-
-        p {
-          color: $dracula-foreground;
-          font-size: 12px;
-        }
-
-        svg {
-          background: none;
-          color: $dracula-red;
-          width: 42px;
-          height: 42px;
-        }
-      }
-
-      .headerTitle {
-        flex: 1;
-        min-width: 0;
-
-        h1 {
-          color: $dracula-foreground;
-          font-size: 16px;
-          font-weight: 600;
-          margin: 0 0 4px 0;
-          line-height: 1.3;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
-
-      .cardSubtitle {
-        color: $dracula-comment;
-        font-size: 11px;
-        margin: 0;
-        font-weight: 400;
-        line-height: 1.4;
-      }
-
-      .totalBadge {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background-color: $dracula-background;
-        border-radius: 8px;
-        padding: 5px 8px;
-        min-width: 55px;
-        border: 1px solid $dracula-selection;
-        flex-shrink: 0;
-
-        span:first-child {
-          color: $dracula-foreground;
-          font-size: 18px;
-          font-weight: 700;
-          line-height: 1;
-        }
-
-        span:last-child {
-          color: $dracula-comment;
-          font-size: 9px;
-          font-weight: 500;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          margin-top: 2px;
-        }
-      }
-
-      .healthScore {
-        background: linear-gradient(135deg,
-            $dracula-green,
-            ($dracula-green, 10%));
-        border-radius: 8px;
-        padding: 6px 10px;
-        color: $dracula-foreground;
-        font-weight: 700;
-        font-size: 14px;
-        flex-shrink: 0;
-      }
-    }
-
-    // Card Content
-    .cardContent {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      overflow: hidden;
-
-      // Единые стили прогресс-баров
-      .statusBar,
-      .statProgress,
-      .progressBar,
-      .deploymentBar {
-        height: 4px;
-        background-color: $dracula-background;
-        border-radius: 2px;
-        overflow: hidden;
-
-        >div {
-          height: 100%;
-          border-radius: 2px;
-          transition: width 300ms ease;
-        }
-      }
-
-      // Projects Card
-      .projectsGrid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-top: 4px;
-      }
-
-      .projectStatus {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        padding: 10px;
-        border-radius: 8px;
-        background-color: $dracula-background;
-        border: 1px solid $dracula-selection;
-        border-top: 3px solid transparent;
-
-        &.active {
-          border-top-color: $dracula-green;
-        }
-
-        &.paused {
-          border-top-color: $dracula-cyan;
-        }
-
-        &.risk {
-          border-top-color: $dracula-red;
-        }
-
-        .statusHeader {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 6px;
-        }
-
-        .statusIcon {
-          width: 18px;
-          height: 18px;
-
-          .active & {
-            color: $dracula-green;
-          }
-
-          .paused & {
-            color: $dracula-cyan;
-          }
-
-          .risk & {
-            color: $dracula-red;
-          }
-        }
-
-        .statusCount {
-          font-size: 18px;
-          font-weight: 700;
-          line-height: 1;
-
-          .active & {
-            color: $dracula-green;
-          }
-
-          .paused & {
-            color: $dracula-cyan;
-          }
-
-          .risk & {
-            color: $dracula-red;
-          }
-        }
-
-        .statusLabel {
-          color: $dracula-foreground;
-          font-size: 10px;
-          font-weight: 500;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          margin: 0;
-          opacity: 0.9;
-        }
-
-        .statusBarFill {
-          .active & {
-            background-color: $dracula-green;
-          }
-
-          .paused & {
-            background-color: $dracula-cyan;
-          }
-
-          .risk & {
-            background-color: $dracula-red;
-          }
-        }
-      }
-
-      // Teams Card
-      .teamsStats {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-        margin-bottom: 4px;
-      }
-
-      .statBlock {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-      }
-
-      .statRow {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .statLabel {
-        color: $dracula-comment;
-        font-size: 11px;
-        font-weight: 500;
-      }
-
-      .statValue {
-        font-size: 18px;
-        font-weight: 700;
-        color: $dracula-foreground;
-
-        &.onlineValue {
-          color: $dracula-green;
-          position: relative;
-          padding-right: 14px;
-        }
-      }
-
-      .onlineDot {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 7px;
-        height: 7px;
-        background-color: $dracula-green;
-        border-radius: 50%;
-        animation: pulse 2s infinite;
-
-        @media (prefers-reduced-motion: reduce) {
-          animation: none;
-        }
-      }
-
-      .statProgressFill {
-        background-color: $dracula-foreground;
-
-        &.onlineProgress {
-          background-color: $dracula-green;
-        }
-      }
-
-      .onlineUsers {
-        border-top: 1px solid $dracula-selection;
-        padding-top: 12px;
-        margin-top: auto;
-      }
-
-      .avatarsRow {
-        display: flex;
-        align-items: center;
-        gap: -10px;
-        margin-bottom: 6px;
-      }
-
-      .avatarWrapper {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background-color: $dracula-background;
-        border: 2px solid $dracula-current-line;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-
-        &:nth-child(1) {
-          z-index: 6;
-        }
-
-        &:nth-child(2) {
-          z-index: 5;
-        }
-
-        &:nth-child(3) {
-          z-index: 4;
-        }
-
-        &:nth-child(4) {
-          z-index: 3;
-        }
-
-        &:nth-child(5) {
-          z-index: 2;
-        }
-
-        &:nth-child(6) {
-          z-index: 1;
-        }
-      }
-
-      .avatar {
-        width: 16px;
-        height: 16px;
-        color: $dracula-comment;
-      }
-
-      .moreUsers {
-        margin-left: 10px;
-        font-size: 11px;
-        color: $dracula-comment;
-        font-weight: 500;
-        background-color: $dracula-background;
-        border-radius: 10px;
-        padding: 4px 8px;
-        border: 1px solid $dracula-selection;
-      }
-
-      .onlineHint {
-        color: $dracula-comment;
-        font-size: 10px;
-        margin: 0;
-        text-align: center;
-      }
-
-      // Metrics Card
-      .metricsOverview {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        gap: 16px;
-        align-items: center;
-
-        @media (max-width: 480px) {
-          grid-template-columns: 1fr;
-          gap: 12px;
-
-          .metricDivider {
-            display: none;
-          }
-        }
-      }
-
-      .metricItem {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .metricHeader {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-
-        @media (max-width: 768px) {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 4px;
-        }
-      }
-
-      .metricNumber {
-        font-size: 22px;
-        font-weight: 700;
-        color: $dracula-foreground;
-        line-height: 1;
-
-        &.overdue {
-          color: $dracula-red;
-        }
-      }
-
-      .metricTrend {
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-size: 9px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        white-space: nowrap;
-
-        &.neutral {
-          background-color: rgba($dracula-comment, 0.1);
-          color: $dracula-comment;
-        }
-
-        &.negative {
-          background-color: rgba($dracula-red, 0.1);
-          color: $dracula-red;
-        }
-
-        @media (max-width: 768px) {
-          align-self: flex-start;
-        }
-      }
-
-      .metricDescription {
-        color: $dracula-comment;
-        font-size: 10px;
-        margin: 0;
-        line-height: 1.4;
-      }
-
-      .metricDivider {
-        width: 1px;
-        height: 36px;
-        background-color: $dracula-selection;
-      }
-
-      .tasksProgress {
-        border-top: 1px solid $dracula-selection;
-        padding-top: 14px;
-        margin-top: auto;
-      }
-
-      .progressInfo {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 6px;
-      }
-
-      .progressLabel {
-        color: $dracula-comment;
-        font-size: 11px;
-        font-weight: 500;
-      }
-
-      .progressValue {
-        color: $dracula-green;
-        font-size: 13px;
-        font-weight: 600;
-      }
-
-      .progressBarFill {
-        background-color: $dracula-green;
-      }
-
-      // CI/CD Card
-      .pipelineStats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-bottom: 12px;
-      }
-
-      .pipelineItem {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 6px;
-        padding: 8px;
-        background-color: $dracula-background;
-        border-radius: 8px;
-        border: 1px solid $dracula-selection;
-      }
-
-      .statusIndicator {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-
-        &.success {
-          background-color: $dracula-green;
-        }
-
-        &.failed {
-          background-color: $dracula-red;
-        }
-
-        &.running {
-          background-color: $dracula-orange;
-        }
-      }
-
-      .pipelineInfo {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 2px;
-      }
-
-      .pipelineCount {
-        font-size: 16px;
-        font-weight: 700;
-        color: $dracula-foreground;
-        line-height: 1;
-      }
-
-      .pipelineLabel {
-        color: $dracula-comment;
-        font-size: 9px;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        text-align: center;
-      }
-
-      .deploymentFrequency {
-        border-top: 1px solid $dracula-selection;
-        padding-top: 12px;
-        margin-top: auto;
-      }
-
-      .deploymentHeader {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 6px;
-      }
-
-      .deploymentLabel {
-        color: $dracula-comment;
-        font-size: 11px;
-        font-weight: 500;
-      }
-
-      .deploymentValue {
-        color: $dracula-green;
-        font-size: 13px;
-        font-weight: 600;
-      }
-
-      .deploymentBarFill {
-        background-color: $dracula-green;
-        animation: pulseWidth 2s infinite alternate;
-
-        @media (prefers-reduced-motion: reduce) {
-          animation: none;
-        }
-      }
-    }
-  }
-}
-
-// Анимации
-@keyframes pulse {
-
-  0%,
-  100% {
-    opacity: 1;
-    transform: translateY(-50%) scale(1);
-  }
-
-  50% {
-    opacity: 0.6;
-    transform: translateY(-50%) scale(0.9);
-  }
-}
-
-@keyframes pulseWidth {
-  0% {
-    opacity: 0.8;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
-// Responsive adjustments
-@media (max-width: 1024px) {
-  .metricsGrid .metricCard .cardContent {
-    .projectsGrid {
-      gap: 8px;
-    }
-
-    .pipelineStats {
-      gap: 8px;
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .metricsGrid .metricCard {
-    &:hover {
-      transform: none;
-    }
-
-    .cardContent {
-      .projectStatus {
-        padding: 8px;
-      }
-
-      .statusCount {
-        font-size: 16px;
-      }
-
-      .pipelineItem {
-        padding: 6px;
-      }
-
-      .pipelineCount {
-        font-size: 14px;
-      }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .metricsGrid .metricCard .cardContent {
-    .projectsGrid {
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-
-    .projectStatus {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-
-      .statusHeader {
-        order: 1;
-        flex: 1;
-      }
-
-      .statusLabel {
-        order: 2;
-        margin-right: 12px;
-      }
-
-      .statusBar {
-        order: 3;
-        width: 60px;
-      }
-    }
-
-    .pipelineStats {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-}
+// ============================================
+// PROGRESS BAR
+// ============================================
 
 .progressDiv {
   width: 100%;
@@ -1508,7 +277,52 @@
   }
 }
 
-// Projects Focus Grid - адаптивная сетка
+// ============================================
+// DASHBOARD SECTION
+// ============================================
+
+.dashboard {
+  padding: 30px;
+
+  @media (max-width: 1024px) {
+    padding: 25px 20px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px 15px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 15px 12px;
+  }
+
+  > h1 {
+    color: $dracula-foreground;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+
+    @media (max-width: 1024px) {
+      font-size: 28px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+  }
+}
+
+// ============================================
+// TASKS SECTION
+// ============================================
+
 .tasksSection {
   width: 100%;
   margin-bottom: 40px;
@@ -1520,6 +334,10 @@
     margin: 0 0 20px 0;
   }
 }
+
+// ============================================
+// PROJECTS GRID
+// ============================================
 
 .gridProjects {
   width: 100%;
@@ -1540,13 +358,16 @@
     grid-template-columns: 1fr;
   }
 
-  // Когда нет проектов или загрузка - растягиваем на всю ширину
-  >.noProjects,
-  >.loading,
+  > .noProjects,
+  > .loading,
   .errorCont {
     grid-column: 1 / -1;
   }
 }
+
+// ============================================
+// PROJECT CARD (in gridProjects)
+// ============================================
 
 .taskCard {
   background-color: $dracula-current-line;
@@ -1604,7 +425,6 @@
           gap: 8px;
         }
 
-        // Кнопка статуса в заголовке задачи
         button {
           background-color: $dracula-background;
           border: 1px solid $dracula-selection;
@@ -1700,10 +520,6 @@
           flex-shrink: 0;
         }
 
-        /* ========================= */
-        /* ===== STATUS: ACTIVE ==== */
-        /* ========================= */
-
         &.btnActive {
           svg {
             color: $dracula-green;
@@ -1714,10 +530,6 @@
           }
         }
 
-        /* ========================= */
-        /* ===== STATUS: BLOCKED === */
-        /* ========================= */
-
         &.btnBlocked {
           svg {
             color: $dracula-red;
@@ -1727,10 +539,6 @@
             color: $dracula-red;
           }
         }
-
-        /* ========================= */
-        /* ===== STATUS: OVERDUE === */
-        /* ========================= */
 
         &.btnOverdue {
           svg {
@@ -1886,7 +694,10 @@
   }
 }
 
-// Bottom Section Layout
+// ============================================
+// BOTTOM SECTION LAYOUT
+// ============================================
+
 .bottomSection {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1909,277 +720,239 @@
   }
 }
 
-// My Work Section
-.myactivetaskSection {
+// ============================================
+// CARDS CONTAINER (Task Cards in bottomSection)
+// ============================================
+
+.cardsContainer {
   background-color: $dracula-current-line;
-  border: 1px solid $dracula-selection;
   border-radius: 8px;
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  gap: 8px;
+  min-height: 100px;
 
-  @media (max-width: 1024px) {
-    padding: 18px;
+  &::-webkit-scrollbar {
+    width: 6px;
   }
 
-  @media (max-width: 768px) {
+  &::-webkit-scrollbar-track {
+    background: $dracula-background;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $dracula-selection;
+    border-radius: 3px;
+
+    &:hover {
+      background: $dracula-comment;
+    }
+  }
+
+  // Task card for the cardsContainer context
+  .taskCard {
+    border: 1px solid $dracula-selection;
+    background-color: $dracula-background;
+    border-radius: 10px;
     padding: 16px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 14px;
-    border-radius: 6px;
-  }
-
-  .sectionHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 15px;
-
-    @media (max-width: 768px) {
-      margin-bottom: 16px;
-      gap: 12px;
-    }
-
-    @media (max-width: 480px) {
-      margin-bottom: 14px;
-      gap: 10px;
-    }
-
-    .sort {
-      display: flex;
-      flex-flow: row wrap;
-      gap: 10px;
-
-      @media (max-width: 480px) {
-        gap: 8px;
-      }
-    }
-
-    .sectionTitle {
-      color: $dracula-foreground;
-      font-size: 24px;
-      font-weight: 700;
-      margin: 0;
-
-      @media (max-width: 1024px) {
-        font-size: 22px;
-      }
-
-      @media (max-width: 768px) {
-        font-size: 20px;
-      }
-
-      @media (max-width: 480px) {
-        font-size: 18px;
-      }
-    }
-
-    .Overdue {
-      color: $dracula-red;
-      font-size: 14px;
-      font-weight: 600;
-      margin: 0;
-
-      @media (max-width: 480px) {
-        font-size: 12px;
-      }
-    }
-
-    .btnSecondary {
-      display: flex;
-      flex-direction: row;
-      padding: 8px 16px;
-      background-color: $dracula-background;
-      color: $dracula-foreground;
-      border: 1px solid $dracula-selection;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-
-      @media (max-width: 768px) {
-        padding: 6px 12px;
-        font-size: 13px;
-      }
-
-      @media (max-width: 480px) {
-        padding: 6px 10px;
-        font-size: 12px;
-        border-radius: 6px;
-      }
-
-      &:hover {
-        border-color: $dracula-purple;
-        background-color: $dracula-purple-rgba-01;
-      }
-    }
-  }
-
-  .mytaskscard {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    flex: 1;
+    gap: 12px;
+    position: relative;
+    transition: all 0.2s ease;
+    cursor: pointer;
 
-    @media (max-width: 768px) {
-      gap: 12px;
-    }
-
-    @media (max-width: 480px) {
-      gap: 10px;
-    }
-
-    >div {
-      background-color: $dracula-background;
-      border: 1px solid $dracula-selection;
-      border-radius: 6px;
-      padding: 15px;
-
-      @media (max-width: 768px) {
-        padding: 12px;
-      }
-
-      @media (max-width: 480px) {
-        padding: 10px;
-        border-radius: 4px;
-      }
-
-      .Lowcardstatus {
-        display: inline-block;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 10px;
-        background-color: $dracula-green;
-        color: $dracula-background;
-
-        @media (max-width: 480px) {
-          padding: 3px 6px;
-          font-size: 11px;
-          margin-bottom: 8px;
-        }
-      }
-
-      .Mediumcardstatus {
-        display: inline-block;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 10px;
-        background-color: $dracula-yellow;
-        color: $dracula-background;
-
-        @media (max-width: 480px) {
-          padding: 3px 6px;
-          font-size: 11px;
-          margin-bottom: 8px;
-        }
-      }
-
-      .Hightcardstatus {
-        display: inline-block;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 10px;
-        background-color: $dracula-red;
-        color: $dracula-background;
-
-        @media (max-width: 480px) {
-          padding: 3px 6px;
-          font-size: 11px;
-          margin-bottom: 8px;
-        }
-      }
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      .taskInfo {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        width: 100%;
-        gap: 12px;
-
-        @media (max-width: 480px) {
-          flex-direction: column;
-          gap: 8px;
-        }
-      }
-
-      .taskName {
-        color: $dracula-foreground;
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0;
-        flex: 1;
-        min-width: 0;
-        word-break: break-word;
-
-        @media (max-width: 768px) {
-          font-size: 15px;
-        }
-
-        @media (max-width: 480px) {
-          font-size: 14px;
-        }
-      }
-
-      .datesContainer {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        margin-left: 16px;
-        flex-shrink: 0;
-
-        @media (max-width: 480px) {
-          margin-left: 0;
-          align-items: flex-start;
-          width: 100%;
-        }
-      }
-
-      .taskCreatedAt,
-      .taskDedline {
-        color: $dracula-comment;
-        font-size: 14px;
-        margin: 0;
-        white-space: nowrap;
-
-        @media (max-width: 768px) {
-          font-size: 13px;
-        }
-
-        @media (max-width: 480px) {
-          font-size: 12px;
-        }
-      }
-
-      .taskDedline {
-        margin-top: 4px;
-
-        @media (max-width: 480px) {
-          margin-top: 2px;
-        }
-      }
+    &:hover {
+      border-color: $dracula-purple;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
   }
 }
 
-// Right Column
+// ============================================
+// TASK CARD HEADER (in cardsContainer)
+// ============================================
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.taskId {
+  font-size: 12px;
+  font-weight: 600;
+  color: $dracula-purple;
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.5px;
+}
+
+.priorityIcon {
+  font-size: 13px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+
+  &.priorityHigh {
+    background-color: rgba(255, 92, 108, 0.15);
+    color: $dracula-red;
+  }
+
+  &.priorityNormal {
+    background-color: rgba(108, 140, 255, 0.15);
+    color: $dracula-purple;
+  }
+
+  &.priorityLow {
+    background-color: rgba(139, 230, 92, 0.15);
+    color: $dracula-green;
+  }
+}
+
+.taskTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: $dracula-foreground;
+  margin: 0;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+// ============================================
+// TAGS
+// ============================================
+
+.tagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: $dracula-current-line;
+  color: $dracula-cyan;
+  font-weight: 500;
+}
+
+.tagMore {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: $dracula-selection;
+  color: $dracula-comment;
+  font-weight: 500;
+}
+
+// ============================================
+// CARD FOOTER (in cardsContainer)
+// ============================================
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid $dracula-selection;
+}
+
+.assigneeInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+
+  span {
+    font-size: 13px;
+    color: $dracula-foreground;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.assigneeAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: $dracula-orange;
+  color: $dracula-background;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.projectBadge {
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background-color: rgba(108, 140, 255, 0.1);
+  color: $dracula-purple;
+  font-weight: 500;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ============================================
+// CARD META (Dates)
+// ============================================
+
+.cardMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: $dracula-comment;
+}
+
+.dueDate {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: $dracula-comment;
+  font-size: 12px;
+  font-weight: 500;
+
+  svg {
+    flex-shrink: 0;
+    color: $dracula-purple;
+    width: 14px;
+    height: 14px;
+  }
+
+  &.overdue {
+    color: $dracula-red;
+    font-weight: 600;
+
+    svg {
+      color: $dracula-red;
+    }
+  }
+}
+
+.createdDate {
+  font-size: 11px;
+  color: $dracula-comment;
+  opacity: 0.7;
+}
+
+// ============================================
+// RIGHT COLUMN
+// ============================================
+
 .rightColumn {
   display: flex;
   flex-direction: column;
@@ -2194,7 +967,10 @@
   }
 }
 
-// My Stats Section
+// ============================================
+// MY STATS SECTION
+// ============================================
+
 .mystatsSection {
   background-color: $dracula-current-line;
   border: 1px solid $dracula-selection;
@@ -2339,7 +1115,10 @@
   }
 }
 
-// AI Section
+// ============================================
+// AI SECTION
+// ============================================
+
 .AiSection {
   background-color: $dracula-current-line;
   border: 1px solid $dracula-selection;
@@ -2413,7 +1192,7 @@
     }
   }
 
-  >div {
+  > div {
     margin-bottom: 12px;
 
     @media (max-width: 480px) {
@@ -2501,32 +1280,20 @@
   }
 }
 
-// Дополнительные адаптивные улучшения для очень маленьких экранов
+// ============================================
+// RESPONSIVE ADJUSTMENTS FOR VERY SMALL SCREENS
+// ============================================
+
 @media (max-width: 360px) {
   .homeContainer {
     padding-left: 0;
   }
 
-  .pageHeader {
-    padding: 10px 12px;
-    gap: 10px;
-  }
-
   .dashboard {
     padding: 12px 10px;
 
-    >h1 {
+    > h1 {
       font-size: 18px;
-    }
-  }
-
-  .metricCard {
-    padding: 12px;
-
-    .cardHeader {
-      h1 {
-        font-size: 14px;
-      }
     }
   }
 
