@@ -1,4 +1,4 @@
-@use '.././Styles/Variables.scss' as *;
+@use ".././Styles/Variables.scss" as *;
 
 .TaskContainer {
   min-height: 100vh;
@@ -12,7 +12,8 @@
   width: 100%;
   position: relative;
 
-  @media (max-width: 1400px) {}
+  @media (max-width: 1400px) {
+  }
 
   @media (max-width: 1024px) {
     padding-left: 0;
@@ -37,7 +38,7 @@
     padding: 15px 12px;
   }
 
-  >h1 {
+  > h1 {
     color: $dracula-foreground;
     font-size: 32px;
     font-weight: 700;
@@ -247,11 +248,22 @@
 // ========== КАНБАН ДОСКА ==========
 .kanbanBoard {
   display: flex;
-  gap: 24px;
+  gap: 16px;
   padding: 8px 0 20px;
   height: 100%;
   min-height: 500px;
   flex: 1;
+  @media (max-width: 1400px) {
+    gap: 12px;
+  }
+
+  @media (max-width: 1024px) {
+    gap: 10px;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 
   &::-webkit-scrollbar {
     height: 8px;
@@ -274,9 +286,9 @@
 
 // Колонка статуса
 .kanbanColumn {
-  flex: 0 0 320px;
+  flex: 1;
   min-width: 280px;
-  max-width: 350px;
+  max-width: none;
   background-color: $dracula-current-line;
   border: 1px solid $dracula-selection;
   border-radius: 12px;
@@ -284,10 +296,22 @@
   flex-direction: column;
   height: fit-content;
 
+  @media (max-width: 1400px) {
+    min-width: 260px;
+  }
+
+  @media (max-width: 1024px) {
+    min-width: 240px;
+  }
+
+  @media (max-width: 768px) {
+    min-width: 100%;
+    max-width: 100%;
+  }
 }
 
 .columnHeader {
-  padding: 16px;
+  padding: 12px 14px;
   border-bottom: 1px solid $dracula-selection;
   display: flex;
   justify-content: space-between;
@@ -363,12 +387,11 @@
 
 // Контейнер карточек
 .cardsContainer {
-  padding: 16px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   min-height: 100px;
-
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -393,94 +416,148 @@
 .taskCard {
   background-color: $dracula-background;
   border: 1px solid $dracula-selection;
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: 10px;
+  padding: 16px;
   display: flex;
-  height: 100%;
   flex-direction: column;
-  gap: 8px;
-  position: relative;
-
-}
-
-.taskHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-}
-
-.taskId {
-  color: $dracula-comment;
-  font-size: 11px;
-  font-weight: 500;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.taskMenu {
-  background: none;
-  border: none;
-  color: $dracula-comment;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 0 2px;
-  border-radius: 4px;
-}
-
-.taskTitle {
-  font-size: 14px;
-  font-weight: 600;
-  color: $dracula-foreground;
-  margin: 0;
-  line-height: 1.3;
-  word-break: break-word;
-}
-
-.taskDescription {
-  font-size: 12px;
-  color: $dracula-comment;
-  margin: 0;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-// Мета информация
-.taskMeta {
-  display: flex;
-  flex-wrap: wrap;
   gap: 12px;
-  margin-top: 4px;
-}
+  position: relative;
+  transition: all 0.2s ease;
+  cursor: pointer;
 
-.metaItem {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: $dracula-comment;
-  font-size: 12px;
-
-  svg {
-    width: 14px;
-    height: 14px;
-    color: $dracula-purple;
+  &:hover {
+    border-color: $dracula-purple;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 }
 
+// Заголовок карточки (ID + приоритет)
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.taskId {
+  font-size: 12px;
+  font-weight: 600;
+  color: $dracula-purple;
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.5px;
+}
+
+.priorityIcon {
+  font-size: 13px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+
+  &.priorityHigh {
+    background-color: rgba(255, 92, 108, 0.15);
+    color: $dracula-red;
+  }
+
+  &.priorityNormal {
+    background-color: rgba(108, 140, 255, 0.15);
+    color: $dracula-purple;
+  }
+
+  &.priorityLow {
+    background-color: rgba(139, 230, 92, 0.15);
+    color: $dracula-green;
+  }
+}
+
+.taskTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: $dracula-foreground;
+  margin: 0;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+// Теги
+.tagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: $dracula-current-line;
+  color: $dracula-cyan;
+  font-weight: 500;
+}
+
+.tagMore {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: $dracula-selection;
+  color: $dracula-comment;
+  font-weight: 500;
+}
+
+// Футер карточки
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid $dracula-selection;
+}
+
+.projectBadge {
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background-color: rgba(108, 140, 255, 0.1);
+  color: $dracula-purple;
+  font-weight: 500;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Мета информация (даты)
+.cardMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: $dracula-comment;
+}
+
+.createdDate {
+  font-size: 11px;
+  color: $dracula-comment;
+  opacity: 0.7;
+}
+
 // Бейджи
-.statusBadge,
 .priorityBadge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 10px;
-  border-radius: 20px;
+  padding: 4px 12px;
+  border-radius: 4px;
   font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
+  font-weight: 500;
+  text-transform: capitalize;
   letter-spacing: 0.3px;
   width: fit-content;
+  flex-shrink: 0;
+}
+
+.priorityNormal {
+  background-color: rgba(108, 140, 255, 0.2);
+  color: $dracula-purple;
 }
 
 .statusActive {
@@ -526,9 +603,8 @@
 }
 
 .priorityHigh {
-  background-color: rgba(255, 159, 107, 0.15);
+  background-color: rgba(255, 159, 107, 0.2);
   color: $dracula-orange;
-  border: 1px solid rgba(255, 159, 107, 0.3);
 }
 
 .priorityMedium {
@@ -538,9 +614,8 @@
 }
 
 .priorityLow {
-  background-color: rgba(139, 230, 92, 0.15);
+  background-color: rgba(139, 230, 92, 0.2);
   color: $dracula-green;
-  border: 1px solid rgba(139, 230, 92, 0.3);
 }
 
 .priorityCritical {
@@ -554,8 +629,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 8px;
-  padding-top: 12px;
+  margin-top: 4px;
+  padding-top: 4px;
   border-top: 1px solid $dracula-selection;
 }
 
@@ -564,13 +639,24 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1;
+  min-width: 0;
+
+  span {
+    font-size: 13px;
+    color: $dracula-foreground;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .assigneeAvatar {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background-color: $dracula-purple;
+  background-color: $dracula-orange;
   color: $dracula-background;
   display: flex;
   align-items: center;
@@ -608,24 +694,37 @@
   gap: 6px;
   color: $dracula-comment;
   font-size: 12px;
+  font-weight: 500;
+
+  svg {
+    flex-shrink: 0;
+    color: $dracula-purple;
+    width: 14px;
+    height: 14px;
+  }
 
   &.overdue {
     color: $dracula-red;
     font-weight: 600;
+
+    svg {
+      color: $dracula-red;
+    }
   }
 }
 
 // Название проекта
 .projectName {
-  font-size: 12px;
+  font-size: 10px;
   color: $dracula-comment;
-  padding: 4px 10px;
+  padding: 2px 8px;
   background-color: $dracula-current-line;
-  border-radius: 20px;
+  border-radius: 12px;
   max-width: 150px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-top: 2px;
 }
 
 // Пустое состояние колонки

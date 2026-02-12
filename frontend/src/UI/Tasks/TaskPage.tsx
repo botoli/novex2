@@ -16,7 +16,7 @@ const TaskPage = observer(() => {
   const [activeFiltertask, setActiveFiltertask] = useState<string>(() => {
     return localStorage.getItem("activeFiltertask") || "All Tasks";
   });
-  const [currentTasks, setCurrentTasks] = useState([])
+  const [currentTasks, setCurrentTasks] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Due Date");
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,23 +24,22 @@ const TaskPage = observer(() => {
   const [isUp, setIsUp] = useState(false);
   const token =
     CurrentUserStore.currentuser?.id ?? localStorage.getItem("token");
-  dataStroe.setToken(localStorage.getItem("token"))
+  dataStroe.setToken(localStorage.getItem("token"));
   const btns = [
     { name: "All Tasks" },
     { name: "Overdue" },
     { name: "Hight priority" },
     { name: "Blocked" },
     { name: "Assigned = Me" },
-    { name: "More filters" }
+    { name: "More filters" },
   ];
   useEffect(() => {
-
     if (dataStroe.tasks) {
       setCurrentTasks(
         dataStroe.tasks.filter((p: any) => p.assigneeId === Number(token)),
       );
     }
-  }, [])
+  }, []);
   useEffect(() => {
     localStorage.setItem("activeFiltertask", activeFiltertask);
   }, [activeFiltertask]);
@@ -59,50 +58,15 @@ const TaskPage = observer(() => {
       return dataStroe.currentTasks;
     }
     if (activeFiltertask === "My Tasks") {
-      return dataStroe.currentTasks.filter((task) => task.assigneeId === Number(dataStroe.token));
+      return dataStroe.currentTasks.filter(
+        (task) => task.assigneeId === Number(dataStroe.token),
+      );
     }
     return dataStroe.currentTasks.filter(
       (task) => task.status === activeFiltertask.toLowerCase(),
     );
   }, [dataStroe.currentTasks, activeFiltertask, dataStroe.token]);
-  const getProjectName = (projectId: number) => {
-    const project = dataStroe.projects.find((p) => p.id === projectId);
-    return project ? project.title : "Unknown";
-  };
 
-  const getAssigneeName = (assigneeId: number) => {
-    const user = dataStroe.users.find((u) => u.id === assigneeId);
-    return user ? user.name : null;
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return styles.statusActive;
-      case "blocked":
-        return styles.statusBlocked;
-      case "completed":
-        return styles.statusComplete;
-      case "overdue":
-        return styles.statusOverdue;
-      default:
-        return "";
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return styles.priorityHigh;
-      case "medium":
-        return styles.priorityMedium;
-      case "low":
-        return styles.priorityLow;
-      default:
-        return "";
-    }
-  };
-  function setTasksfilter(name) { }
   return (
     <div className={styles.TaskContainer}>
       <PageHeader />
@@ -126,14 +90,15 @@ const TaskPage = observer(() => {
                     ? dataStroe.currentTasks.length
                     : btn.name === "My Tasks"
                       ? dataStroe.currentTasks.filter(
-                        (task) => task.assigneeId === Number(dataStroe.token),
-                      ).length
+                          (task) => task.assigneeId === Number(dataStroe.token),
+                        ).length
                       : btn.name === "Complete"
-                        ? dataStroe.currentTasks.filter((task) => task.status === "completed")
-                          .length
+                        ? dataStroe.currentTasks.filter(
+                            (task) => task.status === "completed",
+                          ).length
                         : dataStroe.currentTasks.filter(
-                          (task) => task.status === btn.name.toLowerCase(),
-                        ).length}
+                            (task) => task.status === btn.name.toLowerCase(),
+                          ).length}
                 </p>
               </button>
             ))}
@@ -143,7 +108,9 @@ const TaskPage = observer(() => {
         {/* Контролы задач - остаются без изменений */}
         <div className={styles.tasksControls}>
           <div className={styles.tasksInfo}>
-            <span className={styles.totalTasks}>Total: {dataStroe.currentTasks.length}</span>
+            <span className={styles.totalTasks}>
+              Total: {dataStroe.currentTasks.length}
+            </span>
           </div>
           <div className={styles.tasksActions}>
             <div className={styles.searchContainer}>
@@ -165,7 +132,6 @@ const TaskPage = observer(() => {
 
         {/* КАНБАН ДОСКА - вместо таблицы */}
         <div className={styles.kanbanBoard}>
-
           {/* Колонка To Do */}
           <div className={styles.kanbanColumn}>
             <div className={styles.columnHeader}>
@@ -174,38 +140,94 @@ const TaskPage = observer(() => {
                 <h3>To Do</h3>
               </div>
               <span className={styles.columnCount}>
-                {dataStroe.tasks.filter(t => t.status === "todo").length}
+                {dataStroe.tasks.filter((t) => t.status === "todo").length}
               </span>
             </div>
             <div className={styles.cardsContainer}>
-              {dataStroe.tasks.filter(t => t.status === 'todo').map(task =>
-                <div key={task.id} className={styles.taskCard}>
-                  <div className={styles.taskHeader}>
-                    <span className={styles.taskId}>#123</span>
-                    <button className={styles.taskMenu}>⋯</button>
-                  </div>
-                  <h4 className={styles.taskTitle}>{task.name}</h4>
-                  <p className={styles.taskDescription}>Описание задачи</p>
-                  <div className={styles.taskMeta}>
-                    <span className={`${styles.priorityBadge} ${styles.priorityHigh}`}>
-                      High
-                    </span>
-                    <span className={`${styles.statusBadge} ${styles.statusTodo}`}>
-                      To Do
-                    </span>
-                  </div>
-                  <div className={styles.taskFooter}>
-                    <div className={styles.assigneeInfo}>
-                      <div className={styles.assigneeAvatar}>A</div>
-                      <span>Assignee Name</span>
+              {dataStroe.tasks
+                .filter((t) => t.status === "todo")
+                .map((task) => (
+                  <div key={task.id} className={styles.taskCard}>
+                    <div className={styles.cardHeader}>
+                      <span className={styles.taskId}>TASK-{task.id}</span>
+                      <span
+                        className={`${styles.priorityIcon} ${task.priorityId === 1 ? styles.priorityLow : task.priorityId === 2 ? styles.priorityNormal : styles.priorityHigh}`}
+                        title={
+                          task.priorityId === 1
+                            ? "Low"
+                            : task.priorityId === 2
+                              ? "Normal"
+                              : "High"
+                        }
+                      >
+                        {task.priorityId === 3
+                          ? "↑↑"
+                          : task.priorityId === 2
+                            ? "↑"
+                            : "↓"}
+                      </span>
                     </div>
-                    <span className={styles.dueDate}>2024-01-20</span>
+                    <h4 className={styles.taskTitle}>{task.name}</h4>
+                    {task.tags && task.tags.length > 0 && (
+                      <div className={styles.tagsRow}>
+                        {task.tags.slice(0, 3).map((tag, i) => (
+                          <span key={i} className={styles.tag}>
+                            {tag}
+                          </span>
+                        ))}
+                        {task.tags.length > 3 && (
+                          <span className={styles.tagMore}>
+                            +{task.tags.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    <div className={styles.cardFooter}>
+                      <div className={styles.assigneeInfo}>
+                        <div className={styles.assigneeAvatar}>
+                          {dataStroe.users.find((u) => u.id === task.assigneeId)
+                            ?.name[0] || "?"}
+                        </div>
+                        <span>
+                          {dataStroe.users.find((u) => u.id === task.assigneeId)
+                            ?.name || "Unassigned"}
+                        </span>
+                      </div>
+                      <span className={styles.projectBadge}>
+                        {dataStroe.projects.find((p) => p.id === task.projectId)
+                          ?.title || "No project"}
+                      </span>
+                    </div>
+                    <div className={styles.cardMeta}>
+                      <span className={styles.dueDate}>
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="18"
+                            rx="2"
+                            ry="2"
+                          />
+                          <line x1="16" y1="2" x2="16" y2="6" />
+                          <line x1="8" y1="2" x2="8" y2="6" />
+                          <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                        {task.deadline}
+                      </span>
+                      <span className={styles.createdDate}>
+                        Created: {new Date(task.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
                   </div>
-                  <div className={styles.projectName}>Project Name</div>
-                </div>)
-
-              }
-
+                ))}
             </div>
           </div>
 
@@ -216,40 +238,100 @@ const TaskPage = observer(() => {
                 <span className={`${styles.statusIcon} ${styles.inProgress}`} />
                 <h3>In Progress</h3>
               </div>
-              <span className={styles.columnCount}>0</span>
+              <span className={styles.columnCount}>
+                {
+                  dataStroe.tasks.filter((t) => t.status === "in_progress")
+                    .length
+                }
+              </span>
             </div>
             <div className={styles.cardsContainer}>
-              {dataStroe.tasks.filter(t => t.status === 'in_progress').map(task =>
-                <div key={task.id} className={styles.taskCard}>
-                  <div className={styles.taskHeader}>
-                    <span className={styles.taskId}>#123</span>
-                    <button className={styles.taskMenu}>⋯</button>
-                  </div>
-                  <h4 className={styles.taskTitle}>{task.name}</h4>
-                  <p className={styles.taskDescription}>Описание задачи</p>
-                  <div className={styles.taskMeta}>
-                    <span className={`${styles.priorityBadge} ${styles.priorityHigh}`}>
-                      High
-                    </span>
-                    <span className={`${styles.statusBadge} ${styles.statusTodo}`}>
-                      To Do
-                    </span>
-                  </div>
-                  <div className={styles.taskFooter}>
-                    <div className={styles.assigneeInfo}>
-                      <div className={styles.assigneeAvatar}>A</div>
-                      <span>Assignee Name</span>
+              {dataStroe.tasks
+                .filter((t) => t.status === "in_progress")
+                .map((task) => (
+                  <div key={task.id} className={styles.taskCard}>
+                    <div className={styles.cardHeader}>
+                      <span className={styles.taskId}>TASK-{task.id}</span>
+                      <span
+                        className={`${styles.priorityIcon} ${task.priorityId === 1 ? styles.priorityLow : task.priorityId === 2 ? styles.priorityNormal : styles.priorityHigh}`}
+                        title={
+                          task.priorityId === 1
+                            ? "Low"
+                            : task.priorityId === 2
+                              ? "Normal"
+                              : "High"
+                        }
+                      >
+                        {task.priorityId === 3
+                          ? "↑↑"
+                          : task.priorityId === 2
+                            ? "↑"
+                            : "↓"}
+                      </span>
                     </div>
-                    <span className={styles.dueDate}>2024-01-20</span>
+                    <h4 className={styles.taskTitle}>{task.name}</h4>
+                    {task.tags && task.tags.length > 0 && (
+                      <div className={styles.tagsRow}>
+                        {task.tags.slice(0, 3).map((tag, i) => (
+                          <span key={i} className={styles.tag}>
+                            {tag}
+                          </span>
+                        ))}
+                        {task.tags.length > 3 && (
+                          <span className={styles.tagMore}>
+                            +{task.tags.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    <div className={styles.cardFooter}>
+                      <div className={styles.assigneeInfo}>
+                        <div className={styles.assigneeAvatar}>
+                          {dataStroe.users.find((u) => u.id === task.assigneeId)
+                            ?.name[0] || "?"}
+                        </div>
+                        <span>
+                          {dataStroe.users.find((u) => u.id === task.assigneeId)
+                            ?.name || "Unassigned"}
+                        </span>
+                      </div>
+                      <span className={styles.projectBadge}>
+                        {dataStroe.projects.find((p) => p.id === task.projectId)
+                          ?.title || "No project"}
+                      </span>
+                    </div>
+                    <div className={styles.cardMeta}>
+                      <span className={styles.dueDate}>
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="18"
+                            rx="2"
+                            ry="2"
+                          />
+                          <line x1="16" y1="2" x2="16" y2="6" />
+                          <line x1="8" y1="2" x2="8" y2="6" />
+                          <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                        {task.deadline}
+                      </span>
+                      <span className={styles.createdDate}>
+                        Created: {new Date(task.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
                   </div>
-                  <div className={styles.projectName}>Project Name</div>
-                </div>)
-
-              }
+                ))}
             </div>
           </div>
-
-
 
           {/* Колонка Blocked */}
           <div className={styles.kanbanColumn}>
@@ -258,36 +340,95 @@ const TaskPage = observer(() => {
                 <span className={`${styles.statusIcon} ${styles.blocked}`} />
                 <h3>Blocked</h3>
               </div>
-              <span className={styles.columnCount}>0</span>
+              <span className={styles.columnCount}>
+                {dataStroe.tasks.filter((t) => t.status === "blocked").length}
+              </span>
             </div>
             <div className={styles.cardsContainer}>
-              {dataStroe.tasks.filter(t => t.status === 'blocked').map(task =>
-                <div key={task.id} className={styles.taskCard}>
-                  <div className={styles.taskHeader}>
-                    <span className={styles.taskId}>#123</span>
-                    <button className={styles.taskMenu}>⋯</button>
-                  </div>
-                  <h4 className={styles.taskTitle}>{task.name}</h4>
-                  <p className={styles.taskDescription}>Описание задачи</p>
-                  <div className={styles.taskMeta}>
-                    <span className={`${styles.priorityBadge} ${styles.priorityHigh}`}>
-                      High
-                    </span>
-                    <span className={`${styles.statusBadge} ${styles.statusTodo}`}>
-                      To Do
-                    </span>
-                  </div>
-                  <div className={styles.taskFooter}>
-                    <div className={styles.assigneeInfo}>
-                      <div className={styles.assigneeAvatar}>A</div>
-                      <span>Assignee Name</span>
+              {dataStroe.tasks
+                .filter((t) => t.status === "blocked")
+                .map((task) => (
+                  <div key={task.id} className={styles.taskCard}>
+                    <div className={styles.cardHeader}>
+                      <span className={styles.taskId}>TASK-{task.id}</span>
+                      <span
+                        className={`${styles.priorityIcon} ${task.priorityId === 1 ? styles.priorityLow : task.priorityId === 2 ? styles.priorityNormal : styles.priorityHigh}`}
+                        title={
+                          task.priorityId === 1
+                            ? "Low"
+                            : task.priorityId === 2
+                              ? "Normal"
+                              : "High"
+                        }
+                      >
+                        {task.priorityId === 3
+                          ? "↑↑"
+                          : task.priorityId === 2
+                            ? "↑"
+                            : "↓"}
+                      </span>
                     </div>
-                    <span className={styles.dueDate}>2024-01-20</span>
+                    <h4 className={styles.taskTitle}>{task.name}</h4>
+                    {task.tags && task.tags.length > 0 && (
+                      <div className={styles.tagsRow}>
+                        {task.tags.slice(0, 3).map((tag, i) => (
+                          <span key={i} className={styles.tag}>
+                            {tag}
+                          </span>
+                        ))}
+                        {task.tags.length > 3 && (
+                          <span className={styles.tagMore}>
+                            +{task.tags.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    <div className={styles.cardFooter}>
+                      <div className={styles.assigneeInfo}>
+                        <div className={styles.assigneeAvatar}>
+                          {dataStroe.users.find((u) => u.id === task.assigneeId)
+                            ?.name[0] || "?"}
+                        </div>
+                        <span>
+                          {dataStroe.users.find((u) => u.id === task.assigneeId)
+                            ?.name || "Unassigned"}
+                        </span>
+                      </div>
+                      <span className={styles.projectBadge}>
+                        {dataStroe.projects.find((p) => p.id === task.projectId)
+                          ?.title || "No project"}
+                      </span>
+                    </div>
+                    <div className={styles.cardMeta}>
+                      <span className={styles.dueDate}>
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="18"
+                            rx="2"
+                            ry="2"
+                          />
+                          <line x1="16" y1="2" x2="16" y2="6" />
+                          <line x1="8" y1="2" x2="8" y2="6" />
+                          <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                        {task.deadline}
+                      </span>
+                      <span className={styles.createdDate}>
+                        Created: {new Date(task.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
                   </div>
-                  <div className={styles.projectName}>Project Name</div>
-                </div>)
-
-              }
+                ))}
             </div>
           </div>
 
@@ -298,43 +439,100 @@ const TaskPage = observer(() => {
                 <span className={`${styles.statusIcon} ${styles.done}`} />
                 <h3>Done</h3>
               </div>
-              <span className={styles.columnCount}>0</span>
+              <span className={styles.columnCount}>
+                {dataStroe.tasks.filter((t) => t.status === "done").length}
+              </span>
             </div>
             <div className={styles.cardsContainer}>
-              {dataStroe.tasks.filter(t => t.status === 'done').map(task =>
-                <div key={task.id} className={styles.taskCard}>
-                  <div className={styles.taskHeader}>
-                    <span className={styles.taskId}>#123</span>
-                    <button className={styles.taskMenu}>⋯</button>
-                  </div>
-                  <h4 className={styles.taskTitle}>{task.name}</h4>
-                  <p className={styles.taskDescription}>Описание задачи</p>
-                  <div className={styles.taskMeta}>
-                    <span className={`${styles.priorityBadge} ${styles.priorityHigh}`}>
-                      High
-                    </span>
-                    <span className={`${styles.statusBadge} ${styles.statusTodo}`}>
-                      To Do
-                    </span>
-                  </div>
-                  <div className={styles.taskFooter}>
-                    <div className={styles.assigneeInfo}>
-                      <div className={styles.assigneeAvatar}>A</div>
-                      <span>Assignee Name</span>
+              {dataStroe.tasks
+                .filter((t) => t.status === "done")
+                .map((task) => (
+                  <div key={task.id} className={styles.taskCard}>
+                    <div className={styles.cardHeader}>
+                      <span className={styles.taskId}>TASK-{task.id}</span>
+                      <span
+                        className={`${styles.priorityIcon} ${task.priorityId === 1 ? styles.priorityLow : task.priorityId === 2 ? styles.priorityNormal : styles.priorityHigh}`}
+                        title={
+                          task.priorityId === 1
+                            ? "Low"
+                            : task.priorityId === 2
+                              ? "Normal"
+                              : "High"
+                        }
+                      >
+                        {task.priorityId === 3
+                          ? "↑↑"
+                          : task.priorityId === 2
+                            ? "↑"
+                            : "↓"}
+                      </span>
                     </div>
-                    <span className={styles.dueDate}>2024-01-20</span>
+                    <h4 className={styles.taskTitle}>{task.name}</h4>
+                    {task.tags && task.tags.length > 0 && (
+                      <div className={styles.tagsRow}>
+                        {task.tags.slice(0, 3).map((tag, i) => (
+                          <span key={i} className={styles.tag}>
+                            {tag}
+                          </span>
+                        ))}
+                        {task.tags.length > 3 && (
+                          <span className={styles.tagMore}>
+                            +{task.tags.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    <div className={styles.cardFooter}>
+                      <div className={styles.assigneeInfo}>
+                        <div className={styles.assigneeAvatar}>
+                          {dataStroe.users.find((u) => u.id === task.assigneeId)
+                            ?.name[0] || "?"}
+                        </div>
+                        <span>
+                          {dataStroe.users.find((u) => u.id === task.assigneeId)
+                            ?.name || "Unassigned"}
+                        </span>
+                      </div>
+                      <span className={styles.projectBadge}>
+                        {dataStroe.projects.find((p) => p.id === task.projectId)
+                          ?.title || "No project"}
+                      </span>
+                    </div>
+                    <div className={styles.cardMeta}>
+                      <span className={styles.dueDate}>
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="18"
+                            rx="2"
+                            ry="2"
+                          />
+                          <line x1="16" y1="2" x2="16" y2="6" />
+                          <line x1="8" y1="2" x2="8" y2="6" />
+                          <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                        {task.deadline}
+                      </span>
+                      <span className={styles.createdDate}>
+                        Created: {new Date(task.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
                   </div>
-                  <div className={styles.projectName}>Project Name</div>
-                </div>)
-
-              }
+                ))}
             </div>
           </div>
-
-
         </div>
-      </section >
-    </div >
+      </section>
+    </div>
   );
-})
+});
 export default TaskPage;

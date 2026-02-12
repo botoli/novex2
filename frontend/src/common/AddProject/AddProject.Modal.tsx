@@ -4,8 +4,11 @@ import dataStroe from "../../Store/Data";
 import styles from "./AddProject.module.scss";
 import { CloseIcon } from "../../UI/Icons";
 import { observer, useLocalObservable } from "mobx-react-lite";
+import { CurrentUserStore } from "../../Store/User.store";
 
 const AddProjectModal = observer(() => {
+  const token =
+    CurrentUserStore.currentuser?.id ?? localStorage.getItem("token");
   const form = useLocalObservable(() => ({
     title: "",
     description: "",
@@ -14,6 +17,8 @@ const AddProjectModal = observer(() => {
     assigned_to: [] as { id: number; name: string }[],
     tag: "",
     tags: [] as string[],
+    created_by: token ? parseInt(token) : 0,
+    created_at: new Date().toISOString(),
     addNewProject() {
       const newProject = {
         title: this.title,
@@ -22,6 +27,7 @@ const AddProjectModal = observer(() => {
         priority: this.priority,
         assigned_to: [...this.assigned_to],
         tags: [...this.tags],
+        created_by: this.created_by,
       };
       projectsStore.projects = [...projectsStore.projects, newProject];
       this.title = "";
