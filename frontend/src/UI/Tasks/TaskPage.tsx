@@ -2,7 +2,6 @@ import { useEffect, useState, useMemo, useId } from "react";
 import styles from "./TaskPage.module.scss";
 import PageHeader from "../../common/PageHeader";
 import { SearchIcon } from "../../UI/Icons";
-import { nowurl, useData } from "../../fetch/fetchTasks";
 import { useLogin } from "../../context/Modal";
 import { useRegistration } from "../../context/RegistrarionModal";
 import Registration from "../../common/Registration/Registration";
@@ -17,22 +16,31 @@ const TaskPage = observer(() => {
   const [activeFiltertask, setActiveFiltertask] = useState<string>(() => {
     return localStorage.getItem("activeFiltertask") || "All Tasks";
   });
+  const [currentTasks, setCurrentTasks] = useState([])
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Due Date");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortedTasks, setSortedTasks] = useState(dataStroe.currentTasks);
   const [isUp, setIsUp] = useState(false);
+  const token =
+    CurrentUserStore.currentuser?.id ?? localStorage.getItem("token");
   dataStroe.setToken(localStorage.getItem("token"))
   const btns = [
     { name: "All Tasks" },
-    { name: "My Tasks" },
     { name: "Overdue" },
-    { name: "Active" },
+    { name: "Hight priority" },
     { name: "Blocked" },
-    { name: "Completed" },
+    { name: "Assigned = Me" },
+    { name: "More filters" }
   ];
+  useEffect(() => {
 
-
+    if (dataStroe.tasks) {
+      setCurrentTasks(
+        dataStroe.tasks.filter((p: any) => p.assigneeId === Number(token)),
+      );
+    }
+  }, [])
   useEffect(() => {
     localStorage.setItem("activeFiltertask", activeFiltertask);
   }, [activeFiltertask]);
@@ -102,6 +110,8 @@ const TaskPage = observer(() => {
       {isOpenRegistration ? <Registration /> : null}
       <section className={styles.dashboard}>
         <h1>Tasks</h1>
+
+        {/* Фильтры задач - остаются без изменений */}
         <div className={styles.headerTasks}>
           <div className={styles.filterall}>
             {btns?.map((btn) => (
@@ -130,21 +140,10 @@ const TaskPage = observer(() => {
           </div>
         </div>
 
+        {/* Контролы задач - остаются без изменений */}
         <div className={styles.tasksControls}>
           <div className={styles.tasksInfo}>
             <span className={styles.totalTasks}>Total: {dataStroe.currentTasks.length}</span>
-            <div className={styles.sortContainer}>
-              <span className={styles.sortLabel}>Sort By:</span>
-              <select
-                className={styles.sortSelect}
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="Due Date">Due Date</option>
-                <option value="Priority">Priority</option>
-                <option value="Status">Status</option>
-              </select>
-            </div>
           </div>
           <div className={styles.tasksActions}>
             <div className={styles.searchContainer}>
@@ -164,96 +163,178 @@ const TaskPage = observer(() => {
           </div>
         </div>
 
-        <div className={styles.tableContainer}>
-          <table className={styles.tasksTable}>
-            <thead>
-              <tr>
-                <th className={styles.checkboxCol}>
-                  <input type="checkbox" className={styles.checkbox} />
-                </th>
-                <th className={styles.titleCol}>Title</th>
-                <th className={styles.statusCol}>
-                  Status <span className={styles.sortArrow}></span>
-                </th>
-                <th
-                  className={styles.priorityCol}
-                  onClick={() => {
-                    SortBy();
-                    setIsUp(!isUp);
-                  }}
-                >
-                  Priority{" "}
-                  <span className={styles.sortArrow}>{isUp ? "▲" : "▼"}</span>
-                </th>
-                <th className={styles.assigneeCol}>Assignee</th>
-                <th className={styles.dueDateCol}>
-                  Due Date <span className={styles.sortArrow}>▼</span>
-                </th>
-                <th className={styles.projectCol}>Project</th>
-                <th className={styles.actionsCol}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredTasks?.map((task) => {
-                const assigneeName = getAssigneeName(task.assigneeId);
-                const projectName = getProjectName(task.projectId);
+        {/* КАНБАН ДОСКА - вместо таблицы */}
+        <div className={styles.kanbanBoard}>
 
-                return (
-                  <tr key={task.id} className={styles.tableRow}>
-                    <td className={styles.checkboxCol}>
-                      <input type="checkbox" className={styles.checkbox} />
-                    </td>
-                    <td className={styles.titleCol}>
-                      <span className={styles.taskTitle}>{task.name}</span>
-                    </td>
-                    <td className={styles.statusCol}>
-                      <span
-                        className={`${styles.statusBadge} ${getStatusColor(task.status)}`}
-                      >
-                        {task.status.charAt(0).toUpperCase() +
-                          task.status.slice(1)}
-                      </span>
-                    </td>
-                    <td className={styles.priorityCol}>
-                      <span
-                        className={`${styles.priorityBadge} ${getPriorityColor(task.priority)}`}
-                      >
-                        {task.priority.charAt(0).toUpperCase() +
-                          task.priority.slice(1)}
-                      </span>
-                    </td>
-                    <td className={styles.assigneeCol}>
-                      {assigneeName ? (
-                        <div className={styles.assigneeInfo}>
-                          <div className={styles.assigneeAvatar}>
-                            {assigneeName.charAt(0).toUpperCase()}
-                          </div>
-                          <span>{assigneeName + " "} </span>
-                        </div>
-                      ) : (
-                        <div className={styles.unassigned}>
-                          <span className={styles.unassignedBadge}>2</span>
-                          <span>Unassigned</span>
-                        </div>
-                      )}
-                    </td>
-                    <td className={styles.dueDateCol}>
-                      <span className={styles.dueDate}>{task.deadline}</span>
-                    </td>
-                    <td className={styles.projectCol}>
-                      <span className={styles.projectName}>{projectName}</span>
-                    </td>
-                    <td className={styles.actionsCol}>
-                      <button className={styles.actionsBtn}>⋯</button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          {/* Колонка To Do */}
+          <div className={styles.kanbanColumn}>
+            <div className={styles.columnHeader}>
+              <div className={styles.columnTitle}>
+                <span className={`${styles.statusIcon} ${styles.todo}`} />
+                <h3>To Do</h3>
+              </div>
+              <span className={styles.columnCount}>
+                {dataStroe.tasks.filter(t => t.status === "todo").length}
+              </span>
+            </div>
+            <div className={styles.cardsContainer}>
+              {dataStroe.tasks.filter(t => t.status === 'todo').map(task =>
+                <div key={task.id} className={styles.taskCard}>
+                  <div className={styles.taskHeader}>
+                    <span className={styles.taskId}>#123</span>
+                    <button className={styles.taskMenu}>⋯</button>
+                  </div>
+                  <h4 className={styles.taskTitle}>{task.name}</h4>
+                  <p className={styles.taskDescription}>Описание задачи</p>
+                  <div className={styles.taskMeta}>
+                    <span className={`${styles.priorityBadge} ${styles.priorityHigh}`}>
+                      High
+                    </span>
+                    <span className={`${styles.statusBadge} ${styles.statusTodo}`}>
+                      To Do
+                    </span>
+                  </div>
+                  <div className={styles.taskFooter}>
+                    <div className={styles.assigneeInfo}>
+                      <div className={styles.assigneeAvatar}>A</div>
+                      <span>Assignee Name</span>
+                    </div>
+                    <span className={styles.dueDate}>2024-01-20</span>
+                  </div>
+                  <div className={styles.projectName}>Project Name</div>
+                </div>)
+
+              }
+
+            </div>
+          </div>
+
+          {/* Колонка In Progress */}
+          <div className={styles.kanbanColumn}>
+            <div className={styles.columnHeader}>
+              <div className={styles.columnTitle}>
+                <span className={`${styles.statusIcon} ${styles.inProgress}`} />
+                <h3>In Progress</h3>
+              </div>
+              <span className={styles.columnCount}>0</span>
+            </div>
+            <div className={styles.cardsContainer}>
+              {dataStroe.tasks.filter(t => t.status === 'in_progress').map(task =>
+                <div key={task.id} className={styles.taskCard}>
+                  <div className={styles.taskHeader}>
+                    <span className={styles.taskId}>#123</span>
+                    <button className={styles.taskMenu}>⋯</button>
+                  </div>
+                  <h4 className={styles.taskTitle}>{task.name}</h4>
+                  <p className={styles.taskDescription}>Описание задачи</p>
+                  <div className={styles.taskMeta}>
+                    <span className={`${styles.priorityBadge} ${styles.priorityHigh}`}>
+                      High
+                    </span>
+                    <span className={`${styles.statusBadge} ${styles.statusTodo}`}>
+                      To Do
+                    </span>
+                  </div>
+                  <div className={styles.taskFooter}>
+                    <div className={styles.assigneeInfo}>
+                      <div className={styles.assigneeAvatar}>A</div>
+                      <span>Assignee Name</span>
+                    </div>
+                    <span className={styles.dueDate}>2024-01-20</span>
+                  </div>
+                  <div className={styles.projectName}>Project Name</div>
+                </div>)
+
+              }
+            </div>
+          </div>
+
+
+
+          {/* Колонка Blocked */}
+          <div className={styles.kanbanColumn}>
+            <div className={styles.columnHeader}>
+              <div className={styles.columnTitle}>
+                <span className={`${styles.statusIcon} ${styles.blocked}`} />
+                <h3>Blocked</h3>
+              </div>
+              <span className={styles.columnCount}>0</span>
+            </div>
+            <div className={styles.cardsContainer}>
+              {dataStroe.tasks.filter(t => t.status === 'blocked').map(task =>
+                <div key={task.id} className={styles.taskCard}>
+                  <div className={styles.taskHeader}>
+                    <span className={styles.taskId}>#123</span>
+                    <button className={styles.taskMenu}>⋯</button>
+                  </div>
+                  <h4 className={styles.taskTitle}>{task.name}</h4>
+                  <p className={styles.taskDescription}>Описание задачи</p>
+                  <div className={styles.taskMeta}>
+                    <span className={`${styles.priorityBadge} ${styles.priorityHigh}`}>
+                      High
+                    </span>
+                    <span className={`${styles.statusBadge} ${styles.statusTodo}`}>
+                      To Do
+                    </span>
+                  </div>
+                  <div className={styles.taskFooter}>
+                    <div className={styles.assigneeInfo}>
+                      <div className={styles.assigneeAvatar}>A</div>
+                      <span>Assignee Name</span>
+                    </div>
+                    <span className={styles.dueDate}>2024-01-20</span>
+                  </div>
+                  <div className={styles.projectName}>Project Name</div>
+                </div>)
+
+              }
+            </div>
+          </div>
+
+          {/* Колонка Done */}
+          <div className={styles.kanbanColumn}>
+            <div className={styles.columnHeader}>
+              <div className={styles.columnTitle}>
+                <span className={`${styles.statusIcon} ${styles.done}`} />
+                <h3>Done</h3>
+              </div>
+              <span className={styles.columnCount}>0</span>
+            </div>
+            <div className={styles.cardsContainer}>
+              {dataStroe.tasks.filter(t => t.status === 'done').map(task =>
+                <div key={task.id} className={styles.taskCard}>
+                  <div className={styles.taskHeader}>
+                    <span className={styles.taskId}>#123</span>
+                    <button className={styles.taskMenu}>⋯</button>
+                  </div>
+                  <h4 className={styles.taskTitle}>{task.name}</h4>
+                  <p className={styles.taskDescription}>Описание задачи</p>
+                  <div className={styles.taskMeta}>
+                    <span className={`${styles.priorityBadge} ${styles.priorityHigh}`}>
+                      High
+                    </span>
+                    <span className={`${styles.statusBadge} ${styles.statusTodo}`}>
+                      To Do
+                    </span>
+                  </div>
+                  <div className={styles.taskFooter}>
+                    <div className={styles.assigneeInfo}>
+                      <div className={styles.assigneeAvatar}>A</div>
+                      <span>Assignee Name</span>
+                    </div>
+                    <span className={styles.dueDate}>2024-01-20</span>
+                  </div>
+                  <div className={styles.projectName}>Project Name</div>
+                </div>)
+
+              }
+            </div>
+          </div>
+
+
         </div>
-      </section>
-    </div>
+      </section >
+    </div >
   );
 })
 export default TaskPage;

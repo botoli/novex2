@@ -28,7 +28,7 @@ export interface UserInterface {
 export interface TaskInterface {
   id: number;
   name: string;
-  status: "active" | "completed" | "blocked" | "overdue";
+  status: "in_progress" | "done" | "blocked" | "todo";
   projectId: number;
   priority: "low" | "medium" | "high";
   priorityId: number;

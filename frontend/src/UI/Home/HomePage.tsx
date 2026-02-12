@@ -19,7 +19,7 @@ import Login from "../../common/Login/Login";
 import { useLogin } from "../../context/Modal";
 import Registration from "../../common/Registration/Registration";
 import { useRegistration } from "../../context/RegistrarionModal";
-import { Link } from "react-router";
+import { data, Link } from "react-router";
 import { CurrentUserStore } from "../../Store/User.store";
 import dataStroe from "../../Store/Data";
 
@@ -158,12 +158,13 @@ const HomePage = observer(() => {
         <div className={styles.tasksSection}>
           <h1 className={styles.sectionTitle}>Projects Focus</h1>
           <div className={styles.gridProjects}>
+
             {dataStroe.isLoading ? (
               <div className={styles.loading}>
                 <div className={styles.spinner}></div>
                 <p>Загрузка проектов...</p>
               </div>
-            ) : currentProjects.length === 0 ? (
+            ) : currentProjects.length === 0 && !dataStroe.error ? (
               <div className={styles.noProjects}>
                 <div className={styles.noProjectsdiv}>
                   <h1 className={styles.noProjectsTitle}>У вас нет проектов</h1>
@@ -176,105 +177,110 @@ const HomePage = observer(() => {
                   <p>Создать проект</p>
                 </button>
               </div>
-            ) : (
-              currentProjects.map((project) => (
-                <div key={project.id} className={styles.taskCard}>
-                  <div className={styles.taskHeader}>
-                    <div className={styles.taskInfo}>
-                      <h1>
-                        {project.title}
-                        <button>
-                          <ArrowRightIcon />
-                        </button>
-                      </h1>
-                      <div className={styles.progressContainer}>
-                        <p className={styles.progressText}>
-                          {progress(project.id)}%
-                        </p>
-                        <div className={styles.progressDiv}>
-                          <div
-                            className={styles.progressBar}
-                            style={{ width: progress(project.id) + "%" }}
-                          ></div>
+            ) : dataStroe.error !== null ?
+              <div className={styles.errorCont}>
+                <div className={styles.errorDiv}>
+                  <h1 className={styles.ErrorTitle}>Ошибка: {dataStroe.error.code}</h1>
+                  <h1 className={styles.ErrorTitle}>{dataStroe.error.message}</h1></div>
+              </div> : (
+                currentProjects.map((project) => (
+                  <div key={project.id} className={styles.taskCard}>
+                    <div className={styles.taskHeader}>
+                      <div className={styles.taskInfo}>
+                        <h1>
+                          {project.title}
+                          <button>
+                            <ArrowRightIcon />
+                          </button>
+                        </h1>
+                        <div className={styles.progressContainer}>
+                          <p className={styles.progressText}>
+                            {progress(project.id)}%
+                          </p>
+                          <div className={styles.progressDiv}>
+                            <div
+                              className={styles.progressBar}
+                              style={{ width: progress(project.id) + "%" }}
+                            ></div>
+                          </div>
+                          <p>
+                            {Math.floor(
+                              dataStroe.tasks.filter(
+                                (task) =>
+                                  task.projectId === project.id &&
+                                  task.status === "completed",
+                              ).length,
+                            )}
+                            /
+                            {Math.floor(
+                              dataStroe.tasks.filter(
+                                (task) => task.projectId === project.id,
+                              ).length,
+                            )}
+                          </p>
                         </div>
-                        <p>
-                          {Math.floor(
-                            dataStroe.tasks.filter(
-                              (task) =>
-                                task.projectId === project.id &&
-                                task.status === "completed",
-                            ).length,
-                          )}
-                          /
-                          {Math.floor(
-                            dataStroe.tasks.filter(
-                              (task) => task.projectId === project.id,
-                            ).length,
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.taskFooter}>
-                    <div className={styles.taskMetrics}>
-                      <div className={styles.metricButtons}>
-                        <button className={`${styles.btnActive}`}>
-                          <ActiveIcon />
-                          <span className={styles.label}>Active:</span>
-                          <span className={styles.value}>
-                            {SetStatistikActive(project.id)}
-                          </span>
-                        </button>
-
-                        <button className={`${styles.btnBlocked}`}>
-                          <BlockedIcon />
-                          <span className={styles.label}>Blocked:</span>
-
-                          <span className={styles.value}>
-                            {SetStatistikBlocked(project.id)}
-                          </span>
-                        </button>
-
-                        <button className={`${styles.btnOverdue}`}>
-                          <OverdueIcon />
-                          <span className={styles.label}>Overdue:</span>
-                          <span className={styles.value}>
-                            {SetStatistikOverdue(project.id)}
-                          </span>
-                        </button>
                       </div>
                     </div>
 
-                    <div className={styles.githubInfo}>
-                      <GithubIcon />
-                      <span>github:</span>
-                      <span className={styles.githubCommits}>
-                        commits:{/* {CountOfCommits} */} 10
-                      </span>
-                      <span className={styles.githubCommits}>
-                        PR:{/* {PR} */}7
-                      </span>
-                      <span className={styles.githubCommits}>
-                        CI:{/* {CI} */}2{" "}
-                      </span>
-                    </div>
+                    <div className={styles.taskFooter}>
+                      <div className={styles.taskMetrics}>
+                        <div className={styles.metricButtons}>
+                          <button className={`${styles.btnActive}`}>
+                            <ActiveIcon />
+                            <span className={styles.label}>Active:</span>
+                            <span className={styles.value}>
+                              {SetStatistikActive(project.id)}
+                            </span>
+                          </button>
 
-                    <div className={styles.actionButtons}>
-                      <button className={styles.btnBoard}>
-                        <p>Board</p>
-                      </button>
-                      <button className={styles.btnGithub}>
-                        <p>Repo</p>
-                      </button>
-                      <button className={styles.btnAnalytics}>
-                        <p>Analytics</p>
-                      </button>
+                          <button className={`${styles.btnBlocked}`}>
+                            <BlockedIcon />
+                            <span className={styles.label}>Blocked:</span>
+
+                            <span className={styles.value}>
+                              {SetStatistikBlocked(project.id)}
+                            </span>
+                          </button>
+
+                          <button className={`${styles.btnOverdue}`}>
+                            <OverdueIcon />
+                            <span className={styles.label}>Overdue:</span>
+                            <span className={styles.value}>
+                              {SetStatistikOverdue(project.id)}
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className={styles.githubInfo}>
+                        <GithubIcon />
+                        <span>github:</span>
+                        <span className={styles.githubCommits}>
+                          commits:{/* {CountOfCommits} */} 10
+                        </span>
+                        <span className={styles.githubCommits}>
+                          PR:{/* {PR} */}7
+                        </span>
+                        <span className={styles.githubCommits}>
+                          CI:{/* {CI} */}2{" "}
+                        </span>
+                      </div>
+
+                      <div className={styles.actionButtons}>
+                        <button className={styles.btnBoard}>
+                          <p>Board</p>
+                        </button>
+                        <button className={styles.btnGithub}>
+                          <p>Repo</p>
+                        </button>
+                        <button className={styles.btnAnalytics}>
+                          <p>Analytics</p>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
-            )}
+                ))
+              )}
           </div>
         </div>
         {/* Active Tasks */}

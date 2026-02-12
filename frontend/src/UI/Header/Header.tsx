@@ -24,6 +24,7 @@ const Header = observer(() => {
   const currentPath = location.pathname;
 
   const [currentProjects, setCurrentProjects] = useState<any[]>([]);
+  const [currentTasks, setCurrentTasks] = useState<any[]>([]);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -32,9 +33,15 @@ const Header = observer(() => {
         dataStroe.projects.filter((p: any) => p.assigned_to === Number(token)),
       );
     }
-  }, [dataStroe.projects, token]);
+    if (dataStroe.tasks) {
+      setCurrentTasks(
+        dataStroe.tasks.filter((p: any) => p.assigneeId === Number(token)),
+      );
+    }
+  }, [dataStroe.projects, dataStroe.tasks, token]);
 
   const countOfProjects = currentProjects?.length ?? 0;
+  const countOfTasks = currentTasks?.length ?? 0;
   const [tabs, setTabs] = useState(() => {
     const storedTabs = localStorage.getItem("tabs");
     return storedTabs ? JSON.parse(storedTabs) : Tabs;
@@ -141,9 +148,9 @@ const Header = observer(() => {
                 >
                   {getIcon(tab.name)}
                   <h2>{tab.name}</h2>
-                  {tab.name === "Projects" && countOfProjects > 0 && (
+                  {tab.name === "Projects" && countOfProjects > 0 ? (
                     <div className={styles.projectCount}>{countOfProjects}</div>
-                  )}
+                  ) : tab.name === "Tasks" && countOfTasks > 0 ? <div className={styles.projectCount}>{countOfTasks}</div> : null}
                 </div>
               </Link>
             );

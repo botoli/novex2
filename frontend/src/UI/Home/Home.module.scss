@@ -12,13 +12,137 @@
   width: 100%;
   position: relative;
 
-  @media (max-width: 1400px) {
-  }
+  @media (max-width: 1400px) {}
 
   @media (max-width: 1024px) {
     padding-left: 0;
   }
 }
+
+.errorCont {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: var(--dracula-background);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.errorDiv {
+  background: var(--dracula-current-line);
+  border-radius: 12px;
+  padding: 24px 32px;
+
+  width: 100%;
+  border: 1px solid var(--dracula-selection);
+  box-shadow: 0 4px 12px var(--dracula-shadow-dark);
+  position: relative;
+}
+
+.ErrorTitle {
+  margin: 0;
+  line-height: 1.4;
+  font-weight: 500;
+
+  &:first-of-type {
+    color: var(--dracula-red);
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--dracula-selection);
+    letter-spacing: 0.5px;
+  }
+
+  &:last-of-type {
+    color: var(--dracula-foreground);
+    font-size: 15px;
+    font-weight: 400;
+    padding: 12px;
+    background: var(--dracula-background);
+    border-radius: 6px;
+    border-left: 4px solid var(--dracula-red);
+    word-break: break-word;
+  }
+}
+
+// Кнопка повтора
+.retryButton {
+  margin-top: 20px;
+  padding: 8px 20px;
+  background: var(--dracula-selection);
+  color: var(--dracula-foreground);
+  border: 1px solid var(--dracula-comment);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: none;
+
+  &:hover {
+    background: var(--dracula-purple-rgba-02);
+    border-color: var(--dracula-purple);
+  }
+
+  &:active {
+    background: var(--dracula-purple-rgba-03);
+  }
+}
+
+// Компактный режим для мобильных
+@media (max-width: 640px) {
+  .errorCont {
+    padding: 16px;
+  }
+
+  .errorDiv {
+    padding: 20px 24px;
+  }
+
+  .ErrorTitle {
+    &:first-of-type {
+      font-size: 18px;
+    }
+
+    &:last-of-type {
+      font-size: 14px;
+      padding: 10px;
+    }
+  }
+}
+
+// Опционально: добавить кнопку повтора
+.retryButton {
+  margin-top: 32px;
+  padding: 14px 32px;
+  background: transparent;
+  color: var(--dracula-cyan);
+  border: 2px solid var(--dracula-cyan);
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+
+  &:hover {
+    background: var(--dracula-cyan);
+    color: var(--dracula-background);
+    box-shadow: 0 0 20px var(--dracula-cyan-rgba-01);
+    border-color: transparent;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
 .noProjects {
   display: flex;
   flex-direction: column;
@@ -109,6 +233,7 @@
     transform: rotate(360deg);
   }
 }
+
 .pageHeader {
   display: flex;
   align-items: center;
@@ -264,7 +389,7 @@
   }
 
   // Кнопка уведомлений
-  > div:nth-of-type(2) {
+  >div:nth-of-type(2) {
     button {
       position: relative;
       width: 40px;
@@ -448,6 +573,7 @@
     }
   }
 }
+
 .modalProfile {
   display: flex;
   flex-direction: column;
@@ -535,6 +661,7 @@
     }
   }
 }
+
 .dashboard {
   padding: 30px;
 
@@ -550,7 +677,7 @@
     padding: 15px 12px;
   }
 
-  > h1 {
+  >h1 {
     color: $dracula-foreground;
     font-size: 32px;
     font-weight: 700;
@@ -643,6 +770,7 @@
         height: 44px;
         border-radius: 10px;
         flex-shrink: 0;
+
         svg {
           width: 22px;
           height: 22px;
@@ -679,6 +807,7 @@
           color: $dracula-foreground;
           font-size: 12px;
         }
+
         svg {
           background: none;
           color: $dracula-red;
@@ -741,11 +870,9 @@
       }
 
       .healthScore {
-        background: linear-gradient(
-          135deg,
-          $dracula-green,
-          ($dracula-green, 10%)
-        );
+        background: linear-gradient(135deg,
+            $dracula-green,
+            ($dracula-green, 10%));
         border-radius: 8px;
         padding: 6px 10px;
         color: $dracula-foreground;
@@ -773,7 +900,7 @@
         border-radius: 2px;
         overflow: hidden;
 
-        > div {
+        >div {
           height: 100%;
           border-radius: 2px;
           transition: width 300ms ease;
@@ -966,18 +1093,23 @@
         &:nth-child(1) {
           z-index: 6;
         }
+
         &:nth-child(2) {
           z-index: 5;
         }
+
         &:nth-child(3) {
           z-index: 4;
         }
+
         &:nth-child(4) {
           z-index: 3;
         }
+
         &:nth-child(5) {
           z-index: 2;
         }
+
         &:nth-child(6) {
           z-index: 1;
         }
@@ -1219,11 +1351,13 @@
 
 // Анимации
 @keyframes pulse {
+
   0%,
   100% {
     opacity: 1;
     transform: translateY(-50%) scale(1);
   }
+
   50% {
     opacity: 0.6;
     transform: translateY(-50%) scale(0.9);
@@ -1234,6 +1368,7 @@
   0% {
     opacity: 0.8;
   }
+
   100% {
     opacity: 1;
   }
@@ -1312,6 +1447,7 @@
     }
   }
 }
+
 .progressDiv {
   width: 100%;
   height: 10px;
@@ -1330,6 +1466,7 @@
     transition: width 0.3s ease;
   }
 }
+
 .progressContainer {
   height: 20px;
   margin-top: 15px;
@@ -1370,6 +1507,7 @@
     }
   }
 }
+
 // Projects Focus Grid - адаптивная сетка
 .tasksSection {
   width: 100%;
@@ -1393,16 +1531,19 @@
   @media (max-width: 1500px) {
     grid-template-columns: repeat(2, 1fr);
   }
+
   @media (max-width: 1100px) {
     grid-template-columns: repeat(1, 1fr);
   }
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
 
   // Когда нет проектов или загрузка - растягиваем на всю ширину
-  > .noProjects,
-  > .loading {
+  >.noProjects,
+  >.loading,
+  .errorCont {
     grid-column: 1 / -1;
   }
 }
@@ -1567,6 +1708,7 @@
           svg {
             color: $dracula-green;
           }
+
           .value {
             color: $dracula-green;
           }
@@ -1580,6 +1722,7 @@
           svg {
             color: $dracula-red;
           }
+
           .value {
             color: $dracula-red;
           }
@@ -1593,6 +1736,7 @@
           svg {
             color: $dracula-orange;
           }
+
           .value {
             color: $dracula-orange;
           }
@@ -1893,7 +2037,7 @@
       gap: 10px;
     }
 
-    > div {
+    >div {
       background-color: $dracula-background;
       border: 1px solid $dracula-selection;
       border-radius: 6px;
@@ -2269,7 +2413,7 @@
     }
   }
 
-  > div {
+  >div {
     margin-bottom: 12px;
 
     @media (max-width: 480px) {
@@ -2371,7 +2515,7 @@
   .dashboard {
     padding: 12px 10px;
 
-    > h1 {
+    >h1 {
       font-size: 18px;
     }
   }

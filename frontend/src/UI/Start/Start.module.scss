@@ -1,4 +1,4 @@
-@import "../Styles/Variables.scss";
+@use "../Styles/Variables.scss" as *;
 
 .startPageContainer {
   width: 100%;

@@ -8,9 +8,20 @@ const dataStroe = {
   tasks: [],
   isLoading: true,
   token: null,
+  error: null,
+
   setToken(token) {
-    this.token = token
+    this.token = token;
   },
+
+  // ✅ Добавь этот метод
+  updateTaskStatus(taskId, newStatus) {
+    const task = this.tasks.find(t => t.id === taskId);
+    if (task) {
+      task.status = newStatus; // Теперь работает!
+    }
+  },
+
   FetchALl() {
     this.isLoading = true;
     Promise.all([
@@ -22,20 +33,34 @@ const dataStroe = {
         runInAction(() => {
           this.users = usersResp.data;
           this.projects = projectsResp.data;
-          this.tasks = tasksResp.data;
+
+          // ✅ ВАЖНО: делаем каждую задачу observable
+          this.tasks = tasksResp.data.map(task => {
+            makeAutoObservable(task);
+            return task;
+          });
+
           this.isLoading = false;
         });
       })
       .catch((error) => {
-        console.error("Ошибка получения данных:", error);
+        runInAction(() => {
+          this.isLoading = false;
+          this.error = {
+            code: error?.response?.status || error?.code || 'UNKNOWN_ERROR',
+            message: error?.response?.data?.message || error?.message || 'Произошла ошибка при загрузке данных',
+          };
+        });
       });
   },
 
   get currentProjects() {
     if (!this.token) {
-      return []
-    } return this.projects.filter(project => project.assigned_to === Number(this.token))
+      return [];
+    }
+    return this.projects.filter(project => project.assigned_to === Number(this.token));
   },
+
   get currentTasks() {
     const projectIds = this.currentProjects.map(p => p.id);
     return this.tasks.filter(task =>
@@ -45,5 +70,4 @@ const dataStroe = {
 };
 
 makeAutoObservable(dataStroe);
-
 export default dataStroe;
