@@ -347,32 +347,22 @@
 
   &.todo {
     background-color: $dracula-blue;
-    box-shadow: 0 0 8px rgba(92, 200, 255, 0.3);
   }
 
   &.inProgress {
     background-color: $dracula-yellow;
-    box-shadow: 0 0 8px rgba(255, 216, 102, 0.3);
-  }
-
-  &.review {
-    background-color: $dracula-purple;
-    box-shadow: 0 0 8px rgba(108, 140, 255, 0.3);
   }
 
   &.done {
     background-color: $dracula-green;
-    box-shadow: 0 0 8px rgba(139, 230, 92, 0.3);
   }
 
   &.blocked {
     background-color: $dracula-red;
-    box-shadow: 0 0 8px rgba(255, 92, 108, 0.3);
   }
 
   &.overdue {
     background-color: $dracula-orange;
-    box-shadow: 0 0 8px rgba(255, 159, 107, 0.3);
   }
 }
 
