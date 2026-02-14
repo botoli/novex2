@@ -25,6 +25,12 @@ const TaskPage = observer(() => {
   const token =
     CurrentUserStore.currentuser?.id ?? localStorage.getItem("token");
   dataStroe.setToken(localStorage.getItem("token"));
+
+  {
+    setTimeout(() => {
+      console.log("Пиписка");
+    }, 1000);
+  }
   const btns = [
     { name: "All Tasks" },
     { name: "Overdue" },
@@ -36,7 +42,9 @@ const TaskPage = observer(() => {
   useEffect(() => {
     if (dataStroe.tasks) {
       setCurrentTasks(
-        dataStroe.tasks.filter((p: any) => p.assigneeId === Number(token)),
+        dataStroe.tasks.filter((p: any) =>
+          p.assigned_to.includes(Number(token)),
+        ),
       );
     }
   }, []);
@@ -58,8 +66,8 @@ const TaskPage = observer(() => {
       return dataStroe.currentTasks;
     }
     if (activeFiltertask === "My Tasks") {
-      return dataStroe.currentTasks.filter(
-        (task) => task.assigneeId === Number(dataStroe.token),
+      return dataStroe.currentTasks.filter((task) =>
+        task.assigned_to.includes(Number(dataStroe.token)),
       );
     }
     return dataStroe.currentTasks.filter(
@@ -89,8 +97,8 @@ const TaskPage = observer(() => {
                   {btn.name === "All Tasks"
                     ? dataStroe.currentTasks.length
                     : btn.name === "My Tasks"
-                      ? dataStroe.currentTasks.filter(
-                          (task) => task.assigneeId === Number(dataStroe.token),
+                      ? dataStroe.currentTasks.filter((task) =>
+                          task.assigned_to.includes(Number(dataStroe.token)),
                         ).length
                       : btn.name === "Complete"
                         ? dataStroe.currentTasks.filter(
@@ -185,12 +193,14 @@ const TaskPage = observer(() => {
                     <div className={styles.cardFooter}>
                       <div className={styles.assigneeInfo}>
                         <div className={styles.assigneeAvatar}>
-                          {dataStroe.users.find((u) => u.id === task.assigneeId)
-                            ?.name[0] || "?"}
+                          {dataStroe.users.find((u) =>
+                            task.assigned_to.includes(u.id),
+                          )?.name[0] || "?"}
                         </div>
                         <span>
-                          {dataStroe.users.find((u) => u.id === task.assigneeId)
-                            ?.name || "Unassigned"}
+                          {dataStroe.users.find((u) =>
+                            task.assigned_to.includes(u.id),
+                          )?.name || "Unassigned"}
                         </span>
                       </div>
                       <span className={styles.projectBadge}>
@@ -287,12 +297,14 @@ const TaskPage = observer(() => {
                     <div className={styles.cardFooter}>
                       <div className={styles.assigneeInfo}>
                         <div className={styles.assigneeAvatar}>
-                          {dataStroe.users.find((u) => u.id === task.assigneeId)
-                            ?.name[0] || "?"}
+                          {dataStroe.users.find((u) =>
+                            task.assigned_to.includes(u.id),
+                          )?.name[0] || "?"}
                         </div>
                         <span>
-                          {dataStroe.users.find((u) => u.id === task.assigneeId)
-                            ?.name || "Unassigned"}
+                          {dataStroe.users.find((u) =>
+                            task.assigned_to.includes(u.id),
+                          )?.name || "Unassigned"}
                         </span>
                       </div>
                       <span className={styles.projectBadge}>
@@ -386,12 +398,14 @@ const TaskPage = observer(() => {
                     <div className={styles.cardFooter}>
                       <div className={styles.assigneeInfo}>
                         <div className={styles.assigneeAvatar}>
-                          {dataStroe.users.find((u) => u.id === task.assigneeId)
-                            ?.name[0] || "?"}
+                          {dataStroe.users.find((u) =>
+                            task.assigned_to.includes(u.id),
+                          )?.name[0] || "?"}
                         </div>
                         <span>
-                          {dataStroe.users.find((u) => u.id === task.assigneeId)
-                            ?.name || "Unassigned"}
+                          {dataStroe.users.find((u) =>
+                            task.assigned_to.includes(u.id),
+                          )?.name || "Unassigned"}
                         </span>
                       </div>
                       <span className={styles.projectBadge}>
@@ -431,7 +445,7 @@ const TaskPage = observer(() => {
                 ))}
             </div>
           </div>
-
+          <div className={styles.pipisja}></div>
           {/* Колонка Done */}
           <div className={styles.kanbanColumn}>
             <div className={styles.columnHeader}>
@@ -485,12 +499,14 @@ const TaskPage = observer(() => {
                     <div className={styles.cardFooter}>
                       <div className={styles.assigneeInfo}>
                         <div className={styles.assigneeAvatar}>
-                          {dataStroe.users.find((u) => u.id === task.assigneeId)
-                            ?.name[0] || "?"}
+                          {dataStroe.users.find((u) =>
+                            task.assigned_to.includes(u.id),
+                          )?.name[0] || "?"}
                         </div>
                         <span>
-                          {dataStroe.users.find((u) => u.id === task.assigneeId)
-                            ?.name || "Unassigned"}
+                          {dataStroe.users.find((u) =>
+                            task.assigned_to.includes(u.id),
+                          )?.name || "Unassigned"}
                         </span>
                       </div>
                       <span className={styles.projectBadge}>

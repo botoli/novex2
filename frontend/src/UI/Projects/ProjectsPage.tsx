@@ -39,7 +39,9 @@ const ProjectsPage = observer(() => {
     CurrentUserStore.currentuser?.id ?? localStorage.getItem("token");
 
   const currentProjects = useMemo(() => {
-    return dataStroe.projects.filter((p) => p.assigned_to === Number(token));
+    return dataStroe.projects.filter((p) =>
+      p.assigned_to.includes(Number(token)),
+    );
   }, [dataStroe.projects, token, CurrentUserStore.currentuser]);
 
   const filtered = useMemo(() => {
@@ -59,7 +61,7 @@ const ProjectsPage = observer(() => {
           (task) => task.projectId === id && task.status === "completed",
         ).length /
           dataStroe.tasks.filter((task) => task.projectId === id).length) *
-        100,
+          100,
       ) || 0
     );
   };
@@ -102,8 +104,9 @@ const ProjectsPage = observer(() => {
             {btns?.map((btn) => (
               <button
                 key={btn.name}
-                className={`${styles.Allprojetcs} ${activeFilter === btn.name ? styles.active : ""
-                  }`}
+                className={`${styles.Allprojetcs} ${
+                  activeFilter === btn.name ? styles.active : ""
+                }`}
                 onClick={() => setActiveFilter(btn.name)}
               >
                 <p>{btn.name}</p>
@@ -111,7 +114,7 @@ const ProjectsPage = observer(() => {
                   {btn.name === "All Projects"
                     ? currentProjects.length
                     : currentProjects.filter((p) => p.status === btn.name)
-                      .length}
+                        .length}
                 </p>
               </button>
             ))}

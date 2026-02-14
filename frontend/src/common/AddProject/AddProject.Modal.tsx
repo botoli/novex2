@@ -5,43 +5,68 @@ import styles from "./AddProject.module.scss";
 import { CloseIcon } from "../../UI/Icons";
 import { observer, useLocalObservable } from "mobx-react-lite";
 import { CurrentUserStore } from "../../Store/User.store";
+import { nowurl, useData } from "../../fetch/fetchTasks";
 
 const AddProjectModal = observer(() => {
+  const Priority = ["Low", "Medium", "High"];
   const token =
     CurrentUserStore.currentuser?.id ?? localStorage.getItem("token");
+
+  // useData provides `post` which invalidates the GET cache on success
+  const { post: postProject, postStatus } = useData(nowurl + "projects");
+
   const form = useLocalObservable(() => ({
     title: "",
     description: "",
-    status: "",
     priority: "",
+    status: "Active",
     assigned_to: [] as { id: number; name: string }[],
     tag: "",
     tags: [] as string[],
     created_by: token ? parseInt(token) : 0,
     created_at: new Date().toISOString(),
-    addNewProject() {
-      const newProject = {
+
+    async addNewProject() {
+      const payload = {
         title: this.title,
         description: this.description,
-        status: this.status,
         priority: this.priority,
-        assigned_to: [...this.assigned_to],
+        assigned_to: this.assigned_to.map((u) => u.id),
         tags: [...this.tags],
         created_by: this.created_by,
+        created_at: this.created_at,
       };
-      projectsStore.projects = [...projectsStore.projects, newProject];
-      this.title = "";
-      this.description = "";
-      this.status = "";
-      this.priority = "";
-      this.assigned_to = [];
-      this.tags = [];
-      this.tag = "";
-      projectsStore.IsOpenAddProject = false;
+
+      try {
+        const created = await postProject(payload);
+        // add server response to local store (keeps UI in sync)
+        projectsStore.projects = [...projectsStore.projects, created];
+
+        // reset form
+        this.title = "";
+        this.description = "";
+        this.priority = "";
+        this.assigned_to = [];
+        this.tags = [];
+        this.tag = "";
+        projectsStore.IsOpenAddProject = false;
+      } catch (err) {
+        console.error("Failed to create project:", err);
+        // minimal UX: keep modal open and let user try again
+        // could add toast/inline error later
+      }
     },
+
     toogleUser(id: number, name: string) {
       if (!this.assigned_to.some((u) => u.id === id)) {
         this.assigned_to = [...this.assigned_to, { id, name }];
+      }
+    },
+    tooglePriority(priority: string) {
+      if (this.priority.length > 0 && this.priority === priority) {
+        this.priority = "";
+      } else {
+        this.priority = priority;
       }
     },
     deleteUser(id: number) {
@@ -59,6 +84,7 @@ const AddProjectModal = observer(() => {
   }));
 
   const [isOpenAssignedTo, setIsOpenAssignedTo] = useState(false);
+  const [isOpenPriority, setIsOpenPriority] = useState(false);
   return (
     <div className={projectsStore.IsOpenAddProject ? styles.blur : null}>
       <div
@@ -90,8 +116,43 @@ const AddProjectModal = observer(() => {
             value={form.description}
             onChange={(e) => (form.description = e.target.value)}
           />
-          <div className={styles.status}>Status</div>
-          <div className={styles.priority}>Priority</div>
+          <div
+            className={styles.priority}
+            onClick={() => setIsOpenPriority(!isOpenPriority)}
+          >
+            Priority
+            <div
+              className={
+                isOpenPriority ? styles.openAssigned : styles.closedAssigned
+              }
+            >
+              {Priority.map((p) => (
+                <div
+                  className={styles["priority" + p]}
+                  onClick={() => form.tooglePriority(p)}
+                  key={p}
+                >
+                  {p}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className={styles.activeUser}>
+            {form.priority.length > 0 && (
+              <div
+                className={
+                  form.priority
+                    ? `${styles.user} ${styles["priority" + form.priority]}`
+                    : styles.user
+                }
+              >
+                <p>{form.priority}</p>
+                <div onClick={() => (form.priority = "")}>
+                  <CloseIcon />
+                </div>
+              </div>
+            )}
+          </div>
           <div
             className={styles.assigned_to}
             onClick={() => setIsOpenAssignedTo(!isOpenAssignedTo)}
@@ -136,8 +197,8 @@ const AddProjectModal = observer(() => {
           </div>
           <div className={styles.activeTags}>
             {form.tags.map((tag) => (
-              <div className={styles.tag}>
-                <p>{tag}</p>
+              <div className={styles.user}>
+                <p>#{tag}</p>
                 <div onClick={() => form.DeleteTags(tag)}>
                   <CloseIcon />
                 </div>
@@ -148,8 +209,9 @@ const AddProjectModal = observer(() => {
         <button
           className={styles.addNewProject}
           onClick={() => form.addNewProject()}
+          disabled={postStatus === "loading"}
         >
-          Create Project
+          {postStatus === "loading" ? "Creating..." : "Create Project"}
         </button>
       </div>
     </div>

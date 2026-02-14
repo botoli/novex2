@@ -156,6 +156,22 @@
   &:not(:last-child) {
     border-bottom: 1px solid var(--dracula-selection);
   }
+
+  /* colored priority indicator on each option (small left accent) */
+  &.priorityLow {
+    border-left: 4px solid var(--dracula-green);
+    padding-left: 0.625rem;
+  }
+
+  &.priorityMedium {
+    border-left: 4px solid var(--dracula-orange);
+    padding-left: 0.625rem;
+  }
+
+  &.priorityHigh {
+    border-left: 4px solid var(--dracula-red);
+    padding-left: 0.625rem;
+  }
 }
 
 // --- Active / selected state ---
@@ -200,9 +216,77 @@
         }
       }
     }
+
+    /* colored badge accent for priority chip */
+    &.priorityLow {
+      border-left: 4px solid var(--dracula-green);
+      padding-left: 6px;
+      background-color: rgba(83, 193, 90, 0.06); /* subtle green tint */
+    }
+
+    &.priorityMedium {
+      border-left: 4px solid var(--dracula-orange);
+      padding-left: 6px;
+      background-color: rgba(255, 159, 107, 0.06); /* subtle orange tint */
+    }
+
+    &.priorityHigh {
+      border-left: 4px solid var(--dracula-red);
+      padding-left: 6px;
+      background-color: rgba(255, 92, 108, 0.06); /* subtle red tint */
+    }
   }
 }
+.user {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background-color: var(--dracula-purple-rgba-02);
+  color: var(--dracula-foreground);
+  font-size: 0.8rem;
 
+  p {
+    margin: 0;
+  }
+
+  div {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    svg {
+      width: 12px;
+      height: 12px;
+      fill: var(--dracula-comment);
+      transition: fill 0.12s ease;
+
+      &:hover {
+        fill: var(--dracula-red);
+      }
+    }
+  }
+
+  /* colored badge accent for priority chip */
+  &.priorityLow {
+    border-left: 4px solid var(--dracula-green);
+    padding-left: 6px;
+    background-color: rgba(83, 193, 90, 0.06); /* subtle green tint */
+  }
+
+  &.priorityMedium {
+    border-left: 4px solid var(--dracula-orange);
+    padding-left: 6px;
+    background-color: rgba(255, 159, 107, 0.06); /* subtle orange tint */
+  }
+
+  &.priorityHigh {
+    border-left: 4px solid var(--dracula-red);
+    padding-left: 6px;
+    background-color: rgba(255, 92, 108, 0.06); /* subtle red tint */
+  }
+}
 // --- Tags row ---
 .addTags {
   display: flex;

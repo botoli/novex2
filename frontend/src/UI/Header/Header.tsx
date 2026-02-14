@@ -30,12 +30,16 @@ const Header = observer(() => {
   useEffect(() => {
     if (dataStroe.projects) {
       setCurrentProjects(
-        dataStroe.projects.filter((p: any) => p.assigned_to === Number(token)),
+        dataStroe.projects.filter((p: any) =>
+          p.assigned_to.includes(Number(token)),
+        ),
       );
     }
     if (dataStroe.tasks) {
       setCurrentTasks(
-        dataStroe.tasks.filter((p: any) => p.assigneeId === Number(token)),
+        dataStroe.tasks.filter((p: any) =>
+          p.assigned_to.includes(Number(token)),
+        ),
       );
     }
   }, [dataStroe.projects, dataStroe.tasks, token]);
@@ -150,7 +154,9 @@ const Header = observer(() => {
                   <h2>{tab.name}</h2>
                   {tab.name === "Projects" && countOfProjects > 0 ? (
                     <div className={styles.projectCount}>{countOfProjects}</div>
-                  ) : tab.name === "Tasks" && countOfTasks > 0 ? <div className={styles.projectCount}>{countOfTasks}</div> : null}
+                  ) : tab.name === "Tasks" && countOfTasks > 0 ? (
+                    <div className={styles.projectCount}>{countOfTasks}</div>
+                  ) : null}
                 </div>
               </Link>
             );

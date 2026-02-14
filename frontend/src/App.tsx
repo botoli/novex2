@@ -37,6 +37,12 @@ const App = observer(() => {
                 <StartPage />
               )}
               <Routes>
+                <Route
+                  path="/"
+                  element={
+                    CurrentUserStore.currentuser ? <Home /> : <StartPage />
+                  }
+                />
                 <Route path="/Home" element={<Home />} />
                 <Route path="/Projects" element={<ProjectsPage />} />
                 <Route path="/Tasks" element={<TaskPage />} />

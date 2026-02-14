@@ -7,7 +7,7 @@ export interface ProjectInterface {
   due_date: string;
   project_id: number;
   created_by: number;
-  assigned_to: number;
+  assigned_to: [{ id: number; name: string }];
   tags: string[];
 }
 export interface HeaderInterface {
@@ -34,7 +34,7 @@ export interface TaskInterface {
   priorityId: number;
   createdAt: Date | string;
   deadline: Date | string;
-  assigneeId?: number;
+  assigned_to?: number[];
   tags: string[]; // Для фильтрации
 }
 export interface HeaderInterface {

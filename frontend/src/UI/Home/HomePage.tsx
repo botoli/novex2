@@ -48,7 +48,6 @@ const HomePage = observer(() => {
   const [currentProjects, setCurrentprojects] = useState([]);
   const [sortBy, setSortBy] = useState("Dedline");
   const [sort, setSort] = useState([]);
-  const [isOpenProfile, setIsOpenProfile] = useState(false);
   const [isOpenAccountSettings, setIsOpenAccountSettings] = useState(false);
   const [isSortRisk, setIsSortRisk] = useState(true);
   const [isSortDedline, setIsSortDedline] = useState(true);
@@ -60,7 +59,7 @@ const HomePage = observer(() => {
   useEffect(() => {
     token
       ? setCurrentTasks(
-          dataStroe.tasks.filter((t) => t.assigneeId === Number(token)),
+          dataStroe.tasks.filter((t) => t.assigned_to.includes(Number(token))),
         )
       : setCurrentTasks([]);
   }, [dataStroe.tasks, CurrentUserStore.currentuser, token]);
@@ -68,7 +67,9 @@ const HomePage = observer(() => {
   useEffect(() => {
     token
       ? setCurrentprojects(
-          dataStroe.projects.filter((p) => p.assigned_to === Number(token)),
+          dataStroe.projects.filter((p) =>
+            p.assigned_to.includes(Number(token)),
+          ),
         )
       : setCurrentprojects([]);
   }, [CurrentUserStore.currentuser, dataStroe.projects, token]);
@@ -331,12 +332,14 @@ const HomePage = observer(() => {
                   <div className={styles.cardFooter}>
                     <div className={styles.assigneeInfo}>
                       <div className={styles.assigneeAvatar}>
-                        {dataStroe.users.find((u) => u.id === task.assigneeId)
-                          ?.name[0] || "?"}
+                        {dataStroe.users.find((u) =>
+                          task.assigned_to.includes(u.id),
+                        )?.name[0] || "?"}
                       </div>
                       <span>
-                        {dataStroe.users.find((u) => u.id === task.assigneeId)
-                          ?.name || "Unassigned"}
+                        {dataStroe.users.find((u) =>
+                          task.assigned_to.includes(u.id),
+                        )?.name || "Unassigned"}
                       </span>
                     </div>
                     <span className={styles.projectBadge}>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   AccountIcon,
   LogoutIcon,
@@ -8,10 +8,8 @@ import {
 } from "../UI/Icons";
 import styles from "./Page.Header.module.scss";
 import AccountSettings from "../UI/AccountSettings/AccountSettings";
-import { nowurl, useData } from "../fetch/fetchTasks";
 import { useLogin } from "../context/Modal";
 import { useRegistration } from "../context/RegistrarionModal";
-
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../Store/User.store";
 import projectsStore from "../Store/Projects.store";
