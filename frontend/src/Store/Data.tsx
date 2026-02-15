@@ -1,60 +1,38 @@
 import { get, makeAutoObservable, runInAction } from "mobx";
-import { nowurl, useData } from "../fetch/fetchTasks";
-import axios from "axios";
+import { fetchData } from "../fetch/fetchTasks";
 
-const dataStroe = {
+const dataStore = {
   users: [],
   projects: [],
   tasks: [],
-  isLoading: true,
+  isLoading: false,
   token: null,
   error: null,
-
+  message: null,
   setToken(token) {
     this.token = token;
+    localStorage.setItem("token", token);
   },
+  async FetchAll() {
+    console.log(this.token);
 
-  // ✅ Добавь этот метод
-  updateTaskStatus(taskId, newStatus) {
-    const task = this.tasks.find((t) => t.id === taskId);
-    if (task) {
-      task.status = newStatus; // Теперь работает!
-    }
-  },
-
-  FetchALl() {
     this.isLoading = true;
-    Promise.all([
-      axios.get(nowurl + "users"),
-      axios.get(nowurl + "projects"),
-      axios.get(nowurl + "tasks"),
-    ])
-      .then(([usersResp, projectsResp, tasksResp]) => {
-        runInAction(() => {
-          this.users = usersResp.data;
-          this.projects = projectsResp.data;
-
-          // ✅ ВАЖНО: делаем каждую задачу observable
-          this.tasks = tasksResp.data.map((task) => {
-            makeAutoObservable(task);
-            return task;
-          });
-
-          this.isLoading = false;
-        });
-      })
-      .catch((error) => {
-        runInAction(() => {
-          this.isLoading = false;
-          this.error = {
-            code: error?.response?.status || error?.code || "UNKNOWN_ERROR",
-            message:
-              error?.response?.data?.message ||
-              error?.message ||
-              "Произошла ошибка при загрузке данных",
-          };
-        });
+    this.error = null;
+    try {
+      const [usersResp, projectsResp, tasksResp] = await Promise.all([
+        await fetchData("users"),
+        await fetchData("projects"),
+        await fetchData("tasks"),
+      ]);
+      runInAction(() => {
+        this.projects = projectsResp || [];
+        this.users = usersResp || [];
+        this.tasks = tasksResp || [];
+        this.isLoading = false;
       });
+    } catch (error) {
+      this.message = error.message;
+    }
   },
 
   get currentProjects() {
@@ -72,5 +50,5 @@ const dataStroe = {
   },
 };
 
-makeAutoObservable(dataStroe);
-export default dataStroe;
+makeAutoObservable(dataStore);
+export default dataStore;

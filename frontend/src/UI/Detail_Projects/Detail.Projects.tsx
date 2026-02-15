@@ -1,10 +1,10 @@
 import { useState } from "react";
 import styles from "./Detail.Projects.module.scss";
 import { ArrowRightIcon } from "../Icons/Icon";
-import { nowurl, useData } from "../../fetch/fetchTasks";
+import { nowurl, fetchData } from "../../fetch/fetchTasks";
 
 export default function DetailProject({ name }) {
-  const { data: projects } = useData(nowurl + "projects");
+  const { data: projects } = fetchData(nowurl + "projects");
   return (
     <div className={styles.allDetailProject}>
       {projects

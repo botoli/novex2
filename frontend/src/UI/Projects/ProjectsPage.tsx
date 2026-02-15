@@ -3,92 +3,24 @@ import {
   ActiveIcon,
   ArrowRightIcon,
   BlockedIcon,
-  CloseIcon,
   GithubIcon,
   OverdueIcon,
 } from "../Icons";
 import styles from "./Projects.module.scss";
 import PageHeader from "../../common/PageHeader";
-import { nowurl, useData } from "../../fetch/fetchTasks";
 import { useLogin } from "../../context/Modal";
 import { useRegistration } from "../../context/RegistrarionModal";
 import Login from "../../common/Login/Login";
 import Registration from "../../common/Registration/Registration";
 import { observer } from "mobx-react-lite";
-import { CurrentUserStore } from "../../Store/User.store";
-import dataStroe from "../../Store/Data";
+import dataStore from "../../Store/Data";
 import AddProjectModal from "../../common/AddProject/AddProject.Modal";
 import projectsStore from "../../Store/Projects.store";
+import { useProjectStatus } from "../../Store/useProjectsStatus";
+import FilteredButtons from "../../common/FilteredButtons/FilteredButtons";
 const ProjectsPage = observer(() => {
-  const [activeFilter, setActiveFilter] = useState(() => {
-    return localStorage.getItem("activeFilter") || "All Projects";
-  });
-
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
-
-  const btns = [
-    { name: "All Projects" },
-    { name: "Active" },
-    { name: "Paused" },
-    { name: "At Risk" },
-    { name: "Completed" },
-  ];
-
-  const token =
-    CurrentUserStore.currentuser?.id ?? localStorage.getItem("token");
-
-  const currentProjects = useMemo(() => {
-    return dataStroe.projects.filter((p) =>
-      p.assigned_to.includes(Number(token)),
-    );
-  }, [dataStroe.projects, token, CurrentUserStore.currentuser]);
-
-  const filtered = useMemo(() => {
-    return activeFilter === "All Projects"
-      ? currentProjects
-      : currentProjects.filter((p) => p.status === activeFilter);
-  }, [activeFilter, currentProjects]);
-
-  useEffect(() => {
-    localStorage.setItem("activeFilter", activeFilter);
-  }, [activeFilter]);
-
-  const progress = (id: number) => {
-    return (
-      Math.floor(
-        (dataStroe.tasks.filter(
-          (task) => task.projectId === id && task.status === "completed",
-        ).length /
-          dataStroe.tasks.filter((task) => task.projectId === id).length) *
-          100,
-      ) || 0
-    );
-  };
-
-  function SetStatistikActive(id: number) {
-    return Math.floor(
-      dataStroe.tasks.filter(
-        (task) => task.projectId === id && task.status === "active",
-      ).length,
-    );
-  }
-
-  function SetStatistikBlocked(id: number) {
-    return Math.floor(
-      dataStroe.tasks.filter(
-        (task) => task.projectId === id && task.status === "blocked",
-      ).length,
-    );
-  }
-
-  function SetStatistikOverdue(id: number) {
-    return Math.floor(
-      dataStroe.tasks.filter(
-        (task) => task.projectId === id && task.status === "overdue",
-      ).length,
-    );
-  }
 
   return (
     <div className={styles.ProjectContainer}>
@@ -100,25 +32,7 @@ const ProjectsPage = observer(() => {
       <section className={styles.dashboard}>
         <h1>Projects</h1>
         <div className={styles.headerProjects}>
-          <div className={styles.filterall}>
-            {btns?.map((btn) => (
-              <button
-                key={btn.name}
-                className={`${styles.Allprojetcs} ${
-                  activeFilter === btn.name ? styles.active : ""
-                }`}
-                onClick={() => setActiveFilter(btn.name)}
-              >
-                <p>{btn.name}</p>
-                <p className={styles.countProjects}>
-                  {btn.name === "All Projects"
-                    ? currentProjects.length
-                    : currentProjects.filter((p) => p.status === btn.name)
-                        .length}
-                </p>
-              </button>
-            ))}
-          </div>
+          <FilteredButtons />
           <div className={styles.addProject}>
             <button
               className={styles.addbtn}
@@ -145,17 +59,20 @@ const ProjectsPage = observer(() => {
                       </h1>
                       <div className={styles.progressContainer}>
                         <p className={styles.progressText}>
-                          {progress(project.id)}%
+                          {useProjectStatus(project.id).progress}%
                         </p>
                         <div className={styles.progressDiv}>
                           <div
                             className={styles.progressBar}
-                            style={{ width: progress(project.id) + "%" }}
+                            style={{
+                              width:
+                                useProjectStatus(project.id).progress + "%",
+                            }}
                           ></div>
                         </div>
                         <p>
                           {Math.floor(
-                            dataStroe.tasks.filter(
+                            dataStore.tasks.filter(
                               (task) =>
                                 task.projectId === project.id &&
                                 task.status === "completed",
@@ -163,7 +80,7 @@ const ProjectsPage = observer(() => {
                           )}
                           /
                           {Math.floor(
-                            dataStroe.tasks.filter(
+                            dataStore.tasks.filter(
                               (task) => task.projectId === project.id,
                             ).length,
                           )}
@@ -179,7 +96,7 @@ const ProjectsPage = observer(() => {
                           <ActiveIcon />
                           <span className={styles.label}>Active:</span>
                           <span className={styles.value}>
-                            {SetStatistikActive(project.id)}
+                            {useProjectStatus(project.id).active}
                           </span>
                         </button>
 
@@ -188,7 +105,7 @@ const ProjectsPage = observer(() => {
                           <span className={styles.label}>Blocked:</span>
 
                           <span className={styles.value}>
-                            {SetStatistikBlocked(project.id)}
+                            {useProjectStatus(project.id).blocked}
                           </span>
                         </button>
 
@@ -196,7 +113,7 @@ const ProjectsPage = observer(() => {
                           <OverdueIcon />
                           <span className={styles.label}>Overdue:</span>
                           <span className={styles.value}>
-                            {SetStatistikOverdue(project.id)}
+                            {useProjectStatus(project.id).overdue}
                           </span>
                         </button>
                       </div>

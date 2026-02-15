@@ -19,9 +19,8 @@ import Login from "../../common/Login/Login";
 import { useLogin } from "../../context/Modal";
 import Registration from "../../common/Registration/Registration";
 import { useRegistration } from "../../context/RegistrarionModal";
-import { data, Link } from "react-router";
 import { CurrentUserStore } from "../../Store/User.store";
-import dataStroe from "../../Store/Data";
+import dataStore from "../../Store/Data";
 
 const HomePage = observer(() => {
   const mockAI = [
@@ -45,42 +44,33 @@ const HomePage = observer(() => {
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
 
-  const [currentProjects, setCurrentprojects] = useState([]);
   const [sortBy, setSortBy] = useState("Dedline");
   const [sort, setSort] = useState([]);
   const [isOpenAccountSettings, setIsOpenAccountSettings] = useState(false);
   const [isSortRisk, setIsSortRisk] = useState(true);
   const [isSortDedline, setIsSortDedline] = useState(true);
-  const [currentTasks, setCurrentTasks] = useState([]);
+  const { currentTasks, currentProjects, isLoading, FetchAll } = dataStore;
 
-  const token =
-    CurrentUserStore.currentuser?.id ?? localStorage.getItem("token");
-
+ 
   useEffect(() => {
-    token
-      ? setCurrentTasks(
-          dataStroe.tasks.filter((t) => t.assigned_to.includes(Number(token))),
-        )
-      : setCurrentTasks([]);
-  }, [dataStroe.tasks, CurrentUserStore.currentuser, token]);
-
-  useEffect(() => {
-    token
-      ? setCurrentprojects(
-          dataStroe.projects.filter((p) =>
-            p.assigned_to.includes(Number(token)),
-          ),
-        )
-      : setCurrentprojects([]);
-  }, [CurrentUserStore.currentuser, dataStroe.projects, token]);
-
+    console.log("Первый проект:", dataStore.projects[0]);
+    console.log(
+      "Все проекты:",
+      dataStore.projects.map((p) => ({
+        id: p.id,
+        title: p.title,
+        assigned_to: p.assigned_to,
+        тип: typeof p.assigned_to,
+      })),
+    );
+  }, [dataStore.projects]);
   const progress = (id: number) => {
     return (
       Math.floor(
-        (dataStroe.tasks.filter(
+        (dataStore.tasks.filter(
           (task) => task.projectId === id && task.status === "completed",
         ).length /
-          dataStroe.tasks.filter((task) => task.projectId === id).length) *
+          dataStore.tasks.filter((task) => task.projectId === id).length) *
           100,
       ) || 0
     );
@@ -102,7 +92,6 @@ const HomePage = observer(() => {
       });
       setSort(SortByDedline);
     }
-
     if (sortBy === "Risk") {
       const sortByRisk = copyMockTasks.sort((a, b) => {
         const RiskA =
@@ -114,6 +103,7 @@ const HomePage = observer(() => {
       setSort(sortByRisk);
     }
   }
+
   useEffect(() => {
     sorty();
   }, [currentTasks, sortBy, isSortDedline, isSortRisk]);
@@ -140,7 +130,11 @@ const HomePage = observer(() => {
       ).length,
     );
   }
-
+  console.log("Текущее состояние:", {
+    projects: dataStore.projects,
+    token: dataStore.token,
+    currentProjects: dataStore.currentProjects,
+  });
   return (
     <div className={styles.homeContainer}>
       <div className={styles.AccountSettingsModal}>
@@ -157,12 +151,12 @@ const HomePage = observer(() => {
         <div className={styles.tasksSection}>
           <h1 className={styles.sectionTitle}>Projects Focus</h1>
           <div className={styles.gridProjects}>
-            {dataStroe.isLoading ? (
+            {dataStore.isLoading ? (
               <div className={styles.loading}>
                 <div className={styles.spinner}></div>
                 <p>Загрузка проектов...</p>
               </div>
-            ) : currentProjects.length === 0 && !dataStroe.error ? (
+            ) : currentProjects.length === 0 && !dataStore.error ? (
               <div className={styles.noProjects}>
                 <div className={styles.noProjectsdiv}>
                   <h1 className={styles.noProjectsTitle}>У вас нет проектов</h1>
@@ -175,14 +169,14 @@ const HomePage = observer(() => {
                   <p>Создать проект</p>
                 </button>
               </div>
-            ) : dataStroe.error !== null ? (
+            ) : dataStore.error !== null ? (
               <div className={styles.errorCont}>
                 <div className={styles.errorDiv}>
                   <h1 className={styles.ErrorTitle}>
-                    Ошибка: {dataStroe.error.code}
+                    Ошибка: {dataStore.error.code}
                   </h1>
                   <h1 className={styles.ErrorTitle}>
-                    {dataStroe.error.message}
+                    {dataStore.error.message}
                   </h1>
                 </div>
               </div>
@@ -209,7 +203,7 @@ const HomePage = observer(() => {
                         </div>
                         <p>
                           {Math.floor(
-                            dataStroe.tasks.filter(
+                            dataStore.tasks.filter(
                               (task) =>
                                 task.projectId === project.id &&
                                 task.status === "completed",
@@ -217,7 +211,7 @@ const HomePage = observer(() => {
                           )}
                           /
                           {Math.floor(
-                            dataStroe.tasks.filter(
+                            dataStore.tasks.filter(
                               (task) => task.projectId === project.id,
                             ).length,
                           )}
@@ -291,7 +285,7 @@ const HomePage = observer(() => {
         <div className={styles.bottomSection}>
           <div className={styles.cardsContainer}>
             <h1 className={styles.sectionTitle}>Active Tasks</h1>
-            {dataStroe.tasks
+            {dataStore.tasks
               .filter((t) => t.status === "todo")
               .map((task) => (
                 <div key={task.id} className={styles.taskCard}>
@@ -332,18 +326,18 @@ const HomePage = observer(() => {
                   <div className={styles.cardFooter}>
                     <div className={styles.assigneeInfo}>
                       <div className={styles.assigneeAvatar}>
-                        {dataStroe.users.find((u) =>
+                        {dataStore.users.find((u) =>
                           task.assigned_to.includes(u.id),
                         )?.name[0] || "?"}
                       </div>
                       <span>
-                        {dataStroe.users.find((u) =>
+                        {dataStore.users.find((u) =>
                           task.assigned_to.includes(u.id),
                         )?.name || "Unassigned"}
                       </span>
                     </div>
                     <span className={styles.projectBadge}>
-                      {dataStroe.projects.find((p) => p.id === task.projectId)
+                      {dataStore.projects.find((p) => p.id === task.projectId)
                         ?.title || "No project"}
                     </span>
                   </div>

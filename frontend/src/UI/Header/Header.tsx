@@ -14,10 +14,10 @@ import {
   CloseIcon,
 } from "../Icons/index.ts";
 import { useTheme } from "../../context/Theme.tsx";
-import { nowurl, useData } from "../../fetch/fetchTasks.tsx";
+import { fetchData } from "../../fetch/fetchTasks.tsx";
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../../Store/User.store.tsx";
-import dataStroe from "../../Store/Data.tsx";
+import dataStore from "../../Store/Data.tsx";
 
 const Header = observer(() => {
   const location = useLocation();
@@ -28,21 +28,21 @@ const Header = observer(() => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (dataStroe.projects) {
+    if (dataStore.projects) {
       setCurrentProjects(
-        dataStroe.projects.filter((p: any) =>
+        dataStore.projects.filter((p: any) =>
           p.assigned_to.includes(Number(token)),
         ),
       );
     }
-    if (dataStroe.tasks) {
+    if (dataStore.tasks) {
       setCurrentTasks(
-        dataStroe.tasks.filter((p: any) =>
+        dataStore.tasks.filter((p: any) =>
           p.assigned_to.includes(Number(token)),
         ),
       );
     }
-  }, [dataStroe.projects, dataStroe.tasks, token]);
+  }, [dataStore.projects, dataStore.tasks, token]);
 
   const countOfProjects = currentProjects?.length ?? 0;
   const countOfTasks = currentTasks?.length ?? 0;
@@ -112,12 +112,10 @@ const Header = observer(() => {
 
   return (
     <>
-      {/* Overlay для мобильных */}
       {isMenuOpen && (
         <div className={styles.overlay} onClick={() => setIsMenuOpen(false)} />
       )}
 
-      {/* Бургер-кнопка для мобильных */}
       <button
         className={styles.burgerButton}
         onClick={() => setIsMenuOpen(!isMenuOpen)}

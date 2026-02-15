@@ -3,10 +3,9 @@ import { useRegistration } from "../../context/RegistrarionModal";
 import { CloseIcon } from "../../UI/Icons";
 import styles from "./login.module.scss";
 import { useState } from "react";
-import { nowurl, useData } from "../../fetch/fetchTasks";
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../../Store/User.store";
-import dataStroe from "../../Store/Data";
+import dataStore from "../../Store/Data";
 import { Link } from "react-router-dom";
 const Login = observer(() => {
   const { isOpenLogin, setIsOpenLogin } = useLogin();
@@ -15,7 +14,7 @@ const Login = observer(() => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   function LoginValidate() {
-    const found = dataStroe.users.find(
+    const found = dataStore.users.find(
       (user) => user.email === email && user.password === password,
     );
     if (found) {

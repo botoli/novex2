@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRegistration } from "../../context/RegistrarionModal";
 import { CloseIcon } from "../../UI/Icons";
 import styles from "./Registration.module.scss";
 import axios from "axios";
-import { nowurl } from "../../fetch/fetchTasks";
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../../Store/User.store";
 import { Link } from "react-router-dom";
@@ -29,7 +28,7 @@ const Registration = observer(() => {
   };
   async function handleRegistration() {
     try {
-      const response = await axios.post(nowurl + "users", RegData, {
+      const response = await axios.post("users", RegData, {
         headers: { "Content-Type": "application/json" },
       });
       const NewUser = response.data;

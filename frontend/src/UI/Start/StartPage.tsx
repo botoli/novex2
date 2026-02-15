@@ -8,7 +8,7 @@ import { useState, useRef, useEffect } from "react";
 import Login from "../../common/Login/Login";
 import Registration from "../../common/Registration/Registration";
 import { useRegistration } from "../../context/RegistrarionModal";
-import dataStroe from "../../Store/Data";
+import dataStore from "../../Store/Data";
 
 const flags: Record<string, string> = { ru: "🇷🇺", en: "🇺🇸" };
 const langLabels: Record<string, string> = { ru: "Русский", en: "English" };
@@ -267,11 +267,13 @@ const StartPage = observer(() => {
       {/* Stats Section */}
       <section className={styles.statsSection}>
         <div className={styles.statItem}>
-          <h3 className={styles.statNumber}>{dataStroe.users.length}</h3>
+          <h3 className={styles.statNumber}>{dataStore.users.length}</h3>
           <p className={styles.statLabel}>{t.activeUsers}</p>
         </div>
         <div className={styles.statItem}>
-          <h3 className={styles.statNumber}>{dataStroe.tasks.filter(t => t.status === 'completed').length}</h3>
+          <h3 className={styles.statNumber}>
+            {dataStore.tasks.filter((t) => t.status === "completed").length}
+          </h3>
           <p className={styles.statLabel}>{t.completedTasks}</p>
         </div>
         <div className={styles.statItem}>

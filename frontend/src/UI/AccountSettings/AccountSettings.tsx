@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import styles from "./AccountSettings.module.scss";
 import { CloseIcon, LogoIcon, LogoutIcon } from "../Icons";
-import { nowurl, useData } from "../../fetch/fetchTasks";
+import { fetchData } from "../../fetch/fetchTasks";
 import { useUser } from "../../context/UserContext";
 import { observer } from "mobx-react-lite";
 import projectsStore from "../../Store/Projects.store";
 import { CurrentUserStore } from "../../Store/User.store";
 import { Link } from "react-router-dom";
 const AccountSettings = observer(() => {
-  const { data: users } = useData(nowurl + "users");
+  const { data: users } = fetchData("users");
   const token = localStorage.getItem("token");
   const currentUser = users.find((user) => user.id === Number(token));
   const { currentuser, setCurrentuser } = useUser();

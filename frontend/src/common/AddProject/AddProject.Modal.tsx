@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
 import projectsStore from "../../Store/Projects.store";
-import dataStroe from "../../Store/Data";
+import dataStore from "../../Store/Data";
 import styles from "./AddProject.module.scss";
 import { CloseIcon } from "../../UI/Icons";
 import { observer, useLocalObservable } from "mobx-react-lite";
 import { CurrentUserStore } from "../../Store/User.store";
-import { nowurl, useData } from "../../fetch/fetchTasks";
+import { createProject } from "../../fetch/Post";
 
 const AddProjectModal = observer(() => {
   const Priority = ["Low", "Medium", "High"];
   const token =
     CurrentUserStore.currentuser?.id ?? localStorage.getItem("token");
 
-  // useData provides `post` which invalidates the GET cache on success
-  const { post: postProject, postStatus } = useData(nowurl + "projects");
+  // fetchData provides `post` which invalidates the GET cache on success
 
   const form = useLocalObservable(() => ({
     title: "",
@@ -38,7 +37,7 @@ const AddProjectModal = observer(() => {
       };
 
       try {
-        const created = await postProject(payload);
+        const created = await createProject(payload);
         // add server response to local store (keeps UI in sync)
         projectsStore.projects = [...projectsStore.projects, created];
 
@@ -163,7 +162,7 @@ const AddProjectModal = observer(() => {
                 isOpenAssignedTo ? styles.openAssigned : styles.closedAssigned
               }
             >
-              {dataStroe.users.map((u) => (
+              {dataStore.users.map((u) => (
                 <div onClick={() => form.toogleUser(u.id, u.name)} key={u.id}>
                   {u.name}
                 </div>
@@ -209,9 +208,8 @@ const AddProjectModal = observer(() => {
         <button
           className={styles.addNewProject}
           onClick={() => form.addNewProject()}
-          disabled={postStatus === "loading"}
         >
-          {postStatus === "loading" ? "Creating..." : "Create Project"}
+          Create Project
         </button>
       </div>
     </div>
