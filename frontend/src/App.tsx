@@ -44,6 +44,7 @@ const App = observer(() => {
                     CurrentUserStore.currentuser ? <Home /> : <StartPage />
                   }
                 />
+
                 <Route path="/home" element={<Home />} />
                 <Route path="/projects" element={<ProjectsPage />} />
                 <Route path="/tasks" element={<TaskPage />} />

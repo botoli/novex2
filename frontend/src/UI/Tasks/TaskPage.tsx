@@ -9,6 +9,8 @@ import Login from "../../common/Login/Login";
 import { observer } from "mobx-react-lite";
 import dataStore from "../../Store/Data";
 import { CurrentUserStore } from "../../Store/User.store";
+import projectsStore from "../../Store/Projects.store";
+import AddTask from "../../common/AddTask/AddTask.Modal";
 
 const TaskPage = observer(() => {
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
@@ -46,20 +48,6 @@ const TaskPage = observer(() => {
     if (task.status === "done" || task.status === "completed") return false;
     const today = new Date().toISOString().split("T")[0];
     return task.deadline && task.deadline < today;
-  };
-
-  // Функция для проверки соответствия приоритета
-  const getPriorityLevel = (priorityId) => {
-    switch (priorityId) {
-      case 1:
-        return "low";
-      case 2:
-        return "medium";
-      case 3:
-        return "high";
-      default:
-        return "low";
-    }
   };
 
   // Основная фильтрация задач
@@ -218,6 +206,7 @@ const TaskPage = observer(() => {
       <PageHeader />
       {isOpenLogin ? <Login /> : null}
       {isOpenRegistration ? <Registration /> : null}
+      {projectsStore.IsOpenAddTasks ? <AddTask /> : null}
       <section className={styles.dashboard}>
         <h1>Tasks</h1>
 
@@ -256,7 +245,12 @@ const TaskPage = observer(() => {
                 className={styles.searchInput}
               />
             </div>
-            <button className={styles.createTaskBtn}>Create Task</button>
+            <button
+              className={styles.createTaskBtn}
+              onClick={() => projectsStore.changeIsOpenTasks()}
+            >
+              Create Task
+            </button>
           </div>
         </div>
 
@@ -274,7 +268,7 @@ const TaskPage = observer(() => {
               </span>
             </div>
             <div className={styles.cardsContainer}>
-              {getTasksByStatus("todo").map((task) => (
+              {dataStore.currentTasks.map((task) => (
                 <div key={task.id} className={styles.taskCard}>
                   <div className={styles.cardHeader}>
                     <span className={styles.taskId}>TASK-{task.id}</span>

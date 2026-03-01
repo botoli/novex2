@@ -46,7 +46,7 @@ const ProjectsPage = observer(() => {
           <div className={styles.tasksSection}>
             <h1 className={styles.sectionTitle}>Projects Focus</h1>
             <div className={styles.gridProjects}>
-              {filtered?.map((project) => (
+              {dataStore.currentProjects?.map((project) => (
                 <div key={project.id} className={styles.taskCard}>
                   <div className={styles.taskHeader}>
                     <div className={styles.taskInfo}>

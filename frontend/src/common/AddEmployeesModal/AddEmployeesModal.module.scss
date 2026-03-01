@@ -1,0 +1,300 @@
+@use "../../UI/Styles/Variables.scss" as *;
+
+/* Position the employees modal fixed on the right so it doesn't shift the main modal */
+.blur {
+  position: fixed;
+  top: 50%;
+  right: 170px;
+  transform: translateY(-50%);
+  z-index: 10001;
+  background: transparent;
+  display: block;
+}
+
+.modal {
+  background-color: var(--dracula-background);
+  border: 1px solid var(--dracula-selection);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  max-height: 90vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--dracula-selection);
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--dracula-foreground);
+  }
+
+  .close {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      fill: var(--dracula-comment);
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  gap: 1rem;
+  border-bottom: 1px solid var(--dracula-selection);
+  flex-wrap: wrap;
+}
+
+.search {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--dracula-current-line);
+  border: 1px solid var(--dracula-selection);
+  border-radius: 8px;
+  color: var(--dracula-foreground);
+
+  &::placeholder {
+    color: var(--dracula-comment);
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.selectLabel {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+  color: var(--dracula-comment);
+  align-items: flex-start;
+  min-width: 110px;
+}
+
+.select {
+  margin-top: 6px;
+  background-color: var(--dracula-current-line);
+  color: var(--dracula-foreground);
+  border: 1px solid var(--dracula-selection);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+  width: 140px;
+  max-width: 45vw;
+}
+
+.badge {
+  display: inline-block;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 9px;
+  background: var(--dracula-blue);
+  color: var(--dracula-background);
+  font-size: 0.75rem;
+  line-height: 18px;
+  text-align: center;
+  margin-left: 8px;
+}
+
+/* Ensure search doesn't shrink too small when window is narrow */
+.search {
+  min-width: 160px;
+}
+
+.actionBtn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  background-color: var(--dracula-current-line);
+  border: 1px solid var(--dracula-selection);
+  border-radius: 8px;
+  color: var(--dracula-foreground);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Table layout for employees */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  color: var(--dracula-comment);
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--dracula-selection);
+}
+
+.table tbody tr {
+  border-bottom: 1px solid var(--dracula-selection);
+}
+
+.table td {
+  padding: 0.7rem 1rem;
+  vertical-align: middle;
+  color: var(--dracula-foreground);
+}
+
+.avatarCell {
+  width: 56px;
+}
+
+.avatarCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--dracula-selection);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dracula-foreground);
+  font-weight: 600;
+}
+
+.nameCell {
+  font-size: 0.95rem;
+}
+
+.roleCell {
+  font-size: 0.9rem;
+  color: var(--dracula-comment);
+}
+
+/* Neutral table row class so global .row rules don't break table layout */
+.tableRow {
+  transition: all 0.3s ease;
+  display: table-row;
+}
+.activeTableRow {
+  transition: all 0.3s ease;
+  background-color: $dracula-purple;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0.75rem 0;
+  gap: 12px;
+}
+
+.pageNumbers {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pageBtn {
+  padding: 0.4rem 0.65rem;
+  background-color: var(--dracula-current-line);
+  border: 1px solid var(--dracula-selection);
+  color: var(--dracula-foreground);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pageBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.activePage {
+  background-color: var(--dracula-blue);
+  color: var(--dracula-background);
+  border-color: var(--dracula-blue);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  gap: 1rem;
+  border-bottom: 1px solid var(--dracula-selection);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.checkbox {
+  accent-color: var(--dracula-blue);
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--dracula-selection);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dracula-foreground);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .name {
+    color: var(--dracula-foreground);
+    font-size: 0.95rem;
+    margin: 0;
+  }
+  .role {
+    color: var(--dracula-comment);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+}
+
+.menu {
+  cursor: pointer;
+  color: var(--dracula-comment);
+  font-size: 1.25rem;
+}
+
+.footer {
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-top: 1px solid var(--dracula-selection);
+  background-color: var(--dracula-background);
+}
+
+.selectedRow {
+  background-color: rgba(59, 130, 246, 0.08);
+}

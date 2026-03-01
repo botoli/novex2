@@ -151,9 +151,11 @@ const Header = observer(() => {
                   {getIcon(tab.name)}
                   <h2>{tab.name}</h2>
                   {tab.name === "Projects" && countOfProjects > 0 ? (
-                    <div className={styles.projectCount}>{countOfProjects}</div>
+                    <div className={styles.projectCount}>
+                      My: {countOfProjects}
+                    </div>
                   ) : tab.name === "Tasks" && countOfTasks > 0 ? (
-                    <div className={styles.projectCount}>{countOfTasks}</div>
+                    <div className={styles.projectCount}>My: {countOfTasks}</div>
                   ) : null}
                 </div>
               </Link>

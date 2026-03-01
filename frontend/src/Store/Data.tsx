@@ -1,4 +1,4 @@
-import { get, makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import { fetchData } from "../fetch/fetchTasks";
 
 const dataStore = {

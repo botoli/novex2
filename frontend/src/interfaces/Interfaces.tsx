@@ -42,3 +42,17 @@ export interface HeaderInterface {
   name: string;
   active: boolean;
 }
+export interface CreateTaskDto {
+  // Обязательные поля
+  title: string; // заголовок задачи
+  project_id: number; // в каком проекте
+  // Опциональные (может быть null или undefined)
+  description?: string | null; // описание
+  status?: "todo"; // статус (по умолчанию 'todo')
+  priority: string; // приоритет (по умолчанию 'medium')
+  assignee_id?: number | null; // кому назначена
+  parent_task_id?: number | null; // если это подзадача
+  estimated_hours?: number | null; // планируемое время
+  due_date?: string | null; // дедлайн
+  position?: number; // порядок в канбане
+}

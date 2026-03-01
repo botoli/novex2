@@ -1,92 +1,159 @@
 import React, { useState } from "react";
 import styles from "./AccountSettings.module.scss";
-import { CloseIcon, LogoIcon, LogoutIcon } from "../Icons";
-import { fetchData } from "../../fetch/fetchTasks";
+import { CloseIcon, GithubIcon, LogoutIcon } from "../Icons";
 import { useUser } from "../../context/UserContext";
 import { observer } from "mobx-react-lite";
 import projectsStore from "../../Store/Projects.store";
 import { CurrentUserStore } from "../../Store/User.store";
 import { Link } from "react-router-dom";
+import dataStore from "../../Store/Data";
+
 const AccountSettings = observer(() => {
-  const { data: users } = fetchData("users");
   const token = localStorage.getItem("token");
-  const currentUser = users.find((user) => user.id === Number(token));
+  const currentUser = dataStore.users.find((user) => user.id === Number(token));
   const { currentuser, setCurrentuser } = useUser();
+
+  const [username, setUsername] = useState(currentUser?.name || "");
+  const [email, setEmail] = useState(currentUser?.email || "");
+  const [password, setPassword] = useState(currentUser?.password || "");
+  const [repeatPassword, setRepeatPassword] = useState(
+    currentUser?.password || "",
+  );
+  const [about, setAbout] = useState(currentUser?.about || "");
+
+  function close() {
+    projectsStore.changeIsOpenSettings();
+  }
 
   function Logout() {
     CurrentUserStore.logOut();
   }
+
   return (
     <div>
+      <div className={styles.overlay} onClick={close}></div>
+
       <div
-        className={styles.overlay}
-        onClick={() => projectsStore.changeIsOpenSettings()}
-      ></div>
-      <div className={styles.allAccountSettings}>
-        <div
-          className={styles.header}
-          onClick={() => projectsStore.changeIsOpenSettings()}
-        >
-          <h1>Account Settings</h1>
-          <div
-            className={styles.icon}
-            onClick={() => projectsStore.changeIsOpenSettings()}
-          >
+        className={styles.allAccountSettings}
+        role="dialog"
+        aria-modal="true"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className={styles.header}>
+          <h1>Profile</h1>
+          <div className={styles.icon} onClick={close}>
             <CloseIcon />
           </div>
         </div>
 
-        {currentUser && (
-          <div className={styles.userInfo}>
-            <div className={styles.allinfo}>
-              <div className={styles.info}>
-                <p>Name</p>
-                <div>{currentUser.name}</div>
-                <button>Change</button>
+        <div className={styles.modalBody}>
+          {/* Left column - avatar and socials */}
+          <aside className={styles.leftCol}>
+            <div className={styles.avatarWrap}>
+              <div className={styles.avatar}>
+                {/* Placeholder avatar */}
+                {currentUser?.avatar ? (
+                  <img src={currentUser.avatar} alt="avatar" />
+                ) : (
+                  <div className={styles.avatarInitials}>
+                    {(currentUser?.name || "").slice(0, 1)}
+                  </div>
+                )}
               </div>
-              <div className={styles.info}>
-                <p>Role</p>
-                <div>{currentUser.role}</div>
-                <button>Change</button>
-              </div>
-              <div className={styles.info}>
-                <p>GitHub</p>
-                <div>
-                  {currentUser.github ? currentUser.github : "Привяжите github"}
-                </div>
-                <button className={styles.gitconnect}>Connect</button>
-              </div>
-              <div className={styles.info}>
-                <p>Email</p>
-                <div>{currentUser.email}</div>
-                <button>Change</button>
-              </div>
-              <div className={styles.info}>
-                <p>Password</p>
-                <div>{currentUser.password}</div>
-                <button>Change</button>
-              </div>
-            </div>
-            <div className={styles.logOut}>
-              <p>Log out</p>
-              <Link to="/home">
-                <button className={styles.logOutBtn} onClick={() => Logout()}>
-                  <p>Log out</p>
-                </button>
-              </Link>
+              <button className={styles.uploadBtn}>Upload Picture</button>
             </div>
 
-            {currentUser?.name === "Test User" ? null : (
-              <div className={styles.logOut}>
-                <button className={styles.logOutBtn}>
-                  <p>Delete account</p>
+            <ul className={styles.socials}>
+              <li>
+                <button className={styles.socialBtn}>
+                  <GithubIcon />
+                </button>
+                <span>Add Facebook</span>
+              </li>
+              <li>
+                <button className={styles.socialBtn}>T</button>
+                <span>Add Twitter</span>
+              </li>
+              <li>
+                <button className={styles.socialBtn}>I</button>
+                <span>Add Instagram</span>
+              </li>
+              <li>
+                <button className={styles.socialBtn}>G+</button>
+                <span>Add Google+</span>
+              </li>
+            </ul>
+          </aside>
+
+          {/* Center form */}
+          <main className={styles.contentCol}>
+            <form
+              className={styles.form}
+              onSubmit={(e) => {
+                e.preventDefault();
+                // TODO: perform update/save here
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <label>
+                Username:
+                <input
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </label>
+              <label>
+                Role:
+                <input value={currentUser?.role || ""} />
+              </label>
+
+              <label>
+                E-mail:
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </label>
+
+              <label>
+                Password:
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </label>
+
+              <label>
+                About Me:
+                <textarea
+                  value={about}
+                  onChange={(e) => setAbout(e.target.value)}
+                />
+              </label>
+
+              <div className={styles.formActions}>
+                <button type="submit" className={styles.updateBtn}>
+                  Update Information
                 </button>
               </div>
-            )}
-          </div>
-        )}
+            </form>
+          </main>
+
+          {/* Right vertical tabs */}
+          <nav className={styles.rightCol}>
+            <ul className={styles.tabs}>
+              <li className={styles.active}>Profile</li>
+              <li>Statistics</li>
+              <li>Get Help</li>
+              <li>Settings</li>
+              <li onClick={Logout}>Sign Out</li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
   );
 });
+
 export default AccountSettings;
