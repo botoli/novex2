@@ -40,41 +40,41 @@
 
 // Light Theme
 :root.light-theme {
-  --dracula-background: #f4f7fb;
-  --dracula-current-line: #e8edf5;
-  --dracula-selection: #dbe3f0;
-  --dracula-foreground: #1f2430;
-  --dracula-comment: #55607a;
+  --dracula-background: #a9b8db;
+  --dracula-current-line: #93a3c8;
+  --dracula-selection: #6f83b2;
+  --dracula-foreground: #1f2636;
+  --dracula-comment: #5f6c8a;
 
-  --dracula-cyan: #1fb6d9;
-  --dracula-green: #4caf50;
-  --dracula-orange: #e07a3f;
-  --dracula-pink: #b06fd3;
-  --dracula-purple: #5b6cff;
-  --dracula-red: #e5535d;
-  --dracula-yellow: #d4a72c;
+  --dracula-cyan: #0f5f75;
+  --dracula-green: #6fbf4b;
+  --dracula-orange: #d98a54;
+  --dracula-pink: #c08fe0;
+  --dracula-purple: #6c7fe6;
+  --dracula-red: #d8636f;
+  --dracula-yellow: #c9a63a;
 
-  --dracula-blue: #3f7bdc;
-  --dracula-teal: #2fa4a9;
-  --dracula-indigo: #5b6cff;
-  --dracula-rose: #e5535d;
-  --dracula-emerald: #3fbf8f;
-  --dracula-violet: #9b5de5;
-  --dracula-fuchsia: #c445c4;
-  --dracula-sky: #3fb8e0;
-  --dracula-lime: #6bcf63;
-  --dracula-amber: #d4a72c;
+  --dracula-blue: #5aa2d9;
+  --dracula-teal: #4fb3a8;
+  --dracula-indigo: #7786e6;
+  --dracula-rose: #d97888;
+  --dracula-emerald: #59b38f;
+  --dracula-violet: #a487e6;
+  --dracula-fuchsia: #d978c9;
+  --dracula-sky: #6bb6e0;
+  --dracula-lime: #8ecf5a;
+  --dracula-amber: #d4aa4f;
 
-  --dracula-purple-rgba-01: rgba(91, 108, 255, 0.1);
-  --dracula-purple-rgba-02: rgba(91, 108, 255, 0.18);
-  --dracula-purple-rgba-03: rgba(91, 108, 255, 0.28);
-  --dracula-purple-rgba-015: rgba(91, 108, 255, 0.14);
+  --dracula-purple-rgba-01: rgba(108, 127, 230, 0.12);
+  --dracula-purple-rgba-02: rgba(108, 127, 230, 0.2);
+  --dracula-purple-rgba-03: rgba(108, 127, 230, 0.3);
+  --dracula-purple-rgba-015: rgba(108, 127, 230, 0.16);
 
-  --dracula-shadow-dark: rgba(31, 36, 48, 0.18);
-  --dracula-shadow-medium: rgba(31, 36, 48, 0.1);
+  --dracula-shadow-dark: rgba(40, 55, 95, 0.25);
+  --dracula-shadow-medium: rgba(40, 55, 95, 0.14);
 
-  --dracula-cyan-rgba-01: rgba(31, 182, 217, 0.14);
-  --dracula-white-rgba-02: rgba(31, 36, 48, 0.1);
+  --dracula-cyan-rgba-01: rgba(42, 167, 201, 0.18);
+  --dracula-white-rgba-02: rgba(20, 30, 55, 0.12);
 }
 
 // SCSS переменные для обратной совместимости (используют CSS переменные)

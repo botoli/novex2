@@ -6,6 +6,7 @@ import { CloseIcon } from "../../UI/Icons";
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../../Store/User.store";
 import AddEmployeesModal from "../AddEmployeesModal/AddEmployeesModal";
+import { AssignedStore } from "../../Store/Assigned.Users";
 
 const AddProjectModal = observer(() => {
   const Priority = ["Low", "Medium", "High"];
@@ -20,14 +21,13 @@ const AddProjectModal = observer(() => {
   const [tags, setTags] = useState([]); // массив тегов
   const [tagInput, setTagInput] = useState(""); // поле ввода тега
   const [proj, setProj] = useState([]);
-  const [isOpenAssignedTo, setIsOpenAssignedTo] = useState(false);
 
   function addNewProject() {
     const newProj = {
       title: title,
       description: description,
       created_by: Number(token),
-      assigned_to: assignedTo.map((u) => u.id),
+      assigned_to: AssignedStore.assignedUsersProjects,
       priority: priority,
       tags: tags,
     };
@@ -167,7 +167,7 @@ const AddProjectModal = observer(() => {
             <label>Assigned to</label>
             <div
               className={styles.assignedGroup}
-              onClick={() => setIsOpenAssignedTo(!isOpenAssignedTo)}
+              onClick={() => projectsStore.changeIsOpenAssigned()}
             >
               {assignedTo.length > 0 ? (
                 assignedTo.map((u) => (
@@ -223,13 +223,14 @@ const AddProjectModal = observer(() => {
           className={styles.addNewProject}
           onClick={() => {
             addNewProject();
+            projectsStore.changeIsOpenAssigned();
             projectsStore.changeIsOpen();
           }}
         >
           Create Project
         </button>
       </div>
-      {isOpenAssignedTo && <AddEmployeesModal />}
+      {projectsStore.IsOpenAssigned && <AddEmployeesModal />}
     </div>
   );
 });

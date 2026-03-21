@@ -26,4 +26,6 @@ export {
   CloseIcon,
   ArrowUpIcon,
   ArrowDownIcon,
+  MoonIcon,
+  SunIcon,
 } from './Icon';

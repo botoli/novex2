@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AccountIcon,
   LogoutIcon,
@@ -14,18 +14,23 @@ import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../Store/User.store";
 import projectsStore from "../Store/Projects.store";
 import { Link } from "react-router-dom";
+import AvatarStore from "../Store/Avatar.store";
+import dataStore from "../Store/Data";
 
 const PageHeader = observer(() => {
   const [isOpenProfile, setIsOpenProfile] = useState(false);
 
-  const [user, setUser] = useState();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
-
+  const [avatar, setAvatar] = useState(null);
   function Logout() {
     CurrentUserStore.logOut();
+    dataStore.Logout();
+    localStorage.clear();
   }
-
+  useEffect(() => {
+    setAvatar(AvatarStore.avatar);
+  }, [CurrentUserStore.currentuser, AvatarStore.avatar]);
   return (
     <div>
       <div
@@ -74,7 +79,20 @@ const PageHeader = observer(() => {
               <div className={styles.account}>
                 <div className={styles.accountInfo}>
                   <div className={styles.accountAvatar}>
-                    {CurrentUserStore.currentuser.name.charAt(0).toUpperCase()}
+                    {avatar ? (
+                      <img
+                        src={avatar}
+                        alt="avatar"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          borderRadius: "50%",
+                        }}
+                      />
+                    ) : (
+                      CurrentUserStore.currentuser.name.charAt(0).toUpperCase()
+                    )}
                   </div>
                   <div className={styles.accountDetails}>
                     <p className={styles.accountName}>

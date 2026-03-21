@@ -51,19 +51,6 @@ const HomePage = observer(() => {
   const [isSortDedline, setIsSortDedline] = useState(true);
   const { currentTasks, currentProjects, isLoading, FetchAll } = dataStore;
 
- 
-  useEffect(() => {
-    console.log("Первый проект:", dataStore.projects[0]);
-    console.log(
-      "Все проекты:",
-      dataStore.projects.map((p) => ({
-        id: p.id,
-        title: p.title,
-        assigned_to: p.assigned_to,
-        тип: typeof p.assigned_to,
-      })),
-    );
-  }, [dataStore.projects]);
   const progress = (id: number) => {
     return (
       Math.floor(
@@ -130,11 +117,6 @@ const HomePage = observer(() => {
       ).length,
     );
   }
-  console.log("Текущее состояние:", {
-    projects: dataStore.projects,
-    token: dataStore.token,
-    currentProjects: dataStore.currentProjects,
-  });
   return (
     <div className={styles.homeContainer}>
       <div className={styles.AccountSettingsModal}>
@@ -302,10 +284,10 @@ const HomePage = observer(() => {
                       }
                     >
                       {task.priorityId === 3
-                        ? "↑↑"
+                        ? "High"
                         : task.priorityId === 2
-                          ? "↑"
-                          : "↓"}
+                          ? "Normal"
+                          : "Low"}
                     </span>
                   </div>
                   <h4 className={styles.taskTitle}>{task.name}</h4>

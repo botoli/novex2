@@ -11,12 +11,20 @@ export function ThemeProvider({ children }) {
     const saved = localStorage.getItem("theme");
     return saved || "dark";
   });
+
   useEffect(() => {
     localStorage.setItem("theme", theme);
+    // Применяем класс темы к корневому элементу
+    if (theme === "light") {
+      document.documentElement.classList.add("light-theme");
+    } else {
+      document.documentElement.classList.remove("light-theme");
+    }
   }, [theme]);
+
   function changeTheme() {
-    setTheme(theme === "dark" ? "light" : "dark");
-    localStorage.setItem("theme", theme);
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
   }
 
   const value = { theme, changeTheme };

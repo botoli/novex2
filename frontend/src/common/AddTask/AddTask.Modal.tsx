@@ -47,6 +47,7 @@ const AddTask = observer(() => {
         if (response.ok) {
           const data = await response.json();
           console.log("✅ Проект создан:", data);
+          dataStore.NewTask(data);
           // Закрыть модалку
           projectsStore.IsOpenAddTasks = false;
 
@@ -91,10 +92,14 @@ const AddTask = observer(() => {
             type="text"
             {...register("title", {
               required: "Название обязательно",
+              minLength: {
+                value: 5,
+                message: "Минимум 5 символов",
+              },
             })}
           />
           {errors.title && (
-            <span className={styles.errorMessage}>Обязательное поле</span>
+            <span className={styles.errorMessage}>{errors.title.message}</span>
           )}
 
           {/* ТУТ ПРОЕКТЫ Project*/}

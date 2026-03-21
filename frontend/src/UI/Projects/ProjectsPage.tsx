@@ -21,6 +21,7 @@ import FilteredButtons from "../../common/FilteredButtons/FilteredButtons";
 const ProjectsPage = observer(() => {
   const { isOpenRegistration, setIsOpenRegistration } = useRegistration();
   const { isOpenLogin, setIsOpenLogin } = useLogin();
+  console.log(dataStore.currentProjects);
 
   return (
     <div className={styles.ProjectContainer}>

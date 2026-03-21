@@ -18,13 +18,13 @@ import dataStore from "./Store/Data.tsx";
 import { useEffect } from "react";
 
 const App = observer(() => {
+  const token = localStorage.getItem("token");
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (token) {
-      dataStore.setToken(Number(token));
       dataStore.FetchAll();
+      dataStore.setToken(Number(token));
     }
-  }, []);
+  }, [token]);
   return (
     <ThemeProvider>
       <UserProvider>

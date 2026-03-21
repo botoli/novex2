@@ -12,9 +12,10 @@ import {
   AIIcon,
   MenuIcon,
   CloseIcon,
+  MoonIcon,
+  SunIcon,
 } from "../Icons/index.ts";
 import { useTheme } from "../../context/Theme.tsx";
-import { fetchData } from "../../fetch/fetchTasks.tsx";
 import { observer } from "mobx-react-lite";
 import { CurrentUserStore } from "../../Store/User.store.tsx";
 import dataStore from "../../Store/Data.tsx";
@@ -155,7 +156,9 @@ const Header = observer(() => {
                       My: {countOfProjects}
                     </div>
                   ) : tab.name === "Tasks" && countOfTasks > 0 ? (
-                    <div className={styles.projectCount}>My: {countOfTasks}</div>
+                    <div className={styles.projectCount}>
+                      My: {countOfTasks}
+                    </div>
                   ) : null}
                 </div>
               </Link>
@@ -171,7 +174,8 @@ const Header = observer(() => {
               }
             }}
           >
-            {theme}
+            {theme === "dark" ? <MoonIcon /> : <SunIcon />}
+            <h2>{theme === "dark" ? "Dark" : "Light"}</h2>
           </div>
         </div>
       </div>

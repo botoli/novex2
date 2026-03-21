@@ -532,3 +532,255 @@
     font-size: inherit;
   }
 }
+// ============= НОВЫЕ UX УЛУЧШЕНИЯ =============
+
+// Уведомления
+.notification {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  z-index: 10000;
+  animation: slideDown 0.3s ease;
+  
+  &.success {
+    background: $dracula-green;
+    color: $dracula-background;
+  }
+  
+  &.error {
+    background: $dracula-red;
+    color: $dracula-background;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Бэйдж несохраненных изменений
+.unsavedBadge {
+  padding: 4px 10px;
+  background: $dracula-orange;
+  color: $dracula-background;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+// Аватарка с загрузкой
+.avatar {
+  position: relative;
+  transition: all 0.3s ease;
+  
+  &.uploading {
+    opacity: 0.6;
+  }
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 4px solid $dracula-selection;
+  border-top-color: $dracula-purple;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  z-index: 10;
+}
+
+@keyframes spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+// Действия с аватаркой
+.avatarActions {
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.uploadBtn {
+  background: transparent;
+  border: none;
+  color: $dracula-purple;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  padding: 6px 12px;
+  border-radius: 6px;
+  
+  &:hover:not(.disabled) {
+    background: $dracula-selection;
+    color: $dracula-indigo;
+  }
+  
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.removeBtn {
+  background: transparent;
+  border: none;
+  color: $dracula-red;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(255, 85, 85, 0.1);
+  }
+}
+
+// Валидация формы
+.hasError {
+  label {
+    color: $dracula-red !important;
+  }
+}
+
+.errorInput {
+  border-color: $dracula-red !important;
+  background: rgba(255, 85, 85, 0.05) !important;
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 85, 85, 0.2);
+  }
+}
+
+.errorText {
+  font-size: 11px;
+  color: $dracula-red;
+  font-weight: 500;
+  margin-top: 2px;
+  animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+// Кнопки формы
+.formActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  margin-top: 12px;
+}
+
+.updateBtn {
+  background: $dracula-purple;
+  color: $dracula-background;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &:hover:not(:disabled) {
+    background: $dracula-indigo;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 233, 253, 0.3);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.resetBtn {
+  background: transparent;
+  color: $dracula-comment;
+  border: 1px solid $dracula-selection;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  
+  &:hover:not(:disabled) {
+    border-color: $dracula-comment;
+    color: $dracula-foreground;
+    background: $dracula-selection;
+  }
+  
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.btnSpinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+// Улучшенные инпуты
+.form input:focus,
+.form textarea:focus {
+  outline: none;
+  border-color: $dracula-purple;
+  box-shadow: 0 0 0 3px rgba(189, 147, 249, 0.1);
+}
+
+.form input[readonly] {
+  background: $dracula-selection;
+  color: $dracula-comment;
+  cursor: not-allowed;
+}

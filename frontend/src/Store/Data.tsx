@@ -14,8 +14,6 @@ const dataStore = {
     localStorage.setItem("token", token);
   },
   async FetchAll() {
-    console.log(this.token);
-
     this.isLoading = true;
     this.error = null;
     try {
@@ -34,11 +32,10 @@ const dataStore = {
       this.message = error.message;
     }
   },
-
+  NewTask(data) {
+    this.tasks = [...this.tasks, data];
+  },
   get currentProjects() {
-    if (!this.token) {
-      return [];
-    }
     return this.projects.filter((project) =>
       project.assigned_to.includes(Number(this.token)),
     );
@@ -47,6 +44,14 @@ const dataStore = {
   get currentTasks() {
     const projectIds = this.currentProjects.map((p) => p.id);
     return this.tasks.filter((task) => projectIds.includes(task.projectId));
+  },
+  Logout() {
+    if (this.currentProjects) {
+      this.projects = [];
+    }
+    if (this.currentTasks) {
+      this.tasks = [];
+    }
   },
 };
 

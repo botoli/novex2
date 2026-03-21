@@ -4,6 +4,7 @@ import styles from "./AddEmployeesModal.module.scss";
 import { CloseIcon } from "../../UI/Icons";
 import { observer } from "mobx-react-lite";
 import { AssignedStore } from "../../Store/Assigned.Users";
+import projectsStore from "../../Store/Projects.store";
 
 const AddEmployeesModal = observer(() => {
   const [search, setSearch] = useState("");
@@ -12,9 +13,7 @@ const AddEmployeesModal = observer(() => {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [roleFilter, setRoleFilter] = useState<string>("All");
   const pageSize = 6;
-  useEffect(() => {
-    console.log(AssignedStore.assignedUsersTask);
-  }, [AssignedStore.assignedUsersTask]);
+
   // basic search+filter
   const searched = dataStore.users.filter((u: any) => {
     const q = search.toLowerCase();
@@ -60,7 +59,12 @@ const AddEmployeesModal = observer(() => {
   if (page > totalPages) setPage(1);
   const pageStart = (page - 1) * pageSize;
   const pageItems = sorted.slice(pageStart, pageStart + pageSize);
-
+  useEffect(() => {
+    console.log("AssignedUsersTask:", AssignedStore.assignedUsersTask);
+  }, [AssignedStore.assignedUsersTask]);
+  useEffect(() => {
+    console.log("AssignedUsersProjects:", AssignedStore.assignedUsersProjects);
+  }, [AssignedStore.assignedUsersProjects]);
   return (
     <div className={styles.blur}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -137,14 +141,22 @@ const AddEmployeesModal = observer(() => {
                   <tr
                     key={u.id}
                     className={
-                      AssignedStore.assignedUsersTask.includes(u.id)
+                      AssignedStore.assignedUsersTask.includes(u.id) ||
+                      AssignedStore.assignedUsersProjects.includes(u.id)
                         ? styles.activeTableRow
                         : styles.tableRow
                     }
                     onClick={() => {
-                      AssignedStore.assignedUsersTask.includes(u.id)
-                        ? AssignedStore.unassignTask(u.id)
-                        : AssignedStore.assignTask(u.id);
+                      if (projectsStore.IsOpenAddTasks) {
+                        AssignedStore.assignedUsersTask.includes(u.id)
+                          ? AssignedStore.unassignTask(u.id)
+                          : AssignedStore.assignTask(u.id);
+                      }
+                      if (projectsStore.IsOpenAddProject) {
+                        AssignedStore.assignedUsersProjects.includes(u.id)
+                          ? AssignedStore.unassignProject(u.id)
+                          : AssignedStore.assignProject(u.id);
+                      }
                     }}
                   >
                     <td className={styles.avatarCell}>

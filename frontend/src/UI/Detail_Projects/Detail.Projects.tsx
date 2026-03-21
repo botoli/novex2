@@ -1,13 +1,13 @@
 import { useState } from "react";
 import styles from "./Detail.Projects.module.scss";
 import { ArrowRightIcon } from "../Icons/Icon";
-import { nowurl, fetchData } from "../../fetch/fetchTasks";
+import { fetchData } from "../../fetch/fetchTasks";
+import dataStore from "../../Store/Data";
 
 export default function DetailProject({ name }) {
-  const { data: projects } = fetchData(nowurl + "projects");
   return (
     <div className={styles.allDetailProject}>
-      {projects
+      {dataStore.currentProjects
         .filter((proj) => proj.title === name)
         .map((proj) => (
           <div key={proj.id} className={styles.DetailProjectHeader}>
